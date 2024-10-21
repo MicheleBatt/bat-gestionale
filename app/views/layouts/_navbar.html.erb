@@ -1,0 +1,64 @@
+<% new_upcoming_deadlines = upcoming_deadlines_count %>
+
+<nav class="navbar-expand-lg sticky-top py-2 mb-0 bg-light shadow">
+  <div class="d-flex align-items-center justify-content-end justify-content-lg-start">
+    <div class="collapse navbar-collapse" id="navbar">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item mx-5">
+          <%= link_to counts_path, class: "nav-link #{'text-primary' if current_page?(counts_path)}" do %>
+            <i class="fas fa-fw fa-wallet"></i> Conti corrente
+          <% end %>
+        </li>
+
+        <li class="nav-item mx-5">
+          <%= link_to expense_items_path, class: "nav-link #{'text-primary' if current_page?(expense_items_path)}" do %>
+            <i class="fas fa-fw fa-tag"></i> Voci di spesa
+          <% end %>
+        </li>
+
+        <li class="nav-item mx-5">
+          <%= link_to deadlines_path, class: "nav-link #{'text-primary' if current_page?(deadlines_path)}" do %>
+            <i class="fas fa-fw fa-hourglass"></i> Scadenziario
+            <% if new_upcoming_deadlines > 0 %>
+              <span class="badge badge-warning rounded-circle"
+                style="position: relative; top: -10px; left: -10px; color: white; background-color: darkorange">
+                <%= new_upcoming_deadlines %>
+              </span>
+            <% end %>
+          <% end %>
+        </li>
+      </ul>
+    </div>
+
+    <div class="btn-group mx-5 d-block d-lg-none">
+      <button type="button" class="btn btn-link text-dark text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-bars"></i>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+          <%= link_to counts_path, class: "dropdown-item #{'text-primary' if current_page?(counts_path)}" do %>
+            <i class="fas fa-fw fa-wallet"></i> Conti corrente
+          <% end %>
+        </li>
+
+        <li>
+          <%= link_to expense_items_path, class: "dropdown-item #{'text-primary' if current_page?(expense_items_path)}" do %>
+            <i class="fas fa-fw fa-tag"></i> Voci di spesa
+          <% end %>
+        </li>
+
+        <li>
+          <%= link_to deadlines_path, class: "dropdown-item #{'text-primary' if current_page?(deadlines_path)}" do %>
+            <i class="fas fa-fw fa-hourglass"></i> Scadenziario
+            <% if new_upcoming_deadlines > 0 %>
+              <span class="badge badge-warning rounded-circle"
+                    style="position: relative; top: -10px; left: -10px; color: white; background-color: darkorange">
+                <%= new_upcoming_deadlines %>
+              </span>
+            <% end %>
+          <% end %>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

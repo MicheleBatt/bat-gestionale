@@ -1,0 +1,39 @@
+<%= form_with(model: count) do |form| %>
+  <% if count.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(count.errors.count, "error") %> prohibited this count from being saved:</h2>
+
+      <ul>
+        <% count.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="m-4">
+    <%= form.label :name, 'Nome', class: "font-weight-bold" %>
+    <%= form.text_field :name, class: "form-control" %>
+  </div>
+
+  <div class="m-4">
+    <%= form.label :description, 'Descrizione (opzionale)', class: "font-weight-bold" %>
+    <%= form.text_area :description, class: "form-control" %>
+  </div>
+
+  <div class="m-4">
+    <%= form.label :iban, 'Codice IBAN', class: "font-weight-bold" %>
+    <%= form.text_field :iban, class: "form-control" %>
+  </div>
+
+  <div class="m-4">
+    <%= form.label :initial_amount, 'Giacenza Iniziale', class: "font-weight-bold" %>
+    <%= form.number_field :initial_amount, step: :any, class: "form-control" %>
+  </div>
+
+  <div class="m-4">
+    <%= form.button :submit, class: 'btn btn-success' do %>
+      Salva
+    <% end %>
+  </div>
+<% end %>

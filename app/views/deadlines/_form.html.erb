@@ -1,0 +1,31 @@
+<%= form_with(model: deadline) do |form| %>
+  <% if deadline.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(deadline.errors.count, "error") %> prohibited this deadline from being saved:</h2>
+
+      <ul>
+        <% deadline.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="m-4">
+    <%= form.label :description, 'Descrizione', class: "font-weight-bold" %>
+    <%= form.text_area :description, class: "form-control" %>
+  </div>
+
+  <div class="m-4">
+    <%= form.label :expired_at, 'Data', class: "font-weight-bold" %>
+    <%= form.date_field :expired_at, attribute: 'date', class: "form-control" %>
+  </div>
+
+  <div class="m-4">
+    <%= form.button :submit, class: 'btn btn-success' do %>
+      Salva
+    <% end %>
+  </div>
+<% end %>
+
+

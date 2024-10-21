@@ -1,0 +1,30 @@
+<%= form_with(model: expense_item) do |form| %>
+  <% if expense_item.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(expense_item.errors.count, "error") %> prohibited this expense_item from being saved:</h2>
+
+      <ul>
+        <% expense_item.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="m-4">
+    <%= form.label :description, 'Descrizione', class: "font-weight-bold" %>
+    <%= form.text_area :description, class: "form-control" %>
+  </div>
+
+  <div class="m-4">
+    <%= form.label :color, 'Colore (esadecimale)', class: "font-weight-bold" %>
+    <%= form.text_field :color, class: "form-control" %>
+  </div>
+
+  <div class="m-4">
+    <%= form.button :submit, class: 'btn btn-success' do %>
+      Salva
+    <% end %>
+  </div>
+<% end %>
+

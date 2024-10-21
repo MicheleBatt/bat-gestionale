@@ -1,0 +1,29 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Movements</h1>
+
+<div id="movements">
+  <% @movements.each do |movement| %>
+    <%= render movement %>
+  <% end %>
+</div>
+
+
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#movementCreationModal">
+  Aggiungi movimento
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="movementCreationModal" tabindex="-1" aria-labelledby="movementCreationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title fs-5" id="movementCreationModalLabel">Aggiungi movimento</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= render "form", movement: @new_movement %>
+      </div>
+    </div>
+  </div>
+</div>

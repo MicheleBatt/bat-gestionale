@@ -1,0 +1,54 @@
+<%= form_with(model: [@count, movement]) do |form| %>
+  <% if movement.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(movement.errors.count, "error") %> prohibited this movement from being saved:</h2>
+
+      <ul>
+        <% movement.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form.hidden_field :count_id, value: @count.id %>
+
+  <div class="m-4">
+    <%= form.label :movement_type, 'Tipo di movimento', class: "font-weight-bold" %>
+    <%= form.select :movement_type,
+                    options_for_select(movement_types_for_select, movement.movement_type),
+                    { include_blank: 'Seleziona il tipo' },
+                    class: 'form-control'
+    %>
+  </div>
+
+  <div class="m-4">
+    <%= form.label :expense_item_id, 'Voce di spesa (se uscita)', class: "font-weight-bold" %>
+    <%= form.select :expense_item_id,
+                    options_for_select(ExpenseItem.all.map{ | item | [item.description, item.id ]}, movement.expense_item_id),
+                    { include_blank: 'Seleziona voce di spesa' },
+                    class: 'form-control'
+    %>
+  </div>
+
+  <div class="m-4">
+    <%= form.label :emitted_at, 'Data', class: "font-weight-bold" %>
+    <%= form.date_field :emitted_at, attribute: 'date', class: "form-control" %>
+  </div>
+
+  <div class="m-4">
+    <%= form.label :causal, 'Causale', class: "font-weight-bold" %>
+    <%= form.text_field :causal, class: "form-control" %>
+  </div>
+
+  <div class="m-4">
+    <%= form.label :amount, 'Importo', class: "font-weight-bold" %>
+    <%= form.number_field :amount, step: :any, class: "form-control" %>
+  </div>
+
+  <div class="m-4 d-flex justify-content-end">
+    <%= form.button :submit, class: 'btn btn-success' do %>
+      Salva
+    <% end %>
+  </div>
+<% end %>
