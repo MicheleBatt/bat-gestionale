@@ -1,11 +1,9 @@
-<p style="color: green"><%= notice %></p>
-
 <% movement_types = movement_types_for_select %>
 <% expense_items = expense_items_for_select %>
 
 <% if @movements.present? || params[:q].present? %>
   <%= search_form_for [@count, @search] do |f| %>
-    <div class="d-flex flex-wrap justify-content-center align-items-end px-x px-lg-4 mb-5">
+    <div class="d-flex flex-wrap justify-content-center align-items-end px-x px-lg-4 mb-5 mt-3">
       <%= f.hidden_field :year_eq, value: @year %>
       <%= f.hidden_field :month_eq, value: @month %>
 

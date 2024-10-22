@@ -43,7 +43,7 @@ class MovementsController < ApplicationController
         format.html { redirect_to @count.default_path, notice: "Movement was successfully created." }
         format.json { render :show, status: :created, location: @movement }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { redirect_to @count.default_path, status: :unprocessable_entity }
         format.json { render json: @movement.errors, status: :unprocessable_entity }
       end
     end
