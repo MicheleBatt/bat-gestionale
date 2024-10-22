@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_21_144249) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_22_140437) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -58,12 +58,26 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_21_144249) do
     t.integer "month", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "year_month", null: false
     t.index ["count_id"], name: "index_movements_on_count_id"
     t.index ["emitted_at"], name: "index_movements_on_emitted_at"
     t.index ["expense_item_id"], name: "index_movements_on_expense_item_id"
     t.index ["month"], name: "index_movements_on_month"
     t.index ["movement_type"], name: "index_movements_on_movement_type"
     t.index ["year"], name: "index_movements_on_year"
+    t.index ["year_month"], name: "index_movements_on_year_month"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "movements", "counts"

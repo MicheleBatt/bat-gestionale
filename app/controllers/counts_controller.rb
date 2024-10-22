@@ -3,7 +3,7 @@ class CountsController < ApplicationController
 
   # GET /counts or /counts.json
   def index
-    @counts = Count.all
+    @counts = Count.all.includes(:movements)
   end
 
   # GET /counts/new

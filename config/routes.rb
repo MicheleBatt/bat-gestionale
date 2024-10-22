@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  devise_for :users
+  root to: 'counts#index'
+
   resources :deadlines, except: :show
   resources :expense_items, except: :show
   resources :counts, except: :show do

@@ -1,42 +1,34 @@
-<div id="<%= dom_id movement %>">
-  <p>
-    <strong>Count:</strong>
-    <%= movement.count_id %>
-  </p>
 
-  <p>
-    <strong>Expense item:</strong>
-    <%= movement.expense_item_id %>
-  </p>
+<div class="col-12 col-lg-6" id="<%= dom_id movement %>" style="background-color: <%= movement.expense_item&.color %>">
+  <div class="row">
+    <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark">
+      <%= parse_date(movement.emitted_at, '%d.%m.%y') %>
+    </div>
+    <div class="col-6 col-sm-8 d-flex justify-content-center border border-dark">
+      <%= movement.causal %>
+    </div>
+    <div class="col-3 col-sm-2 d-flex justify-content-between border border-dark">
+      <div class="d-none d-md-flex">&nbsp;</div>
+      <% visible_amount = to_visible_amount(movement.amount) %>
+      <div class="d-flex d-lg-none m-0"><%= movement.movement_type == 'in' ? '+' : '-' %></div> <%= visible_amount %>€
+      <button type="button" class="btn btn-link text-secondary text-decoration-none mx-1 p-0" data-bs-toggle="modal" data-bs-target="#movementEditinModal_<%= movement.id %>">
+        <i class="fas fa-fw fa-edit"></i>
+      </button>
+    </div>
+  </div>
+</div>
 
-  <p>
-    <strong>Amount:</strong>
-    <%= movement.amount %>
-  </p>
-
-  <p>
-    <strong>Causal:</strong>
-    <%= movement.causal %>
-  </p>
-
-  <p>
-    <strong>Movement type:</strong>
-    <%= movement.movement_type %>
-  </p>
-
-  <p>
-    <strong>Emitted at:</strong>
-    <%= movement.emitted_at %>
-  </p>
-
-  <p>
-    <strong>Year:</strong>
-    <%= movement.year %>
-  </p>
-
-  <p>
-    <strong>Month:</strong>
-    <%= movement.month %>
-  </p>
-
+<!-- Modale per la cancellazione / modifica di un movimento di cassa -->
+<div class="modal fade" id="movementEditinModal_<%= movement.id %>" tabindex="-1" aria-labelledby="movementEditinModal_<%= movement.id %>Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title fs-5" id="movementEditinModal_<%= movement.id %>Label">Modifica movimento</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= render "form", movement: movement, expense_items: expense_items, movement_types: movement_types %>
+      </div>
+    </div>
+  </div>
 </div>

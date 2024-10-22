@@ -11,10 +11,10 @@
       <i class="fas fa-fw fa-edit"></i>
     <% end %>
 
-    <%# if expense_item.movements.blank? %>
+    <% if expense_item.movements.blank? %>
       <%= button_to expense_item, method: :delete, class: "btn btn-link text-danger text-decoration-none mx-3 p-0" do %>
         <i class="fas fa-fw fa-trash"></i>
       <% end %>
-    <%# end %>
+    <% end %>
   </div>
 </div>

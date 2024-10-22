@@ -3,7 +3,7 @@ class ExpenseItemsController < ApplicationController
 
   # GET /expense_items or /expense_items.json
   def index
-    @expense_items = ExpenseItem.all
+    @expense_items = ExpenseItem.all.includes(:movements)
   end
 
   # GET /expense_items/new
