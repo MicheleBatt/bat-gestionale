@@ -1,0 +1,183 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Movimenti del mese") do |sheet|
+  # TESTATA DELLA TABELLA
+  sheet.add_row ["Registro economico #{@count.name} - #{italian_month(@month)} #{@year}".upcase]
+  sheet.add_row ["", "", "", "", "", ""]
+  sheet.add_row ["", "", "", "", "", ""]
+
+  sheet["A1:F3"].each do |cell|
+    cell.style = wb.styles.add_style({font_name: "Calibri", fg_color: 'c9211e', sz: 18, b: true, u: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+  end
+
+  sheet.add_row ["USCITE", "", "", "ENTRATE", "", ""]
+  sheet["A4:F4"].each do |cell|
+    cell.style = wb.styles.add_style({font_name: "Calibri", fg_color: 'ff0800', sz: 14, b: true, u: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+  end
+
+  sheet.add_row ["Data", "Causale", "Spesa", "Data", "Causale", "Spesa"]
+  sheet["A5:F5"].each do |cell|
+    cell.style = wb.styles.add_style({font_name: "Calibri", sz: 12, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+  end
+
+
+
+
+  # RIGHE DELLA TABELLA CHE RIPORTANO I MOVIMENTI DI CASSA DEL MESE
+  current_row = 6
+  cells_to_merge = []
+  last_empty_row_type = nil
+
+  @movements.each do | movement |
+    movement_data = ["#{parse_date(movement.emitted_at, '%d.%m.%y')}", "#{movement.causal}", "#{to_visible_amount(movement.amount)}€"]
+    if movement.movement_type == 'out'
+      sheet.add_row [*movement_data, "", "", ""]
+      if last_empty_row_type == 'in'
+        cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:F#{current_row}"
+      else
+        cells_to_merge << "D#{current_row}:F#{current_row}"
+      end
+      last_empty_row_type = 'in'
+      sheet["A#{current_row}:C#{current_row}"].each do |cell|
+        cell.style = wb.styles.add_style({font_name: "Calibri", sz: 10, bg_color: movement.expense_item.color.gsub('#', ''), alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+      end
+      sheet["D#{current_row}:F#{current_row}"].each do |cell|
+        cell.style = wb.styles.add_style({border: {style: :thin, color: '000000'}})
+      end
+    else
+      sheet.add_row ["", "", "", *movement_data]
+      if last_empty_row_type == 'out'
+        cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:C#{current_row}"
+      else
+        cells_to_merge << "A#{current_row}:C#{current_row}"
+      end
+      last_empty_row_type = 'out'
+      sheet["A#{current_row}:F#{current_row}"].each do |cell|
+        cell.style = wb.styles.add_style({font_name: "Calibri", sz: 10, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+      end
+    end
+    current_row = current_row + 1
+  end
+
+
+
+
+  # UNA RIGA VUOTA
+  sheet.add_row ["", "", "", "", "", ""]
+  ["A#{current_row}:C#{current_row}", "D#{current_row}:F#{current_row}"].each do | cells_interval |
+    sheet[cells_interval].each do |cell|
+      cell.style = wb.styles.add_style({border: {style: :thin, color: '000000'}})
+    end
+  end
+  if last_empty_row_type == 'in'
+    cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:F#{current_row}"
+    cells_to_merge << "A#{current_row}:C#{current_row}"
+  else
+    cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:C#{current_row}"
+    cells_to_merge << "D#{current_row}:F#{current_row}"
+  end
+  current_row = current_row + 1
+
+
+
+
+  # TOTALI DEL MESE PER USCITE / ENTRATE RISPETTIVAMENTE
+  sheet.add_row ["TOTALE:", "", "#{to_visible_amount(@total_out_movements_amount)}€", "TOTALE:", "", "#{to_visible_amount(@total_in_movements_amount)}€"]
+  ["A#{current_row}:B#{current_row}", "D#{current_row}:E#{current_row}"].each do | cells_interval |
+    sheet[cells_interval].each do |cell|
+      cell.style = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, alignment: { horizontal: :right, vertical: :center }, border: {style: :thin, color: '000000'}})
+    end
+    cells_to_merge << cells_interval
+  end
+  ["C#{current_row}:C#{current_row}", "F#{current_row}:F#{current_row}"].each do | cells_interval |
+    sheet[cells_interval].each do |cell|
+      cell.style = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, bg_color: cells_interval.include?('C') ? 'ff0000' : '2cfe22', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+    end
+  end
+  current_row = current_row + 1
+
+
+
+
+  # DUE RIGHE VUOTE
+  sheet.add_row ["", "", "", "", "", ""]
+  sheet.add_row ["", "", "", "", "", ""]
+  sheet["A#{current_row}:F#{current_row + 1}"].each do |cell|
+    cell.style = wb.styles.add_style({border: {style: :thin, color: '000000'}})
+  end
+  cells_to_merge << "A#{current_row}:F#{current_row + 1}"
+  current_row = current_row + 2
+
+
+
+
+  # FONDO CASSA DI INIZIO MESE + SALDO DI FINE MESE = FONDO CASSA DI FINE MESE
+  sheet.add_row ["FONDO CASSA COMPLESSIVO A INIZIO MESE:", "", "", "", "", "#{to_visible_amount(@start_amount, false)}€"]
+  sheet.merge_cells("A#{current_row}:E#{current_row}")
+  sheet["F#{current_row}:F#{current_row}"].each do |cell|
+    cell.style = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+  end
+  current_row = current_row + 1
+  sheet.add_row ["SALDO COMPLESSIVO DI FINE MESE:", "", "", "", "", "#{to_visible_amount(@total_movements_amount, false)}€"]
+  sheet.merge_cells("A#{current_row}:E#{current_row}")
+  sheet["F#{current_row}:F#{current_row}"].each do |cell|
+    cell.style = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, bg_color: @total_movements_amount <= 0 ? 'ff0000' : '2cfe22', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+  end
+  current_row = current_row + 1
+  sheet.add_row ["FONDO CASSA COMPLESSIVO A FINE MESE:", "", "", "", "", "#{to_visible_amount(@final_amount, false)}€"]
+  sheet.merge_cells("A#{current_row}:E#{current_row}")
+  sheet["F#{current_row}:F#{current_row}"].each do |cell|
+    cell.style = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+  end
+  current_row = current_row + 1
+  ["A#{current_row - 3}:E#{current_row - 3}", "A#{current_row - 2}:E#{current_row - 2}", "A#{current_row - 1}:E#{current_row - 1}"].each do | cells_interval |
+    sheet[cells_interval].each do |cell|
+      cell.style = wb.styles.add_style({font_name: "Calibri", sz: 10, alignment: { horizontal: :right, vertical: :center }, border: {style: :thin, color: '000000'}})
+    end
+  end
+
+
+
+
+  # DUE RIGHE VUOTE
+  sheet.add_row ["", "", "", "", "", ""]
+  sheet.add_row ["", "", "", "", "", ""]
+  sheet["A#{current_row}:F#{current_row + 1}"].each do |cell|
+    cell.style = wb.styles.add_style({border: {style: :thin, color: '000000'}})
+  end
+  cells_to_merge << "A#{current_row}:F#{current_row + 1}"
+  current_row = current_row + 2
+
+
+
+
+  # TOTALI DELLE SPESE MENSILI RAGGRUPATE PER VOCI DI SPESA
+  @movements_amounts_by_expense_items.each do | expense_item, amount |
+    sheet.add_row ["AMMONTARE COMPLESSIVO SPESE PER #{expense_item.description.upcase}:", "", "", "", "", "#{to_visible_amount(amount)}€"]
+    sheet.merge_cells("A#{current_row}:E#{current_row}")
+    sheet["A#{current_row}:E#{current_row}"].each do |cell|
+      cell.style = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, bg_color: expense_item.color.gsub('#', ''), alignment: { horizontal: :right, vertical: :center }, border: {style: :thin, color: '000000'}})
+    end
+    sheet["F#{current_row}:F#{current_row}"].each do |cell|
+      cell.style = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, bg_color: expense_item.color.gsub('#', ''), alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+    end
+    current_row = current_row + 1
+  end
+
+
+
+
+  # EFFETTUO IL MERGE DELLE COLONNE CHE NECESSITANO DI ESSERE UNITE
+  sheet.merge_cells("A1:F3")
+  sheet.merge_cells("A4:C4")
+  sheet.merge_cells("D4:F4")
+  cells_to_merge.each do | cells_interval |
+    sheet.merge_cells(cells_interval)
+  end
+
+
+
+
+  # IMPOSTO UNA LARGHEZZA FISSA PER LE COLONNE DEL FILE EXCEL GENERATO
+  sheet.column_widths 10, 60, 15, 10, 60, 15
+end

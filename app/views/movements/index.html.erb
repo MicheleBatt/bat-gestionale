@@ -44,6 +44,12 @@
         <%= link_to @count.path_by_month(@year, @month), class: "btn btn-primary mx-2" do %>
           <i class="fas fa-filter" aria-hidden="true"></i> Reset
         <% end %>
+
+        <% if @year_and_month_filter_active %>
+          <%= link_to @count.path_by_month(@year, @month, :xlsx), class: "btn btn-warning mx-2 text-white" do %>
+            <i class="fas fa-download" aria-hidden="true"></i> Export xls
+          <% end %>
+        <% end %>
       </div>
     </div>
   <% end %>

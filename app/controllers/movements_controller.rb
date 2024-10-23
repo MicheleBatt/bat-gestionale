@@ -28,6 +28,16 @@ class MovementsController < ApplicationController
     end
 
     @movements = @movements.order(emitted_at: :asc).includes(:expense_item)
+
+    respond_to do |format|
+      format.html { render 'index' }
+      format.json { render json: @movements, status: :ok }
+      format.xlsx {
+        movements_file_name = "#{@month} - #{italian_month(@month)}.xlsx"
+        render xlsx: 'index'
+        response.headers['Content-Disposition'] = "attachment; filename=#{movements_file_name}"
+      }
+    end
   end
 
   # GET /movements/1/edit
