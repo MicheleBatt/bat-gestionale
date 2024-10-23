@@ -5,15 +5,13 @@
       <%= parse_date(movement.emitted_at, '%d.%m.%y') %>
     </div>
     <div class="col-6 col-sm-8 d-flex justify-content-center border border-dark">
-      <%= movement.causal %>
-    </div>
-    <div class="col-3 col-sm-2 d-flex justify-content-between border border-dark">
-      <div class="d-none d-md-flex">&nbsp;</div>
-      <% visible_amount = to_visible_amount(movement.amount) %>
-      <div class="d-flex d-lg-none m-0"><%= movement.movement_type == 'in' ? '+' : '-' %></div> <%= visible_amount %>€
-      <button type="button" class="btn btn-link text-secondary text-decoration-none mx-1 p-0" data-bs-toggle="modal" data-bs-target="#movementEditinModal_<%= movement.id %>">
-        <i class="fas fa-fw fa-edit"></i>
+      <button type="button" class="btn btn-link text-dark text-decoration-none mx-1 p-0" data-bs-toggle="modal" data-bs-target="#movementEditinModal_<%= movement.id %>">
+        <%= movement.causal %>
       </button>
+    </div>
+    <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark">
+      <% visible_amount = to_visible_amount(movement.amount) %>
+      <span class="d-flex d-lg-none m-0"><%= movement.movement_type == 'in' ? '+' : '-' %></span> <%= visible_amount %>€
     </div>
   </div>
 </div>
@@ -27,12 +25,12 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <div id="movement_<%= movement.id %>_error_messages"></div>
+
         <%= render "form", movement: movement, expense_items: expense_items, movement_types: movement_types %>
 
-        <div class="my-4 mx-2 mx-sm-4 d-flex justify-content-end">
-          <%= button_to count_movements_path(@count, movement), method: :delete, class: "btn btn-danger" do %>
-            Rimuovi dal conto
-          <% end %>
+        <div class="mt-5 mb-4 mx-2 mx-sm-4 d-flex justify-content-end">
+          <%= button_to 'Rimuovi dal conto', count_movement_path(@count, movement), method: :delete, class: "btn btn-danger" %>
         </div>
       </div>
     </div>

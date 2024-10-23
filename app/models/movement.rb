@@ -7,7 +7,7 @@ class Movement < ApplicationRecord
   belongs_to :expense_item, optional: true
 
   # Validations
-  validates :amount, :causal, :movement_type, :emitted_at, :year, :month, presence: true
+  validates :amount, :causal, :movement_type, :emitted_at, :year, :month, :year_month, presence: true
   validate :valid_amount?
   validate :valid_expense_item_reference?
   enum movement_type: MOVEMENT_TYPES.index_by(&:itself), _prefix: :movement_type
@@ -17,6 +17,7 @@ class Movement < ApplicationRecord
   before_validation { self.year = self.emitted_at.year.to_i if self.emitted_at }
   before_validation { self.month = self.emitted_at.month.to_i if self.emitted_at }
   before_validation { self.year_month = date_to_integer(self.emitted_at.year, self.emitted_at.month) if self.emitted_at }
+  before_save { self.causal = self.causal.capitalize if self.causal }
 
 
   # Instance Methods
@@ -43,11 +44,11 @@ class Movement < ApplicationRecord
 
   def valid_expense_item_reference?
     if self.movement_type == 'out' && self.expense_item_id.blank?
-      errors.add(:expense_item_id, "must be present")
+      errors.add(:expense_item_id, "Specifica una voce di spesa!")
     end
 
     if self.movement_type == 'in' && self.expense_item_id.present?
-      errors.add(:expense_item_id, "cannot be present")
+      errors.add(:expense_item_id, "La voce di spesa può essere selezionata solo per movimenti di cassa in uscita!")
     end
   end
 end

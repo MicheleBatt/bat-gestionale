@@ -3,10 +3,14 @@ class Count < ApplicationRecord
 
   # Relations
   has_many :movements, dependent: :destroy
+  has_many :expense_items, through: :movements
 
   # Validations
   validates :name, presence: true, uniqueness: true
+  validates :initial_amount, presence: true
 
+  # Callbacks
+  before_save { self.name = self.name.capitalize if self.name }
 
   # Instance Methods
   def path_by_month(year, month)

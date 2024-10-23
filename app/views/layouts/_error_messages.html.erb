@@ -1,0 +1,10 @@
+<% if obj && obj.errors.any? %>
+  <ul class="alert-errors list-unstyled mx-2 mx-md-4 my-4">
+    <% obj.errors.full_messages.reverse_each do |msg| %>
+      <li class="alert alert-danger alert-dismissible fade show shadow rounded" role="alert">
+        <span class="mt-1"><%= msg %></span>
+        <button type="button" class="btn-close btn btn-sm px-2 py-1 mt-1" data-bs-dismiss="alert" aria-label="Close"></button>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

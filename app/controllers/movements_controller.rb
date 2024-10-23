@@ -43,10 +43,10 @@ class MovementsController < ApplicationController
         format.html { redirect_to @count.default_path, notice: "Movimento di cassa aggiunto correttamente" }
         format.json { render :show, status: :created, location: @movement }
       else
-        format.html do
-          byebug
-          render turbo_stream: turbo_stream.update('new_movement_error_messages', partial: "movements/error_messages")
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update('new_movement_error_messages', partial: "layouts/error_messages", locals: { obj: @movement })
         end
+        format.html { redirect_to @count.default_path, status: :unprocessable_entity }
         format.json { render json: @movement.errors, status: :unprocessable_entity }
       end
     end
@@ -59,6 +59,9 @@ class MovementsController < ApplicationController
         format.html { redirect_to @count.default_path, notice: "Movimento di cassa aggiornato correttamente" }
         format.json { render :show, status: :ok, location: @movement }
       else
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("movement_#{@movement.id}_error_messages", partial: "layouts/error_messages", locals: { obj: @movement })
+        end
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @movement.errors, status: :unprocessable_entity }
       end
