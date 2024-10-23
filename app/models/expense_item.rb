@@ -7,5 +7,5 @@ class ExpenseItem < ApplicationRecord
 
   # Callbacks
   before_validation { self.color = "##{self.color.to_s.gsub(' ', '')}" unless self.color.to_s.include?('#') }
-  before_save { self.description = self.description.capitalize if self.description }
+  before_save { self.description = self.description.to_s.strip.capitalize if self.description }
 end

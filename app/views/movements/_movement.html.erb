@@ -29,7 +29,7 @@
 
         <%= render "form", movement: movement, expense_items: expense_items, movement_types: movement_types %>
 
-        <div class="mt-5 mb-4 mx-2 mx-sm-4 d-flex justify-content-end">
+        <div class="mt-5 mb-4 mx-2 mx-sm-4 d-flex justify-content-center justify-content-sm-end">
           <%= button_to 'Rimuovi dal conto', count_movement_path(@count, movement), method: :delete, class: "btn btn-danger" %>
         </div>
       </div>

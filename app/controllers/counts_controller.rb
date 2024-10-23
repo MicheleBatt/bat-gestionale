@@ -3,7 +3,9 @@ class CountsController < ApplicationController
 
   # GET /counts or /counts.json
   def index
-    @counts = Count.all.includes(:movements)
+    @counts = Count.all
+    @counts_global_amount = @counts.sum(:current_amount).to_f.round(2)
+    @counts = @counts.order(ordering_number: :asc).includes(:movements)
   end
 
   # GET /counts/new
@@ -61,6 +63,6 @@ class CountsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def count_params
-      params.require(:count).permit(:name, :description, :iban, :initial_amount)
+      params.require(:count).permit(:name, :description, :iban, :initial_amount, :ordering_number)
     end
 end

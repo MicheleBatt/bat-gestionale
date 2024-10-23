@@ -1,6 +1,8 @@
 <h4 class="d-flex d-lg-none m-4">Conti corrente</h4>
 
 <div id="counts" class="d-block">
+  <h5 class="d-flex mx-2 mx-md-4 my-4">Giacenza complessiva attuale: <%= @counts_global_amount %>€</h5>
+
   <% @counts.each do | count | %>
     <%= render count %>
   <% end %>

@@ -17,7 +17,12 @@ class Movement < ApplicationRecord
   before_validation { self.year = self.emitted_at.year.to_i if self.emitted_at }
   before_validation { self.month = self.emitted_at.month.to_i if self.emitted_at }
   before_validation { self.year_month = date_to_integer(self.emitted_at.year, self.emitted_at.month) if self.emitted_at }
-  before_save { self.causal = self.causal.capitalize if self.causal }
+  before_save { self.causal = self.causal.to_s.strip.capitalize if self.causal }
+  before_save { self.amount = self.amount.to_f.round(2) if self.amount }
+
+  after_save { set_count_current_amount }
+  after_update { set_count_current_amount }
+  after_destroy { set_count_current_amount }
 
 
   # Instance Methods
@@ -50,5 +55,10 @@ class Movement < ApplicationRecord
     if self.movement_type == 'in' && self.expense_item_id.present?
       errors.add(:expense_item_id, "La voce di spesa può essere selezionata solo per movimenti di cassa in uscita!")
     end
+  end
+
+  def set_count_current_amount
+    count = self.count
+    count.update!(current_amount: count.initial_amount + self.count.movements.sum(:amount))
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_22_140437) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_23_104210) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -21,7 +21,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_22_140437) do
     t.float "initial_amount", default: 0.0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.float "current_amount", default: 0.0, null: false
+    t.integer "ordering_number", default: 0, null: false
+    t.index ["current_amount"], name: "index_counts_on_current_amount"
+    t.index ["initial_amount"], name: "index_counts_on_initial_amount"
     t.index ["name"], name: "index_counts_on_name", unique: true
+    t.index ["ordering_number"], name: "index_counts_on_ordering_number"
   end
 
   create_table "deadlines", force: :cascade do |t|
@@ -59,6 +64,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_22_140437) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "year_month", null: false
+    t.index ["amount"], name: "index_movements_on_amount"
     t.index ["count_id"], name: "index_movements_on_count_id"
     t.index ["emitted_at"], name: "index_movements_on_emitted_at"
     t.index ["expense_item_id"], name: "index_movements_on_expense_item_id"

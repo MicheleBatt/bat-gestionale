@@ -8,9 +8,14 @@ class Count < ApplicationRecord
   # Validations
   validates :name, presence: true, uniqueness: true
   validates :initial_amount, presence: true
+  validates :ordering_number, numericality: { greater_than_or_equal_to: 0 }
 
   # Callbacks
-  before_save { self.name = self.name.capitalize if self.name }
+  before_save { self.name = self.name.to_s.strip.capitalize if self.name }
+  before_save { self.description = self.description.to_s.strip if self.description }
+  before_save { self.iban = self.name.to_s.gsub(' ', '') if self.iban }
+  before_save { self.initial_amount = self.initial_amount.to_f.round(2) if self.initial_amount }
+  before_save { self.current_amount = self.initial_amount.to_f.round(2) if self.current_amount }
 
   # Instance Methods
   def path_by_month(year, month)

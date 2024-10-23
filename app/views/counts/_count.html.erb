@@ -17,4 +17,5 @@
 
   <h6 class=""><%= count.description %></h6>
   <h6 class="my-0 text-secondary"><%= count.iban %></h6>
+  <h6 class="my-0 text-secondary">Giacenza attuale: <%= to_visible_amount(count.current_amount) %>€</h6>
 </div>
