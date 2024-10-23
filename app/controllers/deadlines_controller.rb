@@ -21,7 +21,7 @@ class DeadlinesController < ApplicationController
 
     respond_to do |format|
       if @deadline.save
-        format.html { redirect_to deadlines_path, notice: "Deadline was successfully created." }
+        format.html { redirect_to deadlines_path, notice: "Nuova scadenza aggiunta correttamente allo scadenziario" }
         format.json { render :show, status: :created, location: @deadline }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -34,7 +34,7 @@ class DeadlinesController < ApplicationController
   def update
     respond_to do |format|
       if @deadline.update(deadline_params)
-        format.html { redirect_to deadlines_path, notice: "Deadline was successfully updated." }
+        format.html { redirect_to deadlines_path, notice: "Scadenza aggiornata correttamente" }
         format.json { render :show, status: :ok, location: @deadline }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -48,7 +48,7 @@ class DeadlinesController < ApplicationController
     @deadline.destroy!
 
     respond_to do |format|
-      format.html { redirect_to deadlines_path, status: :see_other, notice: "Deadline was successfully destroyed." }
+      format.html { redirect_to deadlines_path, status: :see_other, notice: "Scadenza rimossa dallo scadenziario" }
       format.json { head :no_content }
     end
   end

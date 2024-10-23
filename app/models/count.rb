@@ -5,7 +5,7 @@ class Count < ApplicationRecord
   has_many :movements, dependent: :destroy
 
   # Validations
-  validates :name, uniqueness: true
+  validates :name, presence: true, uniqueness: true
 
 
   # Instance Methods

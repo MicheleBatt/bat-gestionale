@@ -244,6 +244,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <div id="new_movement_error_messages"></div>
+
         <%= render "form", movement: @new_movement, expense_items: expense_items, movement_types: movement_types %>
       </div>
     </div>

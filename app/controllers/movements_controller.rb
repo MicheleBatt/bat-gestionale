@@ -40,10 +40,13 @@ class MovementsController < ApplicationController
 
     respond_to do |format|
       if @movement.save
-        format.html { redirect_to @count.default_path, notice: "Movement was successfully created." }
+        format.html { redirect_to @count.default_path, notice: "Movimento di cassa aggiunto correttamente" }
         format.json { render :show, status: :created, location: @movement }
       else
-        format.html { redirect_to @count.default_path, status: :unprocessable_entity }
+        format.html do
+          byebug
+          render turbo_stream: turbo_stream.update('new_movement_error_messages', partial: "movements/error_messages")
+        end
         format.json { render json: @movement.errors, status: :unprocessable_entity }
       end
     end
@@ -53,7 +56,7 @@ class MovementsController < ApplicationController
   def update
     respond_to do |format|
       if @movement.update(movement_params)
-        format.html { redirect_to @count.default_path, notice: "Movement was successfully updated." }
+        format.html { redirect_to @count.default_path, notice: "Movimento di cassa aggiornato correttamente" }
         format.json { render :show, status: :ok, location: @movement }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -67,7 +70,7 @@ class MovementsController < ApplicationController
     @movement.destroy!
 
     respond_to do |format|
-      format.html { redirect_to @count.default_path, status: :see_other, notice: "Movement was successfully destroyed." }
+      format.html { redirect_to @count.default_path, status: :see_other, notice: "Movimento di cassa rimoso" }
       format.json { head :no_content }
     end
   end

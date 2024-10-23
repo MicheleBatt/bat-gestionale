@@ -21,7 +21,7 @@ class ExpenseItemsController < ApplicationController
 
     respond_to do |format|
       if @expense_item.save
-        format.html { redirect_to expense_items_path, notice: "Expense item was successfully created." }
+        format.html { redirect_to expense_items_path, notice: "Voce di spesa aggiunta correttamente alla lista" }
         format.json { render :index, status: :created, location: @expense_item }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -34,7 +34,7 @@ class ExpenseItemsController < ApplicationController
   def update
     respond_to do |format|
       if @expense_item.update(expense_item_params)
-        format.html { redirect_to expense_items_path, notice: "Expense item was successfully updated." }
+        format.html { redirect_to expense_items_path, notice: "Voce di spesa aggiornata correttamente" }
         format.json { render :index, status: :ok, location: @expense_item }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -48,7 +48,7 @@ class ExpenseItemsController < ApplicationController
     @expense_item.destroy!
 
     respond_to do |format|
-      format.html { redirect_to expense_items_path, status: :see_other, notice: "Expense item was successfully destroyed." }
+      format.html { redirect_to expense_items_path, status: :see_other, notice: "Voce di spesa rimossa dalla lista" }
       format.json { head :no_content }
     end
   end

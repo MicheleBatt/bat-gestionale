@@ -21,7 +21,7 @@ class CountsController < ApplicationController
 
     respond_to do |format|
       if @count.save
-        format.html { redirect_to counts_path, notice: "Count was successfully created." }
+        format.html { redirect_to counts_path, notice: "Conto aggiunto correttamente alla lista dei conti corrente" }
         format.json { render :show, status: :created, location: @count }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -34,7 +34,7 @@ class CountsController < ApplicationController
   def update
     respond_to do |format|
       if @count.update(count_params)
-        format.html { redirect_to counts_path, notice: "Count was successfully updated." }
+        format.html { redirect_to counts_path, notice: "Conto corrente aggiornato correttamente" }
         format.json { render :show, status: :ok, location: @count }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -48,7 +48,7 @@ class CountsController < ApplicationController
     @count.destroy!
 
     respond_to do |format|
-      format.html { redirect_to counts_path, status: :see_other, notice: "Count was successfully destroyed." }
+      format.html { redirect_to counts_path, status: :see_other, notice: "Conto rimosso dalla lista dei conti corrente" }
       format.json { head :no_content }
     end
   end

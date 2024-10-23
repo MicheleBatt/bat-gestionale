@@ -13,10 +13,10 @@ class Movement < ApplicationRecord
   enum movement_type: MOVEMENT_TYPES.index_by(&:itself), _prefix: :movement_type
 
   # Callbacks
-  before_validation { self.amount = self.amount * -1 if self.movement_type == 'out' && self.amount > 0 }
-  before_validation { self.year = self.emitted_at.year.to_i }
-  before_validation { self.month = self.emitted_at.month.to_i }
-  before_validation { self.year_month = date_to_integer(self.emitted_at.year, self.emitted_at.month) }
+  before_validation { self.amount = self.amount * -1 if self.movement_type == 'out' && self.amount.to_f > 0 }
+  before_validation { self.year = self.emitted_at.year.to_i if self.emitted_at }
+  before_validation { self.month = self.emitted_at.month.to_i if self.emitted_at }
+  before_validation { self.year_month = date_to_integer(self.emitted_at.year, self.emitted_at.month) if self.emitted_at }
 
 
   # Instance Methods

@@ -1,5 +1,13 @@
-<% flash.each do |message_type, message| %>
-  <div class='alert alert-success alert-dismissable shadow rounded p-4 m-4 position-fixed' style="bottom: 0px">
-    <%= message %>
+<% if flash.present? %>
+  <div class="position-fixed" style="bottom: 0px">
+    <% flash.each do |message_type, message| %>
+      <div class='alert alert-success alert-dismissible fade show shadow rounded p-4 m-4' role="alert">
+        <span class="mt-1"><%= message %></span>
+        <button type="button" class="btn-close btn btn-sm px-2 py-1 mt-1" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% end %>
   </div>
 <% end %>
+
+
+

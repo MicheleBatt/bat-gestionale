@@ -1,15 +1,5 @@
 <%= form_with(model: deadline) do |form| %>
-  <% if deadline.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(deadline.errors.count, "error") %> prohibited this deadline from being saved:</h2>
-
-      <ul>
-        <% deadline.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render 'layouts/error_messages', obj: form.object %>
 
   <div class="m-4">
     <%= form.label :description, 'Descrizione', class: "font-weight-bold" %>
