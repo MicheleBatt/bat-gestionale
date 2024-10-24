@@ -69,4 +69,12 @@ namespace :initDB do
     expense_items_by_colors = ExpenseItem.all.map{ | expense_item | [ expense_item.color[1..-1], expense_item.id ] }.to_h
     ImportCountMovementsFromXlsxFileCommand.call(Count.first, file_paths, expense_items_by_colors)
   end
+
+
+
+
+
+  task import_deadlines_data: :environment do
+    ImportDeadlinesFromXlsxFileCommand.call(['private/import-xlsx/deadlines/SCADENZIARIO.xlsx'])
+  end
 end

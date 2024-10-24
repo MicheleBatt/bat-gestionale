@@ -1,5 +1,20 @@
 module ApplicationHelper
 
+  ITALIAN_MONTHS = {
+    1 => "Gennaio",
+    2 => "Febbraio",
+    3 => "Marzo",
+    4 => "Aprile",
+    5 => "Maggio",
+    6 => "Giugno",
+    7 => "Luglio",
+    8 => "Agosto",
+    9 => "Settembre",
+    10 => "Ottobre",
+    11 => "Novembre",
+    12 => "Dicembre"
+  }.freeze
+
 
   def italian_datetime(datetime)
     if datetime.present?
@@ -26,22 +41,7 @@ module ApplicationHelper
   end
 
   def italian_month(number)
-    months = {
-      1 => "Gennaio",
-      2 => "Febbraio",
-      3 => "Marzo",
-      4 => "Aprile",
-      5 => "Maggio",
-      6 => "Giugno",
-      7 => "Luglio",
-      8 => "Agosto",
-      9 => "Settembre",
-      10 => "Ottobre",
-      11 => "Novembre",
-      12 => "Dicembre"
-    }
-
-    months[number.to_i] || "Numero non valido. Inserisci un numero da 1 a 12."
+    ITALIAN_MONTHS[number.to_i] || "Numero non valido. Inserisci un numero da 1 a 12."
   end
 
   def to_visible_amount(amount, remove_minus = true)
