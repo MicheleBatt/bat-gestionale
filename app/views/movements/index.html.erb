@@ -226,7 +226,7 @@
       <div class="col-12 col-lg-6">
         <div class="row">
           <div class="col-9 col-sm-10 d-flex justify-content-end border border-dark" style="background-color: <%= expense_item.color %>">
-            <b>AMMONTARE COMPLESSIVO SPESE PER <%= expense_item.description.upcase %>:</b>
+            <b>AMMONTARE COMPLESSIVO <%= expense_item.description.upcase %>:</b>
           </div>
           <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark">
             <%= to_visible_amount(amount) %>€

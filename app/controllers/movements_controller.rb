@@ -21,13 +21,14 @@ class MovementsController < ApplicationController
     @total_in_movements_amount = in_movements.sum(&:amount)
     @total_movements_amount = @total_in_movements_amount + @total_out_movements_amount
     @movements_amounts_by_expense_items = out_movements.joins(:expense_item).group(:expense_item).sum(:amount)
+    @movements_amounts_by_expense_items.sort_by{ | expense_item, amount | expense_item.description }
 
     if @year_and_month_filter_active
       @start_amount = @count.month_final_amount(@year, @month)
       @final_amount = @start_amount + @total_movements_amount
     end
 
-    @movements = @movements.order(emitted_at: :asc).includes(:expense_item)
+    @movements = @movements.order(emitted_at: :asc, id: :asc).includes(:expense_item)
 
     respond_to do |format|
       format.html { render 'index' }

@@ -169,7 +169,7 @@ wb.add_worksheet(name: "Movimenti del mese") do |sheet|
   # TOTALI DELLE SPESE MENSILI RAGGRUPATE PER VOCI DI SPESA
   index = 1
   @movements_amounts_by_expense_items.each do | expense_item, amount |
-    sheet.add_row ["AMMONTARE COMPLESSIVO SPESE PER #{expense_item.description.upcase}:", "", "", "", "", "#{to_visible_amount(amount)}€"]
+    sheet.add_row ["AMMONTARE COMPLESSIVO #{expense_item.description.upcase}:", "", "", "", "", "#{to_visible_amount(amount)}€"]
     sheet.merge_cells("A#{current_row}:E#{current_row}")
     sheet["A#{current_row}:E#{current_row}"].each do |cell|
       cell.style = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, bg_color: expense_item.color.gsub('#', ''), alignment: { horizontal: :right, vertical: :center }, border: {style: :thin, color: '000000'}, border_bottom: {style: index == @movements_amounts_by_expense_items.keys.length ? :medium : :thin, color: '000000'}})

@@ -41,12 +41,22 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
+# Gem for authentication
 gem 'devise'
+
+# Gem for data filters on views
 gem 'ransack'
+
+# Gem for data returning on .xlsx format
 gem 'caxlsx'
 gem 'caxlsx_rails'
+
 # Gem for charts rendering on views
 gem "chartkick"
+
+# Gem for xlsx files parsing
+gem "roo", "~> 2.10.0"
+gem 'rubyXL'
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"

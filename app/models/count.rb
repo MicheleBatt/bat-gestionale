@@ -21,7 +21,7 @@ class Count < ApplicationRecord
     count_movements_path(count_id: self.id, q: { 'year_eq': year, 'month_eq': month }, format: format)
   end
 
-  def movements_default_path(year = Time.now.year, month: Time.now.month)
+  def movements_default_path(year = self.movements.maximum('year') || Time.now.year, month: self.movements.maximum('month') || Time.now.month)
     self.movements_path_by_month(year, month)
   end
 
@@ -29,7 +29,7 @@ class Count < ApplicationRecord
     stats_count_path(id: self.id, q: { 'year_eq': year })
   end
 
-  def stats_default_path(year = Time.now.year)
+  def stats_default_path(year = self.movements.maximum('year') || Time.now.year)
     self.stats_path_by_month(year)
   end
 

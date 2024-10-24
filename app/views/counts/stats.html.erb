@@ -27,10 +27,11 @@
 
 
   <!-- Grafico che riporta la giacenza sul conto alla fine di ogni mese dell'anno corrente -->
+  <% chart_title = "Andamento mensile sul #{@count.name} nel #{@year}" %>
   <%= line_chart @count_final_amount_by_month,
-                 title: "Giacenza sul #{@count.name} nel #{@year}",
-                 min: @count_final_amount_by_month.values.min - 50,
-                 download: {filename: "boom", background: "#ffffff"},
+                 title: chart_title,
+                 min: @count_final_amount_by_month.values.min.to_f.round(2) - 50.0,
+                 download: {filename: chart_title, background: "#ffffff"},
                  loading: "Caricamento...",
                  empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
                  suffix: "€"
@@ -40,13 +41,17 @@
 
   <!-- Grafici che riportano l'ammontare complessivo per ogni voce di spesa alla fine di ogni mese dell'anno corrente -->
   <div class="my-5 py-5 row">
-    <% @movements_global_amount_by_expense_items_and_month.keys.each do | expense_item | %>
+    <% @movements_global_amount_by_expense_items_and_month.keys.sort_by{ | key | @movements_global_amount_by_expense_items_and_month[key]['total'] * -1 }.each do | expense_item | %>
       <div class="col-12 col-md-6 col-xl-4 py-5">
+        <% chart_title_compact = "#{expense_item.description} nel #{@year}" %>
+        <% chart_title = "#{chart_title_compact}: #{to_visible_amount(@movements_global_amount_by_expense_items_and_month[expense_item]['total'])}€" %>
+        <% chart_color = expense_item.color.upcase != '#FFFFFF' ? expense_item.color : '#F2F2F2'%>
+        <% @movements_global_amount_by_expense_items_and_month[expense_item].delete('total') %>
         <%= column_chart @movements_global_amount_by_expense_items_and_month[expense_item],
-                         title: "Ammontare spese per #{expense_item.description} nel #{@year}",
+                         title: chart_title,
                          max: @movements_max_amount,
-                         colors: [expense_item.color, expense_item.color],
-                         download: {filename: "boom", background: "#ffffff"},
+                         colors: [chart_color, chart_color],
+                         download: {filename: chart_title_compact, background: "#ffffff"},
                          loading: "Caricamento...",
                          empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
                          suffix: "€"
