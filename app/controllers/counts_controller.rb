@@ -1,5 +1,7 @@
 class CountsController < ApplicationController
-  before_action :set_count, only: %i[ edit update destroy ]
+  before_action :set_count, only: %i[ edit update destroy stats ]
+
+  include ApplicationHelper
 
   # GET /counts or /counts.json
   def index
@@ -52,6 +54,37 @@ class CountsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to counts_path, status: :see_other, notice: "Conto rimosso dalla lista dei conti corrente" }
       format.json { head :no_content }
+    end
+  end
+
+  def stats
+    @count_final_amount_by_month = {}
+    @movements_global_amount_by_expense_items_and_month = {}
+    all_movements = @count.movements.where(movement_type: 'out')
+    @min_year = all_movements.minimum('year')
+    @max_year = all_movements.maximum('year')
+
+    if params[:q].present? && params[:q][:year_eq].present?
+      @search = all_movements.ransack(params[:q])
+      movements = @search.result
+
+      @year = params[:q][:year_eq]
+      months = (1..12).to_a
+
+      @count.expense_items.each_with_object({}) do |expense_item, hash|
+        @movements_global_amount_by_expense_items_and_month[expense_item] = {}
+      end
+
+      @movements_max_amount = 0
+      months.each do | month |
+        @count_final_amount_by_month[italian_month(month)] = @count.month_final_amount(@year, month)
+        @movements_global_amount_by_expense_items_and_month.keys.each do | expense_item |
+          global_amount_by_expense_items = movements.where(month: month, expense_item_id: expense_item.id).sum(&:amount) * -1
+          @movements_global_amount_by_expense_items_and_month[expense_item][italian_month(month)] = global_amount_by_expense_items
+          @movements_max_amount = [@movements_max_amount, global_amount_by_expense_items].max
+        end
+      end
+      @movements_max_amount += 100
     end
   end
 

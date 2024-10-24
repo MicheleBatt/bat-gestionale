@@ -1,0 +1,58 @@
+<div class="mx-2 mx-lg-4 my-5">
+  <% if @year.present? %>
+    <%= search_form_for @search, url: stats_count_path(@count.id) do |f| %>
+      <div class="d-flex flex-wrap justify-content-center align-items-end px-x px-lg-4 mb-5 mt-3">
+        <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+          <%= f.label :year_eq, 'Filtra statistiche per anno', class: "font-weight-bold" %>
+          <%= f.select :year_eq,
+                       options_for_select((@min_year..@max_year).to_a.map{ | year | [year, year] }, @search.year_eq),
+                       { include_blank: false },
+                       class: 'form-control'
+          %>
+        </div>
+
+        <div class="pb-3 d-flex">
+          <button type="submit" class="btn btn-success mx-2">
+            <i class="fas fa-search"></i> Cerca
+          </button>
+
+          <%= link_to @count.stats_default_path, class: "btn btn-primary mx-2" do %>
+            <i class="fas fa-filter" aria-hidden="true"></i> Reset
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
+
+
+  <!-- Grafico che riporta la giacenza sul conto alla fine di ogni mese dell'anno corrente -->
+  <%= line_chart @count_final_amount_by_month,
+                 title: "Giacenza sul #{@count.name} nel #{@year}",
+                 min: @count_final_amount_by_month.values.min - 50,
+                 download: {filename: "boom", background: "#ffffff"},
+                 loading: "Caricamento...",
+                 empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                 suffix: "€"
+  %>
+
+
+
+  <!-- Grafici che riportano l'ammontare complessivo per ogni voce di spesa alla fine di ogni mese dell'anno corrente -->
+  <div class="my-5 py-5 row">
+    <% @movements_global_amount_by_expense_items_and_month.keys.each do | expense_item | %>
+      <div class="col-12 col-md-6 col-xl-4 py-5">
+        <%= column_chart @movements_global_amount_by_expense_items_and_month[expense_item],
+                         title: "Ammontare spese per #{expense_item.description} nel #{@year}",
+                         max: @movements_max_amount,
+                         colors: [expense_item.color, expense_item.color],
+                         download: {filename: "boom", background: "#ffffff"},
+                         loading: "Caricamento...",
+                         empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                         suffix: "€"
+        %>
+      </div>
+    <% end %>
+  </div>
+</div>
+

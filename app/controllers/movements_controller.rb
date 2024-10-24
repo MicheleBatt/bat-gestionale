@@ -21,9 +21,9 @@ class MovementsController < ApplicationController
     @total_in_movements_amount = in_movements.sum(&:amount)
     @total_movements_amount = @total_in_movements_amount + @total_out_movements_amount
     @movements_amounts_by_expense_items = out_movements.joins(:expense_item).group(:expense_item).sum(:amount)
-    
+
     if @year_and_month_filter_active
-      @start_amount = @count.initial_amount.to_f + @count.movements.where('movements.year_month < ? ', date_to_integer(@year, @month)).sum(&:amount)
+      @start_amount = @count.month_final_amount(@year, @month)
       @final_amount = @start_amount + @total_movements_amount
     end
 
@@ -50,13 +50,13 @@ class MovementsController < ApplicationController
 
     respond_to do |format|
       if @movement.save
-        format.html { redirect_to @count.default_path, notice: "Movimento di cassa aggiunto correttamente" }
+        format.html { redirect_to @count.movements_default_path, notice: "Movimento di cassa aggiunto correttamente" }
         format.json { render :show, status: :created, location: @movement }
       else
         format.turbo_stream do
           render turbo_stream: turbo_stream.update('new_movement_error_messages', partial: "layouts/error_messages", locals: { obj: @movement })
         end
-        format.html { redirect_to @count.default_path, status: :unprocessable_entity }
+        format.html { redirect_to @count.movements_default_path, status: :unprocessable_entity }
         format.json { render json: @movement.errors, status: :unprocessable_entity }
       end
     end
@@ -66,7 +66,7 @@ class MovementsController < ApplicationController
   def update
     respond_to do |format|
       if @movement.update(movement_params)
-        format.html { redirect_to @count.default_path, notice: "Movimento di cassa aggiornato correttamente" }
+        format.html { redirect_to @count.movements_default_path, notice: "Movimento di cassa aggiornato correttamente" }
         format.json { render :show, status: :ok, location: @movement }
       else
         format.turbo_stream do
@@ -83,7 +83,7 @@ class MovementsController < ApplicationController
     @movement.destroy!
 
     respond_to do |format|
-      format.html { redirect_to @count.default_path, status: :see_other, notice: "Movimento di cassa rimoso" }
+      format.html { redirect_to @count.movements_default_path, status: :see_other, notice: "Movimento di cassa rimoso" }
       format.json { head :no_content }
     end
   end

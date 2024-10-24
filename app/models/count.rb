@@ -17,11 +17,23 @@ class Count < ApplicationRecord
   before_save { self.current_amount = self.initial_amount.to_f.round(2) if self.current_amount }
 
   # Instance Methods
-  def path_by_month(year, month, format = :html)
+  def movements_path_by_month(year, month, format = :html)
     count_movements_path(count_id: self.id, q: { 'year_eq': year, 'month_eq': month }, format: format)
   end
 
-  def default_path(year = Time.now.year, month: Time.now.month)
-    self.path_by_month(Time.now.year, Time.now.month)
+  def movements_default_path(year = Time.now.year, month: Time.now.month)
+    self.movements_path_by_month(year, month)
+  end
+
+  def stats_path_by_month(year)
+    stats_count_path(id: self.id, q: { 'year_eq': year })
+  end
+
+  def stats_default_path(year = Time.now.year)
+    self.stats_path_by_month(year)
+  end
+
+  def month_final_amount(year, month)
+    self.initial_amount.to_f + self.movements.where('movements.year_month < ? ', date_to_integer(year, month)).sum(&:amount)
   end
 end

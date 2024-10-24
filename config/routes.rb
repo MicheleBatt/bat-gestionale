@@ -5,6 +5,9 @@ Rails.application.routes.draw do
   resources :deadlines, except: :show
   resources :expense_items, except: :show
   resources :counts, except: :show do
+    member do
+      get :stats, to: 'counts#stats'
+    end
     resources :movements, except: [:show, :new]
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
