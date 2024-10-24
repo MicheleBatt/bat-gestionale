@@ -1,0 +1,52 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Scadenziario") do |sheet|
+  # TESTATA DELLA TABELLA
+  sheet.add_row ["SCADENZIARIO", "", ""]
+  sheet.add_row ["", "", ""]
+  sheet.add_row ["", "", ""]
+
+  sheet["A1:C3"].each do |cell|
+    cell.style = wb.styles.add_style({font_name: "Calibri", fg_color: 'c9211e', sz: 24, b: true, u: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :medium, color: '000000'}})
+  end
+
+
+
+
+  # RIGHE DELLA TABELLA CHE RIPORTANO LE SCADENZE RAGGRUPPATE PER ANNO
+  current_row = 4
+  cells_to_merge = []
+
+  @deadlines_by_year.each do | year, deadlines |
+    first_row_by_year = current_row
+    deadlines.each_with_index do | deadline, index |
+      sheet.add_row [year, "#{parse_date(deadline.expired_at, "%d")} #{italian_month(deadline.month)}", deadline.description.upcase]
+      sheet["B#{current_row}:B#{current_row}"].each do |cell|
+        cell.style = wb.styles.add_style({font_name: "Calibri", sz: 12, b: true, alignment: { horizontal: :left, vertical: :center }, border: {style: :thin, color: '000000'}, border_bottom: index == deadlines.size - 1 ? {style: :medium, color: '000000'} :  {style: :thin, color: '000000'}})
+      end
+      sheet["C#{current_row}:C#{current_row}"].each do |cell|
+        cell.style = wb.styles.add_style({font_name: "Calibri", sz: 12, alignment: { horizontal: :left, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, border_bottom: index == deadlines.size - 1 ? {style: :medium, color: '000000'} :  {style: :thin, color: '000000'}})
+      end
+      current_row = current_row + 1
+    end
+    sheet["A#{first_row_by_year}:A#{current_row - 1}"].each do |cell|
+      cell.style = wb.styles.add_style({font_name: "Calibri", sz: 12, b: true, bg_color: 'ffff00', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_bottom: {style: :medium, color: '000000'}})
+    end
+    cells_to_merge << "A#{first_row_by_year}:A#{current_row - 1}"
+  end
+
+
+
+
+  # EFFETTUO IL MERGE DELLE COLONNE CHE NECESSITANO DI ESSERE UNITE
+  sheet.merge_cells("A1:C3")
+  cells_to_merge.each do | cells_interval |
+    sheet.merge_cells(cells_interval)
+  end
+
+
+
+
+  # IMPOSTO UNA LARGHEZZA FISSA PER LE COLONNE DEL FILE EXCEL GENERATO
+  sheet.column_widths 15, 20, 400
+end

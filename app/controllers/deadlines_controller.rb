@@ -4,6 +4,15 @@ class DeadlinesController < ApplicationController
   # GET /deadlines or /deadlines.json
   def index
     @deadlines_by_year = Deadline.all.order(expired_at: :asc).group_by(&:year)
+
+    respond_to do |format|
+      format.html { render 'index' }
+      format.json { render json: @deadlines_by_year, status: :ok }
+      format.xlsx {
+        render xlsx: 'index'
+        response.headers['Content-Disposition'] = "attachment; filename=SCADENZIARIO.xlsx"
+      }
+    end
   end
 
   # GET /deadlines/new

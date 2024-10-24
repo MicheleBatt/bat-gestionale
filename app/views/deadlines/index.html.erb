@@ -1,4 +1,11 @@
-<h4 class="d-flex d-lg-none m-4">Prossime scadenze</h4>
+<div class="d-flex justify-content-between m-4">
+  <h4>Prossime scadenze</h4>
+  <div>
+    <%= link_to deadlines_path(format: :xlsx), class: "btn btn-warning mx-2 text-white" do %>
+      <i class="fas fa-download" aria-hidden="true"></i> Export xls
+    <% end %>
+  </div>
+</div>
 
 <div id="deadlines">
   <% @deadlines_by_year.keys.each do | year | %>

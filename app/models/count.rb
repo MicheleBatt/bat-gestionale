@@ -14,7 +14,7 @@ class Count < ApplicationRecord
   before_save { self.description = self.description.to_s.strip if self.description }
   before_save { self.iban = self.name.to_s.gsub(' ', '') if self.iban }
   before_save { self.initial_amount = self.initial_amount.to_f.round(2) if self.initial_amount }
-  before_save { self.current_amount = self.initial_amount.to_f.round(2) if self.current_amount }
+  before_save { self.current_amount = self.current_amount.to_f.round(2) if self.current_amount }
 
   # Instance Methods
   def movements_path_by_month(year, month, format = :html)

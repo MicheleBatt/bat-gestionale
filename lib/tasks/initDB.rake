@@ -3,6 +3,7 @@
 namespace :initDB do
   desc 'Database Initialization'
 
+  # Script che svuota il db e lo ri-popola con una struttura vergine
   task :init_db => :environment do
     if Rails.env != 'test'
       puts 'Are you sure you want to re-initialize the database? [y/n]'
@@ -52,6 +53,7 @@ namespace :initDB do
 
 
 
+  # Importer da file excel dei dati dei movimenti di uno specifico conto corrente
   task import_movements_data: :environment do
     file_paths = []
 
@@ -74,6 +76,7 @@ namespace :initDB do
 
 
 
+  # Importer da file excel dello scadenziario
   task import_deadlines_data: :environment do
     ImportDeadlinesFromXlsxFileCommand.call(['private/import-xlsx/deadlines/SCADENZIARIO.xlsx'])
   end
