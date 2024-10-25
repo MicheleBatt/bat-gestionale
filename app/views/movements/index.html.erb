@@ -13,7 +13,7 @@
         <%= f.label :movement_type_eq, 'Tipo di movimento', class: "font-weight-bold" %>
         <%= f.select :movement_type_eq,
                         options_for_select(movement_types, @search.movement_type_eq),
-                        { include_blank: 'Seleziona il tipo' },
+                        { include_blank: 'Qualunque tipo' },
                         class: 'form-control'
         %>
       </div>
@@ -22,7 +22,7 @@
         <%= f.label :expense_item_id_eq, 'Tipo di spesa', class: "font-weight-bold" %>
         <%= f.select :expense_item_id_eq,
                         options_for_select(expense_items, @search.expense_item_id_eq),
-                        { include_blank: 'Seleziona voce di spesa' },
+                        { include_blank: 'Qualunque voce di spesa' },
                         class: 'form-control'
         %>
       </div>
