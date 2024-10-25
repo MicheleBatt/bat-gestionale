@@ -2,7 +2,7 @@ wb = xlsx_package.workbook
 
 wb.add_worksheet(name: "Movimenti del mese") do |sheet|
   # TESTATA DELLA TABELLA
-  sheet.add_row ["Registro economico #{@count.name} - #{italian_month(@month)} #{@year}".upcase, "", "", "", "", ""]
+  sheet.add_row [@table_titles[:main_title].upcase, "", "", "", "", ""]
   sheet.add_row ["", "", "", "", "", ""]
   sheet.add_row ["", "", "", "", "", ""]
 
@@ -127,19 +127,19 @@ wb.add_worksheet(name: "Movimenti del mese") do |sheet|
 
 
   # FONDO CASSA DI INIZIO MESE + SALDO DI FINE MESE = FONDO CASSA DI FINE MESE
-  sheet.add_row ["FONDO CASSA COMPLESSIVO A INIZIO MESE:", "", "", "", "", "#{to_visible_amount(@start_amount, false)}€"]
+  sheet.add_row [@table_titles[:start_amount_title].upcase, "", "", "", "", "#{to_visible_amount(@start_amount, false)}€"]
   sheet.merge_cells("A#{current_row}:E#{current_row}")
   sheet["F#{current_row}:F#{current_row}"].each do |cell|
     cell.style = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
   end
   current_row = current_row + 1
-  sheet.add_row ["SALDO COMPLESSIVO DI FINE MESE:", "", "", "", "", "#{to_visible_amount(@total_movements_amount, false)}€"]
+  sheet.add_row [@table_titles[:total_amount_title].upcase, "", "", "", "", "#{to_visible_amount(@total_movements_amount, false)}€"]
   sheet.merge_cells("A#{current_row}:E#{current_row}")
   sheet["F#{current_row}:F#{current_row}"].each do |cell|
     cell.style = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, bg_color: @total_movements_amount <= 0 ? 'ff0000' : '2cfe22', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
   end
   current_row = current_row + 1
-  sheet.add_row ["FONDO CASSA COMPLESSIVO A FINE MESE:", "", "", "", "", "#{to_visible_amount(@final_amount, false)}€"]
+  sheet.add_row [@table_titles[:final_amount_title].upcase, "", "", "", "", "#{to_visible_amount(@final_amount, false)}€"]
   sheet.merge_cells("A#{current_row}:E#{current_row}")
   sheet["F#{current_row}:F#{current_row}"].each do |cell|
     cell.style = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})

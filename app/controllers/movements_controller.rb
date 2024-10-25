@@ -1,5 +1,7 @@
 class MovementsController < ApplicationController
   before_action :set_count
+  before_action :set_timerange, only: %i[ index ]
+  before_action :check_timerange_report, only: %i[ index ]
   before_action :set_movement, only: %i[ edit update destroy ]
 
   include ApplicationHelper
@@ -8,10 +10,6 @@ class MovementsController < ApplicationController
   def index
     @new_movement = Movement.new
 
-    @year = params[:q].present? ? params[:q][:year_eq] : nil
-    @month = params[:q].present? ? params[:q][:month_eq] : nil
-    @year_and_month_filter_active = @year.present? && @month.present?
-    
     @search = @count.movements.ransack(params[:q])
     @movements = @search.result
 
@@ -23,18 +21,20 @@ class MovementsController < ApplicationController
     @movements_amounts_by_expense_items = out_movements.joins(:expense_item).group(:expense_item).sum(:amount)
     @movements_amounts_by_expense_items.sort_by{ | expense_item, amount | expense_item.description }
 
-    if @year_and_month_filter_active
-      @start_amount = @count.month_final_amount(@year, @month)
+    if @time_range_report
+      @start_amount = @count.initial_amount_by_date(@splitted_emitted_at_gteq[0], @splitted_emitted_at_gteq[1], @splitted_emitted_at_gteq[2])
       @final_amount = @start_amount + @total_movements_amount
     end
 
     @movements = @movements.order(emitted_at: :asc, id: :asc).includes(:expense_item)
 
+    @table_titles = @count.movements_list_table_titles(@year, @month, params[:q] ? params[:q][:emitted_at_gteq] : nil, params[:q] ? params[:q][:emitted_at_lteq] : nil)
+
     respond_to do |format|
       format.html { render 'index' }
       format.json { render json: @movements, status: :ok }
       format.xlsx {
-        movements_file_name = "#{@month} - #{italian_month(@month)}.xlsx"
+        movements_file_name = @table_titles[:xlsx_file_name]
         render xlsx: 'index'
         response.headers['Content-Disposition'] = "attachment; filename=#{movements_file_name}"
       }
@@ -51,7 +51,7 @@ class MovementsController < ApplicationController
 
     respond_to do |format|
       if @movement.save
-        format.html { redirect_to @count.movements_default_path, notice: "Movimento di cassa aggiunto correttamente" }
+        format.html { redirect_to @count.movements_path_by_month(@movement.year, @movement.month), notice: "Movimento di cassa aggiunto correttamente" }
         format.json { render :show, status: :created, location: @movement }
       else
         format.turbo_stream do
@@ -67,13 +67,13 @@ class MovementsController < ApplicationController
   def update
     respond_to do |format|
       if @movement.update(movement_params)
-        format.html { redirect_to @count.movements_default_path, notice: "Movimento di cassa aggiornato correttamente" }
+        format.html { redirect_to @count.movements_path_by_month(@movement.year, @movement.month), notice: "Movimento di cassa aggiornato correttamente" }
         format.json { render :show, status: :ok, location: @movement }
       else
         format.turbo_stream do
           render turbo_stream: turbo_stream.update("movement_#{@movement.id}_error_messages", partial: "layouts/error_messages", locals: { obj: @movement })
         end
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { redirect_to @count.movements_default_path, status: :unprocessable_entity }
         format.json { render json: @movement.errors, status: :unprocessable_entity }
       end
     end
@@ -81,10 +81,12 @@ class MovementsController < ApplicationController
 
   # DELETE /movements/1 or /movements/1.json
   def destroy
+    year = @movement.year
+    month = @movement.month
     @movement.destroy!
 
     respond_to do |format|
-      format.html { redirect_to @count.movements_default_path, status: :see_other, notice: "Movimento di cassa rimoso" }
+      format.html { redirect_to @count.movements_path_by_month(year, month), status: :see_other, notice: "Movimento di cassa rimoso" }
       format.json { head :no_content }
     end
   end
@@ -102,5 +104,67 @@ class MovementsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def movement_params
       params.require(:movement).permit(:count_id, :expense_item_id, :amount, :causal, :movement_type, :emitted_at, :year, :month)
+    end
+
+    def set_timerange
+      if params[:q].blank? || params[:q][:emitted_at_gteq].blank?
+        params[:q] = {} if params[:q].blank?
+        first_movement_emission_date = @count.first_movement_emission_date
+        params[:q][:emitted_at_gteq] = "#{first_movement_emission_date.year}-#{first_movement_emission_date.month}-#{first_movement_emission_date.day}"
+      end
+
+      if params[:q].blank? || params[:q][:emitted_at_lteq].blank?
+        params[:q] = {} if params[:q].blank?
+        last_movement_emission_date = @count.last_movement_emission_date
+        params[:q][:emitted_at_gteq] = "#{last_movement_emission_date.year}-#{last_movement_emission_date.month}-#{last_movement_emission_date.day}"
+      end
+    end
+
+    def check_timerange_report
+      q = params[:q]
+      if q.present? && q[:emitted_at_gteq].present? && q[:emitted_at_lteq].present? && blank_keys?(q, q.keys - %w[emitted_at_gteq emitted_at_lteq])
+        @time_range_report = true
+        @splitted_emitted_at_gteq = q[:emitted_at_gteq].split('-')
+        splitted_emitted_at_lteq = q[:emitted_at_lteq].split('-')
+        from_date = Date.new(@splitted_emitted_at_gteq[0].to_i, @splitted_emitted_at_gteq[1].to_i, @splitted_emitted_at_gteq[2].to_i)
+        to_date = Date.new(splitted_emitted_at_lteq[0].to_i, splitted_emitted_at_lteq[1].to_i, splitted_emitted_at_lteq[2].to_i)
+        from_date_year = from_date.year
+        to_date_year = to_date.year
+        from_date_month = from_date.month
+        to_date_month = to_date.month
+        from_date_day = from_date.day
+        to_date_day = to_date.day
+
+        check = from_date_year == to_date_year
+
+        monthly_report =
+            check &&
+            from_date_month == to_date_month &&
+            from_date_day == from_date.beginning_of_month.day &&
+            to_date_day == to_date.end_of_month.day
+
+        if monthly_report
+          @year = from_date_year
+          @month = from_date_month
+        else
+          annual_report =
+            check &&
+            from_date_month == 1 &&
+            to_date_month == 12 &&
+            from_date_day == from_date.beginning_of_year.day &&
+            to_date_day == to_date.end_of_year.day
+
+          @year = from_date_year if annual_report
+        end
+      else
+        return [ false, nil, nil ]
+      end
+    end
+
+    def blank_keys?(hash, keys)
+      keys.each do |key|
+        false if hash[key].present?
+      end
+      true
     end
 end

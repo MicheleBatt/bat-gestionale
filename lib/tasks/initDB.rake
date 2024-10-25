@@ -12,10 +12,10 @@ namespace :initDB do
 
     if Rails.env.test? || response.downcase == 'y'
       # Svuoto il db
-      Deadline.destroy_all
-      Movement.destroy_all
-      ExpenseItem.destroy_all
-      Count.destroy_all
+      Deadline.delete_all
+      Movement.delete_all
+      ExpenseItem.delete_all
+      Count.delete_all
 
 
       ExpenseItem.where(description: 'Spese per Bollette', color: 'FFC000').first_or_create!
@@ -30,6 +30,9 @@ namespace :initDB do
       ExpenseItem.where(description: 'Spese per Bimbe', color: 'FFD966').first_or_create!
       ExpenseItem.where(description: 'Spese per Lavori sulla casa', color: 'C55A11').first_or_create!
       ExpenseItem.where(description: 'Spese Varie', color: 'FFFFFF').first_or_create!
+      ExpenseItem.where(description: 'Trasferimenti su altri conti', color: 'FF5E4C').first_or_create!
+      ExpenseItem.where(description: 'Trasferimenti su altri conti', color: 'FF5E4C').first_or_create!
+      ExpenseItem.where(description: 'Spese amministrative del conto', color: 'FFFF00').first_or_create!
 
 
       # Creo alcuni record del db
@@ -46,6 +49,8 @@ namespace :initDB do
         initial_amount: 0,
         ordering_number: 2
       ).first_or_create!
+    else
+      puts '****** RAKE ABORTED!!! ******'
     end
   end
 

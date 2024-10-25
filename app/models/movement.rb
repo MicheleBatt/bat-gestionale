@@ -7,7 +7,7 @@ class Movement < ApplicationRecord
   belongs_to :expense_item, optional: true
 
   # Validations
-  validates :amount, :causal, :movement_type, :emitted_at, :year, :month, :year_month, presence: true
+  validates :amount, :causal, :movement_type, :emitted_at, :year, :month, :day, :year_month_day, presence: true
   validate :valid_amount?
   validate :valid_expense_item_reference?
   enum movement_type: MOVEMENT_TYPES.index_by(&:itself), _prefix: :movement_type
@@ -16,8 +16,9 @@ class Movement < ApplicationRecord
   before_validation { self.amount = self.amount * -1 if self.movement_type == 'out' && self.amount.to_f > 0 }
   before_validation { self.year = self.emitted_at.year.to_i if self.emitted_at }
   before_validation { self.month = self.emitted_at.month.to_i if self.emitted_at }
-  before_validation { self.year_month = date_to_integer(self.emitted_at.year, self.emitted_at.month) if self.emitted_at }
-  before_save { self.causal = self.causal.to_s.strip.capitalize if self.causal }
+  before_validation { self.day = self.emitted_at.day.to_i if self.emitted_at }
+  before_validation { self.year_month_day = date_to_integer(self.emitted_at.year, self.emitted_at.month, self.emitted_at.day) if self.emitted_at }
+  before_save { self.causal = self.causal.to_s.strip if self.causal }
   before_save { self.amount = self.amount.to_f.round(2) if self.amount }
 
   after_save { set_count_current_amount }
@@ -31,7 +32,7 @@ class Movement < ApplicationRecord
   end
 
   def self.ransackable_attributes(auth_object = nil)
-    %w(movement_type expense_item_id emitted_at year month)
+    %w(causal movement_type expense_item_id emitted_at year month)
   end
 
   def self.ransackable_associations(auth_object = nil)

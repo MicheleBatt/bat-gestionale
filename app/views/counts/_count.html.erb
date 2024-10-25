@@ -1,4 +1,4 @@
-<div class="rounded border shadow mx-2 mx-md-4 my-4 px-4 pb-4 pt-1" id="<%= dom_id count %>">
+<div class="rounded border shadow mx-2 mx-md-4 my-4 px-4 pb-4 pt-1">
   <div class="d-flex justify-content-end align-items-end mb-4 mb-sm-0">
     <%= link_to edit_count_path(count), class: "text-secondary text-decoration-none" do %>
       <i class="fas fa-fw fa-edit"></i>
@@ -16,6 +16,15 @@
   </h4>
 
   <h6 class=""><%= count.description %></h6>
-  <h6 class="my-0 text-secondary"><%= count.iban %></h6>
+  <h6 class="my-0 text-secondary">
+    <% if count.iban.present? %>
+      <span id="count_<%= count.id %>_iban"><%= count.iban %></span>
+      <i class="fas fa-copy"
+         role="button"
+         id="<%= count.id %>"
+         onclick="((event) => { navigator.clipboard.writeText(document.querySelector(`#count_${event.target.id}_iban`).innerHTML?.trim()) })(event)"
+      ></i>
+    <% end %>
+  </h6>
   <h6 class="my-0 text-secondary">Giacenza attuale: <%= to_visible_amount(count.current_amount) %>€</h6>
 </div>

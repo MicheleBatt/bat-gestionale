@@ -77,7 +77,7 @@ class CountsController < ApplicationController
 
       @movements_max_amount = 0
       months.each do | month |
-        @count_final_amount_by_month[italian_month(month)] = @count.month_final_amount(@year, month + 1)
+        @count_final_amount_by_month[italian_month(month)] = @count.initial_amount_by_date(@year, month + 1, 1)
         @movements_global_amount_by_expense_items_and_month.keys.each do | expense_item |
           global_amount_by_expense_items = movements.where(month: month, expense_item_id: expense_item.id).sum(&:amount).to_f.round(2)
           global_amount_by_expense_items = global_amount_by_expense_items * -1 if global_amount_by_expense_items < 0

@@ -4,8 +4,10 @@
 <% if @movements.present? || params[:q].present? %>
   <%= search_form_for [@count, @search] do |f| %>
     <div class="d-flex flex-wrap justify-content-center align-items-end px-x px-lg-4 mb-5 mt-3">
-      <%= f.hidden_field :year_eq, value: @year %>
-      <%= f.hidden_field :month_eq, value: @month %>
+      <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+        <%= f.label :causal_cont, 'Causale', class: 'font-weight-bold' %>
+        <%= f.text_field :causal_cont, placeholder: 'Filtra per causale', class: 'form-control' %>
+      </div>
 
       <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
         <%= f.label :movement_type_eq, 'Tipo di movimento', class: "font-weight-bold" %>
@@ -41,13 +43,13 @@
           <i class="fas fa-search"></i> Cerca
         </button>
 
-        <%= link_to @count.movements_path_by_month(@year, @month), class: "btn btn-primary mx-2" do %>
+        <%= link_to @count.movements_default_path, class: "btn btn-primary mx-2" do %>
           <i class="fas fa-filter" aria-hidden="true"></i> Reset
         <% end %>
 
-        <% if @year_and_month_filter_active %>
-          <%= link_to @count.movements_path_by_month(@year, @month, :xlsx), class: "btn btn-warning mx-2 text-white" do %>
-            <i class="fas fa-download" aria-hidden="true"></i> Export xls
+        <% if @time_range_report %>
+          <%= link_to count_movements_path(q: { emitted_at_gteq: params[:q][:emitted_at_gteq], emitted_at_lteq: params[:q][:emitted_at_lteq] }, format: :xlsx), class: "btn btn-warning mx-2 text-white" do %>
+            <i class="fas fa-download" aria-hidden="true"></i> Esporta movimenti
           <% end %>
         <% end %>
 
@@ -59,25 +61,27 @@
   <% end %>
 <% end %>
 
+
 <div id="movements" class="px-0 mx-lg-4">
   <!-- TESTATA DELLA TABELA -->
   <div class="row">
     <div class="col-12 d-flex justify-content-between text-center border border-dark">
-      <% if @year_and_month_filter_active %>
+      <% movements_list_links = @count.fast_movements_list_links(@year, @month) if @time_range_report  %>
+      <% if movements_list_links.present? %>
         <div class="mx-2">
-          <%= link_to @count.movements_path_by_month(@month.to_i == 1 ? @year.to_i - 1 : @year, @month.to_i == 1 ? 12 : @month.to_i - 1), class: "text-dark text-decoration-none" do %>
+          <%= link_to movements_list_links[0], class: "text-dark text-decoration-none" do %>
             <i class="fa-solid fa-chevron-left"></i>
           <% end %>
         </div>
       <% end %>
 
       <h4 class="my-0">
-        Registro economico <%= @count.name %><%= @year_and_month_filter_active ? ' - ' + italian_month(@month) + ' ' + @year.to_s : '' %>
+        <%= @table_titles[:main_title] %>
       </h4>
 
-      <% if @year_and_month_filter_active %>
+      <% if movements_list_links.present? %>
         <div class="mx-2">
-          <%= link_to @count.movements_path_by_month(@month.to_i == 12 ? @year.to_i + 1 : @year, @month.to_i == 12 ? 1 : @month.to_i + 1), class: "text-dark text-decoration-none" do %>
+          <%= link_to movements_list_links[1], class: "text-dark text-decoration-none" do %>
             <i class="fa-solid fa-chevron-right"></i>
           <% end %>
         </div>
@@ -163,13 +167,13 @@
     <div class="col-6 d-none d-lg-flex">&nbsp;</div>
   </div>
 
-  <% if @start_amount.present? %>
+  <% if @time_range_report.present? %>
     <div class="row">
       <div class="col-6 d-none d-lg-flex"></div>
       <div class="col-12 col-lg-6">
         <div class="row">
           <div class="col-9 col-sm-10 d-flex justify-content-end border border-dark">
-            <b>FONDO CASSA A INIZIO MESE:</b>
+            <b><%= @table_titles[:start_amount_title].upcase %></b>
           </div>
           <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark">
             <%= to_visible_amount(@start_amount, false) %>€
@@ -184,7 +188,7 @@
     <div class="col-12 col-lg-6">
       <div class="row">
         <div class="col-9 col-sm-10 d-flex justify-content-end border border-dark">
-          <b>SALDO COMPLESSIVO<%= @year_and_month_filter_active ? ' DI FINE MESE' : '' %>:</b>
+          <b><%= @table_titles[:total_amount_title].upcase %></b>
         </div>
         <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark bg-<%= @total_movements_amount <= 0 ? 'danger' : 'success' %>">
           <%= to_visible_amount(@total_movements_amount, false) %>€
@@ -193,13 +197,13 @@
     </div>
   </div>
 
-  <% if @final_amount.present? %>
+  <% if @time_range_report.present? %>
     <div class="row">
       <div class="col-6 d-none d-lg-flex"></div>
       <div class="col-12 col-lg-6">
         <div class="row">
           <div class="col-9 col-sm-10 d-flex justify-content-end border border-dark">
-            <b>FONDO CASSA A FINE MESE:</b>
+            <b><%= @table_titles[:final_amount_title].upcase %></b>
           </div>
           <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark">
             <%= to_visible_amount(@final_amount, false) %>€

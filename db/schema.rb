@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_23_104210) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_25_085016) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -63,15 +63,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_23_104210) do
     t.integer "month", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "year_month", null: false
+    t.integer "year_month_day", null: false
+    t.integer "day", null: false
     t.index ["amount"], name: "index_movements_on_amount"
     t.index ["count_id"], name: "index_movements_on_count_id"
+    t.index ["day"], name: "index_movements_on_day"
     t.index ["emitted_at"], name: "index_movements_on_emitted_at"
     t.index ["expense_item_id"], name: "index_movements_on_expense_item_id"
     t.index ["month"], name: "index_movements_on_month"
     t.index ["movement_type"], name: "index_movements_on_movement_type"
     t.index ["year"], name: "index_movements_on_year"
-    t.index ["year_month"], name: "index_movements_on_year_month"
+    t.index ["year_month_day"], name: "index_movements_on_year_month_day"
   end
 
   create_table "users", force: :cascade do |t|
