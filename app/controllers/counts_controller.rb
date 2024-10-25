@@ -58,35 +58,40 @@ class CountsController < ApplicationController
   end
 
   def stats
-    @count_final_amount_by_month = {}
-    @movements_global_amount_by_expense_items_and_month = {}
-    all_movements = @count.movements.where(movement_type: 'out')
-    @min_year = all_movements.minimum('year')
-    @max_year = all_movements.maximum('year')
+    @grouped_count_final_amounts = {}
+    @movements_global_amount_by_expense_items = {}
+    @years_range = @count.years_range
 
-    if params[:q].present? && params[:q][:year_eq].present?
-      @search = all_movements.ransack(params[:q])
-      movements = @search.result
+    @search = @count.movements.where(movement_type: 'out').ransack(params[:q])
+    movements = @search.result
 
-      @year = params[:q][:year_eq]
-      months = (1..12).to_a
+    @year = params[:q].present? ? params[:q][:year_eq] : nil
+    months = (1..12).to_a
 
-      @count.expense_items.each_with_object({}) do |expense_item, hash|
-        @movements_global_amount_by_expense_items_and_month[expense_item] = {'total' => 0}
+    @count.expense_items.each_with_object({}) do |expense_item, hash|
+      @movements_global_amount_by_expense_items[expense_item] = {'total' => 0}
+    end
+
+    @movements_max_amount = 0
+    time_ranges = @year.present? ? months : @years_range
+    time_ranges.each do | time_range |
+      # Calcolo la giacenza finale sul conto a fine di ogni mese / anno
+      if @year.present?
+        @grouped_count_final_amounts[italian_month(time_range)] = @count.initial_amount_by_date(@year, time_range + 1, 1)
+      else
+        @grouped_count_final_amounts[time_range] = @count.initial_amount_by_date(time_range + 1, 1, 1)
       end
 
-      @movements_max_amount = 0
-      months.each do | month |
-        @count_final_amount_by_month[italian_month(month)] = @count.initial_amount_by_date(@year, month + 1, 1)
-        @movements_global_amount_by_expense_items_and_month.keys.each do | expense_item |
-          global_amount_by_expense_items = movements.where(month: month, expense_item_id: expense_item.id).sum(&:amount).to_f.round(2)
-          global_amount_by_expense_items = global_amount_by_expense_items * -1 if global_amount_by_expense_items < 0
-          @movements_global_amount_by_expense_items_and_month[expense_item][italian_month(month)] = global_amount_by_expense_items
-          @movements_global_amount_by_expense_items_and_month[expense_item]['total'] = @movements_global_amount_by_expense_items_and_month[expense_item]['total'] + global_amount_by_expense_items
-          @movements_max_amount = [@movements_max_amount, global_amount_by_expense_items].max
-        end
+      # Calcolo l'ammontare complessivo delle varie spese durante ogni mese / anno
+      @movements_global_amount_by_expense_items.keys.each do | expense_item |
+        movements_by_expense_item = movements.where(expense_item_id: expense_item.id)
+        movements_by_expense_item = @year.present? ? movements_by_expense_item.where(month: time_range) : movements_by_expense_item.where(year: time_range)
+        global_amount_by_expense_items = movements_by_expense_item.sum(&:amount).to_f.round(2)
+        global_amount_by_expense_items = global_amount_by_expense_items * -1 if global_amount_by_expense_items < 0
+        @movements_global_amount_by_expense_items[expense_item][@year.present? ? italian_month(time_range) : time_range] = global_amount_by_expense_items
+        @movements_global_amount_by_expense_items[expense_item]['total'] = @movements_global_amount_by_expense_items[expense_item]['total'] + global_amount_by_expense_items
+        @movements_max_amount = [@movements_max_amount, global_amount_by_expense_items].max
       end
-      @movements_max_amount += 100
     end
   end
 

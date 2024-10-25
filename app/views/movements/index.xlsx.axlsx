@@ -7,7 +7,7 @@ wb.add_worksheet(name: "Movimenti del mese") do |sheet|
   sheet.add_row ["", "", "", "", "", ""]
 
   sheet["A1:F3"].each do |cell|
-    cell.style = wb.styles.add_style({font_name: "Calibri", fg_color: 'c9211e', sz: 18, b: true, u: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :medium, color: '000000'}})
+    cell.style = wb.styles.add_style({font_name: "Calibri", fg_color: 'c9211e', sz: 16, b: true, u: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :medium, color: '000000'}})
   end
 
   sheet.add_row ["USCITE", "", "", "ENTRATE", "", ""]
@@ -127,24 +127,28 @@ wb.add_worksheet(name: "Movimenti del mese") do |sheet|
 
 
   # FONDO CASSA DI INIZIO MESE + SALDO DI FINE MESE = FONDO CASSA DI FINE MESE
-  sheet.add_row [@table_titles[:start_amount_title].upcase, "", "", "", "", "#{to_visible_amount(@start_amount, false)}€"]
-  sheet.merge_cells("A#{current_row}:E#{current_row}")
-  sheet["F#{current_row}:F#{current_row}"].each do |cell|
-    cell.style = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
+  if @time_range_report.present?
+    sheet.add_row [@table_titles[:start_amount_title].upcase, "", "", "", "", "#{to_visible_amount(@start_amount, false)}€"]
+    sheet.merge_cells("A#{current_row}:E#{current_row}")
+    sheet["F#{current_row}:F#{current_row}"].each do |cell|
+      cell.style = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
+    end
+    current_row = current_row + 1
   end
-  current_row = current_row + 1
   sheet.add_row [@table_titles[:total_amount_title].upcase, "", "", "", "", "#{to_visible_amount(@total_movements_amount, false)}€"]
   sheet.merge_cells("A#{current_row}:E#{current_row}")
   sheet["F#{current_row}:F#{current_row}"].each do |cell|
     cell.style = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, bg_color: @total_movements_amount <= 0 ? 'ff0000' : '2cfe22', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
   end
   current_row = current_row + 1
-  sheet.add_row [@table_titles[:final_amount_title].upcase, "", "", "", "", "#{to_visible_amount(@final_amount, false)}€"]
-  sheet.merge_cells("A#{current_row}:E#{current_row}")
-  sheet["F#{current_row}:F#{current_row}"].each do |cell|
-    cell.style = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
+  if @time_range_report.present?
+    sheet.add_row [@table_titles[:final_amount_title].upcase, "", "", "", "", "#{to_visible_amount(@final_amount, false)}€"]
+    sheet.merge_cells("A#{current_row}:E#{current_row}")
+    sheet["F#{current_row}:F#{current_row}"].each do |cell|
+      cell.style = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
+    end
+    current_row = current_row + 1
   end
-  current_row = current_row + 1
   ["A#{current_row - 3}:E#{current_row - 3}", "A#{current_row - 2}:E#{current_row - 2}", "A#{current_row - 1}:E#{current_row - 1}"].each do | cells_interval |
     sheet[cells_interval].each do |cell|
       cell.style = wb.styles.add_style({font_name: "Calibri", sz: 10, alignment: { horizontal: :right, vertical: :center }, border: {style: :thin, color: '000000'}})
@@ -196,5 +200,5 @@ wb.add_worksheet(name: "Movimenti del mese") do |sheet|
 
 
   # IMPOSTO UNA LARGHEZZA FISSA PER LE COLONNE DEL FILE EXCEL GENERATO
-  sheet.column_widths 10, 60, 15, 10, 60, 15
+  sheet.column_widths 10, 80, 15, 10, 80, 15
 end

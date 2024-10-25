@@ -116,7 +116,7 @@ class MovementsController < ApplicationController
       if params[:q].blank? || params[:q][:emitted_at_lteq].blank?
         params[:q] = {} if params[:q].blank?
         last_movement_emission_date = @count.last_movement_emission_date
-        params[:q][:emitted_at_gteq] = "#{last_movement_emission_date.year}-#{last_movement_emission_date.month}-#{last_movement_emission_date.day}"
+        params[:q][:emitted_at_lteq] = "#{last_movement_emission_date.year}-#{last_movement_emission_date.month}-#{last_movement_emission_date.day}"
       end
     end
 
@@ -163,8 +163,8 @@ class MovementsController < ApplicationController
 
     def blank_keys?(hash, keys)
       keys.each do |key|
-        false if hash[key].present?
+        return false if hash[key].present?
       end
-      true
+      return true
     end
 end

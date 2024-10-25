@@ -1,36 +1,38 @@
+<% min_year = @count.min_year %>
+<% max_year = @count.max_year %>
+
 <div class="mx-2 mx-lg-4 my-5">
-  <% if @year.present? %>
-    <%= search_form_for @search, url: stats_count_path(@count.id) do |f| %>
-      <div class="d-flex flex-wrap justify-content-center align-items-end px-x px-lg-4 mb-5 mt-3">
-        <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-          <%= f.label :year_eq, 'Filtra statistiche per anno', class: "font-weight-bold" %>
-          <%= f.select :year_eq,
-                       options_for_select((@min_year..@max_year).to_a.map{ | year | [year, year] }, @search.year_eq),
-                       { include_blank: false },
-                       class: 'form-control'
-          %>
-        </div>
-
-        <div class="pb-3 d-flex">
-          <button type="submit" class="btn btn-success mx-2">
-            <i class="fas fa-search"></i> Cerca
-          </button>
-
-          <%= link_to @count.stats_default_path, class: "btn btn-primary mx-2" do %>
-            <i class="fas fa-filter" aria-hidden="true"></i> Reset
-          <% end %>
-        </div>
+  <%= search_form_for @search, url: stats_count_path(@count.id) do |f| %>
+    <div class="d-flex flex-wrap justify-content-center align-items-end px-x px-lg-4 mb-5 mt-3">
+      <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+        <%= f.label :year_eq, 'Filtra statistiche per anno', class: "font-weight-bold" %>
+        <%= f.select :year_eq,
+                     options_for_select(@years_range.map{ | year | [year, year] }, @search.year_eq),
+                     { include_blank: "Tutti gli anni" },
+                     class: 'form-control'
+        %>
       </div>
-    <% end %>
+
+      <div class="pb-3 d-flex">
+        <button type="submit" class="btn btn-success mx-2">
+          <i class="fas fa-search"></i> Cerca
+        </button>
+
+        <%= link_to @count.stats_default_path, class: "btn btn-primary mx-2" do %>
+          <i class="fas fa-filter" aria-hidden="true"></i> Reset
+        <% end %>
+      </div>
+    </div>
   <% end %>
 
 
 
   <!-- Grafico che riporta la giacenza sul conto alla fine di ogni mese dell'anno corrente -->
-  <% chart_title = "Andamento mensile sul #{@count.name} nel #{@year}" %>
-  <%= line_chart @count_final_amount_by_month,
+  <% chart_title = "Andamento mensile sul #{@count.name} #{@year.present? ? 'nel ' + @year : 'negli anni'}" %>
+  <% min_value = @grouped_count_final_amounts.values.min.to_f.round(2) %>
+  <%= line_chart @grouped_count_final_amounts,
                  title: chart_title,
-                 min: @count_final_amount_by_month.values.min.to_f.round(2) - 50.0,
+                 min: (min_value - (min_value * 0.1)).to_f.round(2),
                  download: {filename: chart_title, background: "#ffffff"},
                  loading: "Caricamento...",
                  empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
@@ -41,21 +43,27 @@
 
   <!-- Grafici che riportano l'ammontare complessivo per ogni voce di spesa alla fine di ogni mese dell'anno corrente -->
   <div class="my-5 py-5 row">
-    <% @movements_global_amount_by_expense_items_and_month.keys.sort_by{ | key | @movements_global_amount_by_expense_items_and_month[key]['total'] * -1 }.each do | expense_item | %>
+    <% @movements_global_amount_by_expense_items.keys.sort_by{ | key | @movements_global_amount_by_expense_items[key]['total'] * -1 }.each do | expense_item | %>
       <div class="col-12 col-md-6 col-xl-4 py-5">
-        <% chart_title_compact = "#{expense_item.description} nel #{@year}" %>
-        <% chart_title = "#{chart_title_compact}: #{to_visible_amount(@movements_global_amount_by_expense_items_and_month[expense_item]['total'])}€" %>
+        <% chart_title_compact = "#{expense_item.description} #{@year.present? ? 'nel ' + @year : 'negli anni'}" %>
+        <% chart_title = "#{chart_title_compact}: #{to_visible_amount(@movements_global_amount_by_expense_items[expense_item]['total'])}€" %>
         <% chart_color = expense_item.color.upcase != '#FFFFFF' ? expense_item.color : '#F2F2F2'%>
-        <% @movements_global_amount_by_expense_items_and_month[expense_item].delete('total') %>
-        <%= column_chart @movements_global_amount_by_expense_items_and_month[expense_item],
+        <% @movements_global_amount_by_expense_items[expense_item].delete('total') %>
+        <%= column_chart @movements_global_amount_by_expense_items[expense_item],
                          title: chart_title,
-                         max: @movements_max_amount,
+                         max: (@movements_max_amount * 1.1).to_f.round(2),
                          colors: [chart_color, chart_color],
                          download: {filename: chart_title_compact, background: "#ffffff"},
                          loading: "Caricamento...",
                          empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
                          suffix: "€"
         %>
+        <div class="d-flex justify-content-center mt-4">
+          <% filters = { 'movement_type_eq': 'out', 'expense_item_id_eq': expense_item.id } %>
+          <% filters = { **filters, 'emitted_at_gteq': "#{@year}-01-01", 'emitted_at_lteq': "#{@year}-12-31" } if @year.present? %>
+          <% filters = { **filters, 'emitted_at_gteq': "#{min_year}-01-01", 'emitted_at_lteq': "#{max_year}-12-31" } unless @year.present? %>
+          <%= link_to 'Vedi movimenti', count_movements_path(@count, q: filters) %>
+        </div>
       </div>
     <% end %>
   </div>

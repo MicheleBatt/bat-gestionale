@@ -20,8 +20,16 @@ class Count < ApplicationRecord
   before_save { self.current_amount = self.current_amount.to_f.round(2) if self.current_amount }
 
   # Instance Methods
+  def min_year
+    self.movements.minimum('year') || Time.now.year
+  end
+
   def max_year
     self.movements.maximum('year') || Time.now.year
+  end
+
+  def years_range
+    (self.min_year..self.max_year).to_a
   end
 
   def max_month
@@ -49,7 +57,7 @@ class Count < ApplicationRecord
   end
 
   def initial_amount_by_date(year, month, day)
-    self.initial_amount.to_f + self.movements.where('movements.year_month_day < ? ', date_to_integer(year, month, day)).sum(&:amount)
+    (self.initial_amount.to_f + self.movements.where('movements.year_month_day < ? ', date_to_integer(year, month, day)).sum(&:amount)).to_f.round(2)
   end
 
   def first_movement_emission_date
@@ -104,16 +112,20 @@ class Count < ApplicationRecord
         }
       end
     else
-      splitted_from_date = from_date.split('-')
-      from_italian_date = "#{splitted_from_date[2]} #{italian_month(splitted_from_date[1])} #{splitted_from_date[0]}"
-      splitted_to_date = to_date.split('-')
-      to_italian_date = "#{splitted_to_date[2]} #{italian_month(splitted_to_date[1])} #{splitted_to_date[0]}"
+      if from_date.present?
+        splitted_from_date = from_date.split('-')
+        from_italian_date = "#{splitted_from_date[2]} #{italian_month(splitted_from_date[1])} #{splitted_from_date[0]}"
+      end
+      if to_date.present?
+        splitted_to_date = to_date.split('-')
+        to_italian_date = "#{splitted_to_date[2]} #{italian_month(splitted_to_date[1])} #{splitted_to_date[0]}"
+      end
 
       {
-        main_title: "#{table_title} dal #{from_italian_date} al #{to_italian_date}",
-        start_amount_title: "Fondo cassa al #{from_italian_date}:",
+        main_title: "#{table_title}#{from_italian_date ? ' dal ' + from_italian_date : ''}#{to_italian_date ? ' al ' + to_italian_date : ''}",
+        start_amount_title: "Fondo cassa#{from_italian_date ? ' al ' + from_italian_date : ''}:",
         total_amount_title: "#{total_amount_title}:",
-        final_amount_title: "Fondo cassa al #{to_italian_date}:",
+        final_amount_title: "Fondo cassa#{to_italian_date ? ' al ' + to_italian_date : ''}:",
         xlsx_file_name: "Rendiconto movimenti.xlsx"
       }
     end
