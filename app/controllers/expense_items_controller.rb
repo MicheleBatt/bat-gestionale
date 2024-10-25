@@ -3,7 +3,8 @@ class ExpenseItemsController < ApplicationController
 
   # GET /expense_items or /expense_items.json
   def index
-    @expense_items = ExpenseItem.all.order(description: :asc).includes(:movements)
+    @search = ExpenseItem.all.ransack(params[:q])
+    @expense_items = @search.result.order(description: :asc).includes(:movements)
   end
 
   # GET /expense_items/new

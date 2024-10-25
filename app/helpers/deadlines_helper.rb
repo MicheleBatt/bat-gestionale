@@ -1,6 +1,6 @@
 module DeadlinesHelper
   def upcoming_deadlines
-    Deadline.where(month: Time.now.month)
+    Deadline.where(year: Time.now.year, month: Time.now.month)
   end
 
   def upcoming_deadlines_count

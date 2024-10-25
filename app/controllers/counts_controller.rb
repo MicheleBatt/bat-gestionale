@@ -5,7 +5,8 @@ class CountsController < ApplicationController
 
   # GET /counts or /counts.json
   def index
-    @counts = Count.all
+    @search = Count.all.ransack(params[:q])
+    @counts = @search.result
     @counts_global_amount = @counts.sum(:current_amount).to_f.round(2)
     @counts = @counts.order(ordering_number: :asc).includes(:movements)
   end

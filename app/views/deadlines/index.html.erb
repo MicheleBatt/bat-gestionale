@@ -1,11 +1,52 @@
 <div class="d-flex justify-content-between m-4">
   <h4>Prossime scadenze</h4>
   <div>
-    <%= link_to deadlines_path(format: :xlsx), class: "btn btn-warning mx-2 text-white" do %>
+    <%= link_to deadlines_path(q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-warning mx-2 text-white" do %>
       <i class="fas fa-download" aria-hidden="true"></i> Export xls
     <% end %>
   </div>
 </div>
+
+<% if @deadlines_by_year.present? || params[:q].present? %>
+  <%= search_form_for @search do |f| %>
+    <div class="d-flex flex-wrap justify-content-center align-items-end px-x px-lg-4 mb-5 mt-3">
+      <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+        <%= f.label :description_cont, 'Descrizione', class: 'font-weight-bold' %>
+        <%= f.text_field :description_cont, placeholder: 'Filtra per descrizione', class: 'form-control' %>
+      </div>
+
+      <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+        <%= f.label :year_eq, 'Mese', class: 'font-weight-bold' %>
+        <%= f.select :year_eq,
+                     options_for_select(((Deadline.minimum('year') || Time.now.year)..(Deadline.maximum('year') || Time.now.year)).map{ | year | [year, year] }, @search.year_eq),
+                     { include_blank: "Qualsiasi anno" },
+                     class: 'form-control'
+        %>
+      </div>
+
+      <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+        <%= f.label :month_eq, 'Mese', class: 'font-weight-bold' %>
+        <%= f.select :month_eq,
+                     options_for_select(italian_months_for_select, @search.month_eq),
+                     { include_blank: "Qualsiasi mese" },
+                     class: 'form-control'
+        %>
+      </div>
+
+      <div class="pb-3 d-flex">
+        <button type="submit" class="btn btn-success mx-2">
+          <i class="fas fa-search"></i> Cerca
+        </button>
+
+        <%= link_to deadlines_path, class: "btn btn-primary mx-2" do %>
+          <i class="fas fa-filter" aria-hidden="true"></i> Reset
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+
 
 <div id="deadlines">
   <% @deadlines_by_year.keys.each do | year | %>

@@ -19,7 +19,20 @@ class Count < ApplicationRecord
   before_save { self.initial_amount = self.initial_amount.to_f.round(2) if self.initial_amount }
   before_save { self.current_amount = self.current_amount.to_f.round(2) if self.current_amount }
 
+
   # Instance Methods
+  def self.ransackable_scopes(_auth_object = nil)
+    %i[]
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w(name)
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %i[]
+  end
+
   def min_year
     self.movements.minimum('year') || Time.now.year
   end
