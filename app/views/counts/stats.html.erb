@@ -27,21 +27,39 @@
 
 
 
-  <!-- Grafico che riporta la giacenza sul conto alla fine di ogni mese dell'anno corrente -->
-  <% chart_title = "Andamento mensile sul #{@count.name} #{@year.present? ? 'nel ' + @year : 'negli anni'}" %>
-  <% min_value = @grouped_count_final_amounts.values.min.to_f.round(2) %>
-  <%= line_chart @grouped_count_final_amounts,
-                 title: chart_title,
-                 min: (min_value - (min_value * 0.1)).to_f.round(2),
-                 download: {filename: chart_title, background: "#ffffff"},
-                 loading: "Caricamento...",
-                 empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                 suffix: "€"
-  %>
+  <!-- Grafico che riporta la giacenza sul conto alla fine di ogni mese / anno -->
+  <div class="mb-5 pb-5">
+    <% chart_title = "Giacenza sul #{@count.name} #{@year.present? ? 'nel ' + @year : 'negli anni'}" %>
+    <% min_value = @grouped_count_final_amounts.values.min.to_f.round(2) %>
+    <%= line_chart @grouped_count_final_amounts,
+                   title: chart_title,
+                   min: (min_value - (min_value * 0.1)).to_f.round(2),
+                   download: {filename: chart_title, background: "#ffffff"},
+                   loading: "Caricamento...",
+                   empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                   suffix: "€"
+    %>
+  </div>
 
 
 
-  <!-- Grafici che riportano l'ammontare complessivo per ogni voce di spesa alla fine di ogni mese dell'anno corrente -->
+  <!-- Grafico che riporta l'ammontare complessivo di tutte le entrate e di tutte le uscite alla fine di ogni mese / anno  -->
+  <div class="my-5 py-5">
+    <% chart_title = "Entrate/Uscite sul #{@count.name} #{@year.present? ? 'nel ' + @year : 'negli anni'}" %>
+    <%= column_chart @data,
+                     stacked: false,
+                     title: chart_title,
+                     download: {filename: chart_title, background: "#ffffff"},
+                     colors: ["#DC3545", "#198754"],
+                     loading: "Caricamento...",
+                     empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                     suffix: "€"
+    %>
+  </div>
+
+
+
+  <!-- Grafici che riportano l'ammontare complessivo per ogni voce di spesa alla fine di ogni mese / anno -->
   <div class="my-5 py-5 row">
     <% @movements_global_amount_by_expense_items.keys.sort_by{ | key | @movements_global_amount_by_expense_items[key]['total'] * -1 }.each do | expense_item | %>
       <div class="col-12 col-md-6 col-xl-4 py-5">

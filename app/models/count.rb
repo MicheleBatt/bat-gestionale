@@ -18,6 +18,8 @@ class Count < ApplicationRecord
   before_save { self.iban = self.iban.to_s.gsub(' ', '') if self.iban }
   before_save { self.initial_amount = self.initial_amount.to_f.round(2) if self.initial_amount }
   before_save { self.current_amount = self.current_amount.to_f.round(2) if self.current_amount }
+  after_save { set_current_amount }
+  after_update { set_current_amount }
 
 
   # Instance Methods
@@ -142,5 +144,9 @@ class Count < ApplicationRecord
         xlsx_file_name: "Rendiconto movimenti.xlsx"
       }
     end
+  end
+
+  def set_current_amount
+    self.update_columns(current_amount: self.initial_amount + self.movements.sum(:amount))
   end
 end

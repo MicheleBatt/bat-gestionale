@@ -8,12 +8,29 @@
   </div>
 
   <div class="d-flex align-items-center">
-    <%= link_to edit_deadline_path(deadline), class: "text-secondary text-decoration-none" do %>
+    <button type="button" class="btn btn-link text-secondary text-decoration-none mx-1 p-0" data-bs-toggle="modal" data-bs-target="#deadlineEditingModal_<%= deadline.id %>">
       <i class="fas fa-fw fa-edit"></i>
-    <% end %>
+    </button>
 
     <%= button_to deadline, method: :delete, class: "btn btn-link text-danger text-decoration-none mx-3 p-0" do %>
       <i class="fas fa-fw fa-trash"></i>
     <% end %>
+  </div>
+</div>
+
+<!-- Modale per la cancellazione / modifica di una scadenza -->
+<div class="modal fade" id="deadlineEditingModal_<%= deadline.id %>" tabindex="-1" aria-labelledby="deadlineEditingModal_<%= deadline.id %>Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title fs-5" id="deadlineEditingModal_<%= deadline.id %>Label">Modifica scadenza</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="deadline_<%= deadline.id %>_error_messages"></div>
+
+        <%= render "form", deadline: deadline %>
+      </div>
+    </div>
   </div>
 </div>

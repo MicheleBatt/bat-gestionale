@@ -59,6 +59,26 @@
   <% end %>
 </div>
 
+
 <div class="d-flex justify-content-center justify-content-lg-end my-5 mx-4">
-  <%= link_to "Nuova scadenza", new_deadline_path, class: "btn btn-success" %>
+  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#deadlineCreationModal">
+    Nuova scadenza
+  </button>
+</div>
+
+<!-- Modale per la creazione di un nuovo movimento di cassa -->
+<div class="modal fade" id="deadlineCreationModal" tabindex="-1" aria-labelledby="deadlineCreationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title fs-5" id="deadlineCreationModalLabel">Aggiungi una nuova scadenza</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="new_deadline_error_messages"></div>
+
+        <%= render "form", deadline: @new_deadline %>
+      </div>
+    </div>
+  </div>
 </div>

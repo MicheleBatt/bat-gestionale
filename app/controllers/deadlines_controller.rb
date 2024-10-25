@@ -1,8 +1,9 @@
 class DeadlinesController < ApplicationController
-  before_action :set_deadline, only: %i[ edit update destroy ]
+  before_action :set_deadline, only: %i[ update destroy ]
 
   # GET /deadlines or /deadlines.json
   def index
+    @new_deadline = Deadline.new
     @search = Deadline.all.ransack(params[:q])
     @deadlines_by_year = @search.result.order(expired_at: :asc).group_by(&:year)
 
@@ -16,15 +17,6 @@ class DeadlinesController < ApplicationController
     end
   end
 
-  # GET /deadlines/new
-  def new
-    @deadline = Deadline.new
-  end
-
-  # GET /deadlines/1/edit
-  def edit
-  end
-
   # POST /deadlines or /deadlines.json
   def create
     @deadline = Deadline.new(deadline_params)
@@ -34,7 +26,10 @@ class DeadlinesController < ApplicationController
         format.html { redirect_to deadlines_path, notice: "Nuova scadenza aggiunta correttamente allo scadenziario" }
         format.json { render :show, status: :created, location: @deadline }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update('new_deadline_error_messages', partial: "layouts/error_messages", locals: { obj: @deadline })
+        end
+        format.html { redirect_to deadlines_path, status: :unprocessable_entity }
         format.json { render json: @deadline.errors, status: :unprocessable_entity }
       end
     end
@@ -47,7 +42,10 @@ class DeadlinesController < ApplicationController
         format.html { redirect_to deadlines_path, notice: "Scadenza aggiornata correttamente" }
         format.json { render :show, status: :ok, location: @deadline }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("deadline_#{@deadline.id}_error_messages", partial: "layouts/error_messages", locals: { obj: @deadline })
+        end
+        format.html { redirect_to deadlines_path, status: :unprocessable_entity }
         format.json { render json: @deadline.errors, status: :unprocessable_entity }
       end
     end

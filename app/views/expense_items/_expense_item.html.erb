@@ -7,14 +7,31 @@
   </div>
 
   <div class="d-flex align-items-center">
-    <%= link_to edit_expense_item_path(expense_item), class: "text-secondary text-decoration-none" do %>
+    <button type="button" class="btn btn-link text-secondary text-decoration-none mx-1 p-0" data-bs-toggle="modal" data-bs-target="#expense_itemEditingModal_<%= expense_item.id %>">
       <i class="fas fa-fw fa-edit"></i>
-    <% end %>
+    </button>
 
     <% if expense_item.movements.blank? %>
       <%= button_to expense_item, method: :delete, class: "btn btn-link text-danger text-decoration-none mx-3 p-0" do %>
         <i class="fas fa-fw fa-trash"></i>
       <% end %>
     <% end %>
+  </div>
+</div>
+
+<!-- Modale per la cancellazione / modifica di una voce di spesa -->
+<div class="modal fade" id="expense_itemEditingModal_<%= expense_item.id %>" tabindex="-1" aria-labelledby="expense_itemEditingModal_<%= expense_item.id %>Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title fs-5" id="expense_itemEditingModal_<%= expense_item.id %>Label">Modifica voce di spesa</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="expense_item_<%= expense_item.id %>_error_messages"></div>
+
+        <%= render "form", expense_item: expense_item %>
+      </div>
+    </div>
   </div>
 </div>

@@ -2,13 +2,13 @@ Rails.application.routes.draw do
   devise_for :users
   root to: 'counts#index'
 
-  resources :deadlines, except: :show
-  resources :expense_items, except: :show
-  resources :counts, except: :show do
+  resources :deadlines, except: [:show, :new, :edit]
+  resources :expense_items, except: [:show, :new, :edit]
+  resources :counts, except: [:show, :new, :edit] do
     member do
       get :stats, to: 'counts#stats'
     end
-    resources :movements, except: [:show, :new]
+    resources :movements, except: [:show, :new, :edit]
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

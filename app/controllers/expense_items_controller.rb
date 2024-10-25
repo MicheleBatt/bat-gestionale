@@ -1,19 +1,11 @@
 class ExpenseItemsController < ApplicationController
-  before_action :set_expense_item, only: %i[ edit update destroy ]
+  before_action :set_expense_item, only: %i[ update destroy ]
 
   # GET /expense_items or /expense_items.json
   def index
+    @new_expense_item = ExpenseItem.new
     @search = ExpenseItem.all.ransack(params[:q])
     @expense_items = @search.result.order(description: :asc).includes(:movements)
-  end
-
-  # GET /expense_items/new
-  def new
-    @expense_item = ExpenseItem.new
-  end
-
-  # GET /expense_items/1/edit
-  def edit
   end
 
   # POST /expense_items or /expense_items.json
@@ -25,7 +17,10 @@ class ExpenseItemsController < ApplicationController
         format.html { redirect_to expense_items_path, notice: "Voce di spesa aggiunta correttamente alla lista" }
         format.json { render :index, status: :created, location: @expense_item }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update('new_expense_item_error_messages', partial: "layouts/error_messages", locals: { obj: @expense_item })
+        end
+        format.html { redirect_to expense_items_path, status: :unprocessable_entity }
         format.json { render json: @expense_item.errors, status: :unprocessable_entity }
       end
     end
@@ -38,7 +33,10 @@ class ExpenseItemsController < ApplicationController
         format.html { redirect_to expense_items_path, notice: "Voce di spesa aggiornata correttamente" }
         format.json { render :index, status: :ok, location: @expense_item }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("expense_item_#{@expense_item.id}_error_messages", partial: "layouts/error_messages", locals: { obj: @expense_item })
+        end
+        format.html { redirect_to expense_items_path, status: :unprocessable_entity }
         format.json { render json: @expense_item.errors, status: :unprocessable_entity }
       end
     end

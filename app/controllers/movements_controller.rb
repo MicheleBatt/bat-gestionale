@@ -2,7 +2,7 @@ class MovementsController < ApplicationController
   before_action :set_count
   before_action :set_timerange, only: %i[ index ]
   before_action :check_timerange_report, only: %i[ index ]
-  before_action :set_movement, only: %i[ edit update destroy ]
+  before_action :set_movement, only: %i[ update destroy ]
 
   include ApplicationHelper
 
@@ -39,10 +39,6 @@ class MovementsController < ApplicationController
         response.headers['Content-Disposition'] = "attachment; filename=#{movements_file_name}"
       }
     end
-  end
-
-  # GET /movements/1/edit
-  def edit
   end
 
   # POST /movements or /movements.json
