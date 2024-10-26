@@ -109,6 +109,17 @@ class CountsController < ApplicationController
         @movements_max_amount = [@movements_max_amount, global_amount_by_expense_items].max
       end
     end
+
+    @in_out_global_amounts = [
+      {
+        name: "Uscite",
+        data: out_global_amounts
+      },
+      {
+        name: "Entrate",
+        data: in_global_amounts
+      }
+    ]
   end
 
   private

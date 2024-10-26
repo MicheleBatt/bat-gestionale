@@ -46,7 +46,7 @@
   <!-- Grafico che riporta l'ammontare complessivo di tutte le entrate e di tutte le uscite alla fine di ogni mese / anno  -->
   <div class="my-5 py-5">
     <% chart_title = "Entrate/Uscite sul #{@count.name} #{@year.present? ? 'nel ' + @year : 'negli anni'}" %>
-    <%= column_chart @data,
+    <%= column_chart @in_out_global_amounts,
                      stacked: false,
                      title: chart_title,
                      download: {filename: chart_title, background: "#ffffff"},
