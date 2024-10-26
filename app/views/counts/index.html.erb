@@ -1,8 +1,9 @@
 <h4 class="d-flex d-lg-none m-4">Conti corrente</h4>
 
-<% if @counts.present? || params[:q].present? %>
+
+<div class="d-flex flex-wrap justify-content-around align-items-end px-2 px-lg-4 my-5">
   <%= search_form_for @search do |f| %>
-    <div class="d-flex flex-wrap justify-content-center align-items-end px-x px-lg-4 mb-5 mt-3">
+    <div class="d-flex flex-wrap justify-content-center align-items-end">
       <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
         <%= f.label :name_cont, 'Nome', class: 'font-weight-bold' %>
         <%= f.text_field :name_cont, placeholder: 'Filtra per nome', class: 'form-control' %>
@@ -19,7 +20,11 @@
       </div>
     </div>
   <% end %>
-<% end %>
+
+  <button type="button" class="btn btn-success mb-3 mx-2" data-bs-toggle="modal" data-bs-target="#countCreationModal">
+    Nuovo conto corrente
+  </button>
+</div>
 
 <div id="counts" class="d-block">
   <h5 class="d-flex mx-2 mx-md-4 my-4">Giacenza complessiva attuale: <%= @counts_global_amount %>€</h5>
@@ -29,13 +34,6 @@
   <% end %>
 </div>
 
-
-
-<div class="d-flex justify-content-center justify-content-lg-end my-5 mx-4">
-  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#countCreationModal">
-    Nuovo conto corrente
-  </button>
-</div>
 
 <!-- Modale per la creazione di un nuovo movimento di cassa -->
 <div class="modal fade" id="countCreationModal" tabindex="-1" aria-labelledby="countCreationModalLabel" aria-hidden="true">

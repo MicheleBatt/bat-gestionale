@@ -1,15 +1,8 @@
-<div class="d-flex justify-content-between m-4">
-  <h4>Prossime scadenze</h4>
-  <div>
-    <%= link_to deadlines_path(q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-warning mx-2 text-white" do %>
-      <i class="fas fa-download" aria-hidden="true"></i> Export xls
-    <% end %>
-  </div>
-</div>
 
-<% if @deadlines_by_year.present? || params[:q].present? %>
+
+<div class="d-flex flex-wrap justify-content-around align-items-end px-2 px-lg-4 my-5">
   <%= search_form_for @search do |f| %>
-    <div class="d-flex flex-wrap justify-content-center align-items-end px-x px-lg-4 mb-5 mt-3">
+    <div class="d-flex flex-wrap justify-content-center align-items-end">
       <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
         <%= f.label :description_cont, 'Descrizione', class: 'font-weight-bold' %>
         <%= f.text_field :description_cont, placeholder: 'Filtra per descrizione', class: 'form-control' %>
@@ -44,7 +37,19 @@
       </div>
     </div>
   <% end %>
-<% end %>
+
+  <div class="d-flex justify-content-center">
+    <%= link_to deadlines_path(q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-warning mb-3 mx-2 text-white" do %>
+      <i class="fas fa-download" aria-hidden="true"></i> Export xls
+    <% end %>
+
+    <button type="button" class="btn btn-success mb-3 mx-2" data-bs-toggle="modal" data-bs-target="#deadlineCreationModal">
+      Nuova scadenza
+    </button>
+  </div>
+</div>
+
+
 
 
 
@@ -60,11 +65,6 @@
 </div>
 
 
-<div class="d-flex justify-content-center justify-content-lg-end my-5 mx-4">
-  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#deadlineCreationModal">
-    Nuova scadenza
-  </button>
-</div>
 
 <!-- Modale per la creazione di un nuovo movimento di cassa -->
 <div class="modal fade" id="deadlineCreationModal" tabindex="-1" aria-labelledby="deadlineCreationModalLabel" aria-hidden="true">
