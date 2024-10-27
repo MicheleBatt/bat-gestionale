@@ -1,23 +1,18 @@
 <%= form_with(model: [@count, movement]) do |form| %>
   <%= form.hidden_field :count_id, value: @count.id %>
+  <%= form.hidden_field :movement_type, value: movement.movement_type %>
+  <%= form.hidden_field :modal_id, value: modal_id %>
 
-  <div class="my-4 mx-2 mx-sm-4">
-    <%= form.label :movement_type, 'Tipo di movimento', class: "font-weight-bold" %>
-    <%= form.select :movement_type,
-                    options_for_select(movement_types, movement.movement_type),
-                    { include_blank: 'Seleziona il tipo' },
-                    class: 'form-control'
-    %>
-  </div>
-
-  <div class="my-4 mx-2 mx-sm-4">
-    <%= form.label :expense_item_id, 'Voce di spesa (se uscita)', class: "font-weight-bold" %>
-    <%= form.select :expense_item_id,
-                    options_for_select(expense_items, movement.expense_item_id),
-                    { include_blank: 'Seleziona voce di spesa' },
-                    class: 'form-control'
-    %>
-  </div>
+  <% if movement.movement_type == 'out' %>
+    <div class="my-4 mx-2 mx-sm-4">
+      <%= form.label :expense_item_id, 'Voce di spesa', class: "font-weight-bold" %>
+      <%= form.select :expense_item_id,
+                      options_for_select(expense_items, movement.expense_item_id),
+                      { include_blank: 'Seleziona una voce di spesa' },
+                      class: 'form-control'
+      %>
+    </div>
+  <% end %>
 
   <div class="my-4 mx-2 mx-sm-4">
     <%= form.label :emitted_at, 'Data', class: "font-weight-bold" %>

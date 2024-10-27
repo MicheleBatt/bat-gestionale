@@ -40,10 +40,10 @@ class Movement < ApplicationRecord
   end
 
   def valid_amount?
-    if self.movement_type == 'out' && self.amount > 0
+    if self.movement_type == 'out' && self.amount.to_f > 0
       errors.add(:amount, "must be negative")
     end
-    if self.movement_type == 'in' && self.amount < 0
+    if self.movement_type == 'in' && self.amount.to_f < 0
       errors.add(:amount, "must be positive")
     end
   end

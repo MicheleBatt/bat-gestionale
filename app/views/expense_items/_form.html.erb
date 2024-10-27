@@ -1,5 +1,5 @@
 <%= form_with(model: expense_item) do |form| %>
-  <%= render 'layouts/error_messages', obj: form.object %>
+  <%= form.hidden_field :modal_id, value: modal_id %>
 
   <div class="m-4">
     <%= form.label :description, 'Descrizione', class: "font-weight-bold" %>
@@ -7,7 +7,7 @@
   </div>
 
   <div class="m-4">
-    <%= form.label :color, 'Colore (esadecimale)', class: "font-weight-bold" %>
+    <%= form.label :color, 'Scegli un colore', class: "font-weight-bold" %>
     <%= form.color_field :color, value: expense_item.color || "#FFFFFF", class: "form-control" %>
   </div>
 

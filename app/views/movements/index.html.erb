@@ -1,9 +1,10 @@
 <% movement_types = movement_types_for_select %>
 <% expense_items = expense_items_for_select %>
 
-<% if @movements.present? || params[:q].present? %>
+
+<div class="d-flex flex-wrap justify-content-around align-items-end rounded shadow border mx-2 my-5 py-3">
   <%= search_form_for [@count, @search] do |f| %>
-    <div class="d-flex flex-wrap justify-content-center align-items-end px-x px-lg-4 mb-5 mt-3">
+    <div class="d-flex flex-wrap justify-content-center align-items-end">
       <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
         <%= f.label :causal_cont, 'Causale', class: 'font-weight-bold' %>
         <%= f.text_field :causal_cont, placeholder: 'Filtra per causale', class: 'form-control' %>
@@ -46,21 +47,33 @@
         <%= link_to @count.movements_default_path, class: "btn btn-primary mx-2" do %>
           <i class="fas fa-filter" aria-hidden="true"></i> Reset
         <% end %>
-
-        <%= link_to count_movements_path(q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-warning mx-2 text-white" do %>
-          <i class="fas fa-download" aria-hidden="true"></i> Esporta movimenti
-        <% end %>
-
-        <%= link_to @count.stats_default_path, class: "btn btn-info mx-2 text-white" do %>
-          <i class="fas fa-line-chart" aria-hidden="true"></i> Grafici
-        <% end %>
       </div>
     </div>
   <% end %>
-<% end %>
+
+  <div class="d-flex justify-content-center">
+    <%= link_to count_movements_path(q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-warning mb-3 mx-2 text-white" do %>
+      <i class="fas fa-download" aria-hidden="true"></i> Esporta movimenti
+    <% end %>
+
+    <%= link_to @count.stats_default_path, class: "btn btn-info mb-3 mx-2 text-white" do %>
+      <i class="fas fa-line-chart" aria-hidden="true"></i> Grafici
+    <% end %>
+  </div>
+</div>
 
 
 <div id="movements" class="px-0 mx-lg-4">
+  <div class="d-flex flex-wrap justify-content-center justify-content-sm-between align-items-end">
+    <button type="button" class="btn btn-danger mt-2 mb-5 mx-2" data-bs-toggle="modal" data-bs-target="#outMovementCreationModal">
+      Aggiungi uscita
+    </button>
+
+    <button type="button" class="btn btn-success mt-2 mb-5 mx-2" data-bs-toggle="modal" data-bs-target="#inMovementCreationModal">
+      Aggiungi entrata
+    </button>
+  </div>
+
   <!-- TESTATA DELLA TABELA -->
   <div class="row">
     <div class="col-12 d-flex justify-content-between text-center border border-dark">
@@ -240,26 +253,25 @@
 </div>
 
 
+<!-- Modale per la creazione di un nuovvo movimento di cassa in uscita -->
+<%= render "modal",
+           modal_id: "outMovementCreationModal",
+           title: "Aggiungi Uscita",
+           movement: @new_out_movement,
+           expense_items: expense_items,
+           movement_types: movement_types,
+           deletion_button_txt: nil,
+           deletion_path: nil
+%>
 
-<div class="d-flex justify-content-center justify-content-lg-end my-5 mx-4">
-  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#movementCreationModal">
-    Aggiungi movimento
-  </button>
-</div>
 
-<!-- Modale per la creazione di un nuovo movimento di cassa -->
-<div class="modal fade" id="movementCreationModal" tabindex="-1" aria-labelledby="movementCreationModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title fs-5" id="movementCreationModalLabel">Aggiungi movimento</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="new_movement_error_messages"></div>
-
-        <%= render "form", movement: @new_movement, expense_items: expense_items, movement_types: movement_types %>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- Modale per la creazione di un nuovvo movimento di cassa in entrata -->
+<%= render "modal",
+           modal_id: "inMovementCreationModal",
+           title: "Aggiungi Entrata",
+           movement: @new_in_movement,
+           expense_items: expense_items,
+           movement_types: movement_types,
+           deletion_button_txt: nil,
+           deletion_path: nil
+%>

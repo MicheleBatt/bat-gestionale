@@ -1,5 +1,5 @@
 <%= form_with(model: deadline) do |form| %>
-  <%= render 'layouts/error_messages', obj: form.object %>
+  <%= form.hidden_field :modal_id, value: modal_id %>
 
   <div class="m-4">
     <%= form.label :description, 'Descrizione', class: "font-weight-bold" %>

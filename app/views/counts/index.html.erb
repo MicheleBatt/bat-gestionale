@@ -36,18 +36,8 @@
 
 
 <!-- Modale per la creazione di un nuovo movimento di cassa -->
-<div class="modal fade" id="countCreationModal" tabindex="-1" aria-labelledby="countCreationModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title fs-5" id="countCreationModalLabel">Aggiungi conto corrente</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="new_count_error_messages"></div>
-
-        <%= render "form", count: @new_count %>
-      </div>
-    </div>
-  </div>
-</div>
+<%= render "modal",
+           modal_id: "countCreationModal",
+           title: "Aggiungi un nuovo conto",
+           count: Count.new
+%>

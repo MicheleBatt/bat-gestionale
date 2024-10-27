@@ -19,18 +19,8 @@
 </div>
 
 <!-- Modale per la cancellazione / modifica di una scadenza -->
-<div class="modal fade" id="deadlineEditingModal_<%= deadline.id %>" tabindex="-1" aria-labelledby="deadlineEditingModal_<%= deadline.id %>Label" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title fs-5" id="deadlineEditingModal_<%= deadline.id %>Label">Modifica scadenza</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="deadline_<%= deadline.id %>_error_messages"></div>
-
-        <%= render "form", deadline: deadline %>
-      </div>
-    </div>
-  </div>
-</div>
+<%= render "modal",
+           modal_id: "deadlineEditingModal_#{deadline.id}",
+           title: "Modifica scadenza",
+           deadline: deadline
+%>

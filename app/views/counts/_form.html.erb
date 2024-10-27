@@ -1,5 +1,5 @@
 <%= form_with(model: count) do |form| %>
-  <%= render 'layouts/error_messages', obj: form.object %>
+  <%= form.hidden_field :modal_id, value: modal_id %>
 
   <div class="m-4">
     <%= form.label :name, 'Nome', class: "font-weight-bold" %>

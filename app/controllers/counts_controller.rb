@@ -5,7 +5,6 @@ class CountsController < ApplicationController
 
   # GET /counts or /counts.json
   def index
-    @new_count = Count.new
     @search = Count.all.ransack(params[:q])
     @counts = @search.result
     @counts_global_amount = @counts.sum(:current_amount).to_f.round(2)
@@ -18,6 +17,8 @@ class CountsController < ApplicationController
 
   # POST /counts or /counts.json
   def create
+    modal_id = params[:count][:modal_id]
+    params[:count].delete(:modal_id)
     @count = Count.new(count_params)
 
     respond_to do |format|
@@ -26,7 +27,7 @@ class CountsController < ApplicationController
         format.json { render :show, status: :created, location: @count }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update('new_count_error_messages', partial: "layouts/error_messages", locals: { obj: @count })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @count })
         end
         format.html { redirect_to counts_path, status: :unprocessable_entity }
         format.json { render json: @count.errors, status: :unprocessable_entity }
@@ -36,13 +37,16 @@ class CountsController < ApplicationController
 
   # PATCH/PUT /counts/1 or /counts/1.json
   def update
+    modal_id = params[:count][:modal_id]
+    params[:count].delete(:modal_id)
+
     respond_to do |format|
       if @count.update(count_params)
         format.html { redirect_to counts_path, notice: "Conto corrente aggiornato correttamente" }
         format.json { render :show, status: :ok, location: @count }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("count_#{@count.id}_error_messages", partial: "layouts/error_messages", locals: { obj: @count })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @count })
         end
         format.html { redirect_to counts_path, status: :unprocessable_entity }
         format.json { render json: @count.errors, status: :unprocessable_entity }

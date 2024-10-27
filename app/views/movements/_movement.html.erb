@@ -17,22 +17,12 @@
 </div>
 
 <!-- Modale per la cancellazione / modifica di un movimento di cassa -->
-<div class="modal fade" id="movementEditingModal_<%= movement.id %>" tabindex="-1" aria-labelledby="movementEditingModal_<%= movement.id %>Label" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title fs-5" id="movementEditingModal_<%= movement.id %>Label">Modifica movimento</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="movement_<%= movement.id %>_error_messages"></div>
-
-        <%= render "form", movement: movement, expense_items: expense_items, movement_types: movement_types %>
-
-        <div class="mt-5 mb-4 mx-2 mx-sm-4 d-flex justify-content-center justify-content-sm-end">
-          <%= button_to 'Rimuovi dal conto', count_movement_path(@count, movement), method: :delete, class: "btn btn-danger" %>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<%= render "modal",
+           modal_id: "movementEditingModal_#{movement.id}",
+           title: "Modifica Uscita",
+           movement: movement,
+           expense_items: expense_items,
+           movement_types: movement_types,
+           deletion_button_txt: 'Rimuovi dal conto',
+           deletion_path: count_movement_path(@count, movement)
+%>

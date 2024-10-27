@@ -8,7 +8,10 @@ class MovementsController < ApplicationController
 
   # GET /movements or /movements.json
   def index
-    @new_movement = Movement.new
+    @new_out_movement = Movement.new
+    @new_out_movement.movement_type = 'out'
+    @new_in_movement = Movement.new
+    @new_in_movement.movement_type = 'in'
 
     @search = @count.movements.ransack(params[:q])
     @movements = @search.result
@@ -43,6 +46,8 @@ class MovementsController < ApplicationController
 
   # POST /movements or /movements.json
   def create
+    modal_id = params[:movement][:modal_id]
+    params[:movement].delete(:modal_id)
     @movement = Movement.new(movement_params)
 
     respond_to do |format|
@@ -51,7 +56,7 @@ class MovementsController < ApplicationController
         format.json { render :show, status: :created, location: @movement }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update('new_movement_error_messages', partial: "layouts/error_messages", locals: { obj: @movement })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @movement })
         end
         format.html { redirect_to @count.movements_default_path, status: :unprocessable_entity }
         format.json { render json: @movement.errors, status: :unprocessable_entity }
@@ -61,13 +66,16 @@ class MovementsController < ApplicationController
 
   # PATCH/PUT /movements/1 or /movements/1.json
   def update
+    modal_id = params[:movement][:modal_id]
+    params[:movement].delete(:modal_id)
+
     respond_to do |format|
       if @movement.update(movement_params)
         format.html { redirect_to @count.movements_path_by_month(@movement.year, @movement.month), notice: "Movimento di cassa aggiornato correttamente" }
         format.json { render :show, status: :ok, location: @movement }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("movement_#{@movement.id}_error_messages", partial: "layouts/error_messages", locals: { obj: @movement })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @movement })
         end
         format.html { redirect_to @count.movements_default_path, status: :unprocessable_entity }
         format.json { render json: @movement.errors, status: :unprocessable_entity }

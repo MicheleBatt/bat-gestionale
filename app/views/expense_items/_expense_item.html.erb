@@ -20,18 +20,8 @@
 </div>
 
 <!-- Modale per la cancellazione / modifica di una voce di spesa -->
-<div class="modal fade" id="expense_itemEditingModal_<%= expense_item.id %>" tabindex="-1" aria-labelledby="expense_itemEditingModal_<%= expense_item.id %>Label" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title fs-5" id="expense_itemEditingModal_<%= expense_item.id %>Label">Modifica voce di spesa</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="expense_item_<%= expense_item.id %>_error_messages"></div>
-
-        <%= render "form", expense_item: expense_item %>
-      </div>
-    </div>
-  </div>
-</div>
+<%= render "modal",
+           modal_id: "expense_itemEditingModal_#{expense_item.id}",
+           title: "Modifica voce di spesa",
+           expense_item: expense_item
+%>

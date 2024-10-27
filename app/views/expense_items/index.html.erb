@@ -34,18 +34,8 @@
 
 
 <!-- Modale per la creazione di un nuovo movimento di cassa -->
-<div class="modal fade" id="expense_itemCreationModal" tabindex="-1" aria-labelledby="expense_itemCreationModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title fs-5" id="expense_itemCreationModalLabel">Aggiungi una voce di spesa</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="new_expense_item_error_messages"></div>
-
-        <%= render "form", expense_item: @new_expense_item %>
-      </div>
-    </div>
-  </div>
-</div>
+<%= render "modal",
+           modal_id: "expense_itemCreationModal",
+           title: "Aggiungi una voce di spesa",
+           expense_item: ExpenseItem.new
+%>

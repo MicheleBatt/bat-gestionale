@@ -3,6 +3,12 @@
     <button type="button" class="btn btn-link text-secondary text-decoration-none mx-1 p-0" data-bs-toggle="modal" data-bs-target="#countEditingModal_<%= count.id %>">
       <i class="fas fa-fw fa-edit"></i>
     </button>
+
+    <% if count.movements.blank? %>
+      <%= button_to count, method: :delete, class: "btn btn-link text-danger text-decoration-none mx-3 p-0" do %>
+        <i class="fas fa-fw fa-trash"></i>
+      <% end %>
+    <% end %>
   </div>
 
   <h4 class="my-0">
@@ -24,25 +30,8 @@
 </div>
 
 <!-- Modale per la cancellazione / modifica di un conto corrente -->
-<div class="modal fade" id="countEditingModal_<%= count.id %>" tabindex="-1" aria-labelledby="countEditingModal_<%= count.id %>Label" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title fs-5" id="countEditingModal_<%= count.id %>Label">Modifica conto corrente</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="count_<%= count.id %>_error_messages"></div>
-
-        <%= render "form", count: count %>
-
-
-        <% if count.movements.blank? %>
-          <div class="mt-5 mb-4 mx-2 mx-sm-4 d-flex justify-content-center justify-content-sm-end">
-            <%= button_to 'Rimuovi conto corrente', count_path(count), method: :delete, class: "btn btn-danger" %>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  </div>
-</div>
+<%= render "modal",
+           modal_id: "countEditingModal_#{count.id}",
+           title: "Modifica conto",
+           count: count
+%>

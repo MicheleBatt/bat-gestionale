@@ -3,13 +3,14 @@ class ExpenseItemsController < ApplicationController
 
   # GET /expense_items or /expense_items.json
   def index
-    @new_expense_item = ExpenseItem.new
     @search = ExpenseItem.all.ransack(params[:q])
     @expense_items = @search.result.order(description: :asc).includes(:movements)
   end
 
   # POST /expense_items or /expense_items.json
   def create
+    modal_id = params[:expense_item][:modal_id]
+    params[:expense_item].delete(:modal_id)
     @expense_item = ExpenseItem.new(expense_item_params)
 
     respond_to do |format|
@@ -18,7 +19,7 @@ class ExpenseItemsController < ApplicationController
         format.json { render :index, status: :created, location: @expense_item }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update('new_expense_item_error_messages', partial: "layouts/error_messages", locals: { obj: @expense_item })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @expense_item })
         end
         format.html { redirect_to expense_items_path, status: :unprocessable_entity }
         format.json { render json: @expense_item.errors, status: :unprocessable_entity }
@@ -28,13 +29,16 @@ class ExpenseItemsController < ApplicationController
 
   # PATCH/PUT /expense_items/1 or /expense_items/1.json
   def update
+    modal_id = params[:expense_item][:modal_id]
+    params[:expense_item].delete(:modal_id)
+    
     respond_to do |format|
       if @expense_item.update(expense_item_params)
         format.html { redirect_to expense_items_path, notice: "Voce di spesa aggiornata correttamente" }
         format.json { render :index, status: :ok, location: @expense_item }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("expense_item_#{@expense_item.id}_error_messages", partial: "layouts/error_messages", locals: { obj: @expense_item })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @expense_item })
         end
         format.html { redirect_to expense_items_path, status: :unprocessable_entity }
         format.json { render json: @expense_item.errors, status: :unprocessable_entity }
