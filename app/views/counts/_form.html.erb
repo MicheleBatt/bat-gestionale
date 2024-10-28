@@ -17,6 +17,15 @@
   </div>
 
   <div class="m-4">
+    <%= form.label :monitoring_scope, 'Monitoraggio', class: "font-weight-bold" %>
+    <%= form.select :monitoring_scope,
+                    options_for_select(monitoring_scopes_for_select, count.monitoring_scope),
+                    { include_blank: false },
+                    class: 'form-control'
+    %>
+  </div>
+
+  <div class="m-4">
     <%= form.label :initial_amount, 'Giacenza Iniziale', class: "font-weight-bold" %>
     <%= form.number_field :initial_amount, step: :any, class: "form-control" %>
   </div>

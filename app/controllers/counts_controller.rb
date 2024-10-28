@@ -134,6 +134,6 @@ class CountsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def count_params
-      params.require(:count).permit(:name, :description, :iban, :initial_amount, :ordering_number)
+      params.require(:count).permit(:name, :description, :iban, :monitoring_scope, :initial_amount, :ordering_number)
     end
 end

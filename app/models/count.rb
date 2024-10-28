@@ -1,5 +1,6 @@
 class Count < ApplicationRecord
   include ApplicationHelper
+  include CountsHelper
   include Rails.application.routes.url_helpers
 
   # Relations
@@ -12,6 +13,7 @@ class Count < ApplicationRecord
   validates :name, presence: true, uniqueness: true
   validates :initial_amount, presence: true
   validates :ordering_number, numericality: { greater_than_or_equal_to: 0 }
+  enum monitoring_scope: MONITORING_SCOPES.index_by(&:itself), _prefix: :monitoring_scope
 
   # Callbacks
   before_save { self.description = self.description.to_s.strip if self.description }
@@ -51,24 +53,42 @@ class Count < ApplicationRecord
     self.movements.where(year: self.max_year).maximum('month') || Time.now.month
   end
 
-  def movements_path_by_month(year, month = nil, format = :html)
-    if month.present?
+  def movements_path_by_month(year = nil, month = nil, format = :html)
+    if year.present? && month.present?
       count_movements_path(count_id: self.id, q: { 'emitted_at_gteq': "#{year}-#{month}-01", 'emitted_at_lteq': "#{year}-#{month}-#{Date.new(year.to_i, month.to_i, 1).end_of_month.day}" }, format: format)
-    else
+    elsif year.present?
       count_movements_path(count_id: self.id, q: { 'emitted_at_gteq': "#{year}-01-01", 'emitted_at_lteq': "#{year}-12-31" }, format: format)
+    else
+      count_movements_path(count_id: self.id, format: format)
     end
   end
 
   def movements_default_path
-    self.movements_path_by_month(self.max_year, self.max_month)
+    case self.monitoring_scope
+    when 'monthly'
+      self.movements_path_by_month(self.max_year, self.max_month)
+    when 'annual'
+      self.movements_path_by_month(self.max_year)
+    else
+      self.movements_path_by_month
+    end
   end
 
-  def stats_path_by_year(year)
-    stats_count_path(id: self.id, q: { 'year_eq': year })
+  def stats_path_by_year(year = nil)
+    if year.present?
+      stats_count_path(id: self.id, q: { 'year_eq': year })
+    else
+      stats_count_path(id: self.id)
+    end
   end
 
-  def stats_default_path(year = self.max_year)
-    self.stats_path_by_year(year)
+  def stats_default_path
+    case self.monitoring_scope
+    when 'monthly'
+      self.stats_path_by_year(self.max_year)
+    else
+      self.stats_path_by_year
+    end
   end
 
   def initial_amount_by_date(year, month, day)

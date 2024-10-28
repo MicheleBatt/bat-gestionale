@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_25_085016) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_28_081525) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -23,8 +23,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_25_085016) do
     t.datetime "updated_at", null: false
     t.float "current_amount", default: 0.0, null: false
     t.integer "ordering_number", default: 0, null: false
+    t.string "monitoring_scope", default: "monthly", null: false
     t.index ["current_amount"], name: "index_counts_on_current_amount"
     t.index ["initial_amount"], name: "index_counts_on_initial_amount"
+    t.index ["monitoring_scope"], name: "index_counts_on_monitoring_scope"
     t.index ["name"], name: "index_counts_on_name", unique: true
     t.index ["ordering_number"], name: "index_counts_on_ordering_number"
   end
