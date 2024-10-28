@@ -13,3 +13,31 @@
  *= require_tree .
  *= require_self
  */
+
+body {
+    font-family: 'Jost';
+    background-color: #D6F8DF;
+    min-height: 100vh;
+}
+
+.bg-light-gray {
+    background-color: #f2f2f2;
+}
+
+.form-label {
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: uppercase;
+    margin-bottom: 0;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #f2f2f2;
+}
+
+.accordion-button {
+    box-shadow: none !important;
+    color:black !important;
+}

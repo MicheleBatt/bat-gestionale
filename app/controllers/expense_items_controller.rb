@@ -1,10 +1,19 @@
 class ExpenseItemsController < ApplicationController
   before_action :set_expense_item, only: %i[ update destroy ]
 
+  include ApplicationHelper
+
   # GET /expense_items or /expense_items.json
   def index
     @search = ExpenseItem.all.ransack(params[:q])
-    @expense_items = @search.result.order(description: :asc).includes(:movements)
+    @expense_items = @search.result
+    @expense_items_count = @expense_items.length
+    @expense_items =
+      @expense_items
+      .order(description: :asc)
+      .includes(:movements)
+      .page(params[:page] || DEFAULT_PAGE)
+      .per(params[:per_page] || DEFAULT_PER_PAGE_PARAM)
   end
 
   # POST /expense_items or /expense_items.json

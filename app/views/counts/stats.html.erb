@@ -1,34 +1,47 @@
 <% min_year = @count.min_year %>
 <% max_year = @count.max_year %>
 
-<div class="mx-2 mx-lg-4 my-5">
-  <%= search_form_for @search, url: stats_count_path(@count.id) do |f| %>
-    <div class="d-flex flex-wrap justify-content-center align-items-end px-x px-lg-4 mb-5 mt-3">
-      <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-        <%= f.label :year_eq, 'Filtra statistiche per anno', class: "font-weight-bold" %>
-        <%= f.select :year_eq,
-                     options_for_select(@years_range.map{ | year | [year, year] }, @search.year_eq),
-                     { include_blank: "Tutti gli anni" },
-                     class: 'form-control'
-        %>
-      </div>
-
-      <div class="pb-3 d-flex">
-        <button type="submit" class="btn btn-success mx-2">
-          <i class="fas fa-search"></i> Cerca
+<div class="container-fluid pt-2">
+  <div class="accordion rounded shadow border border-secondary bg-light-gray mb-4" id="filtersAccordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button class="accordion-button bg-light-gray" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          <b>Filtri</b>
         </button>
+      </h2>
+      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
+        <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
+          <%= search_form_for @search, url: stats_count_path(@count.id) do |f| %>
+            <div class="d-flex flex-wrap justify-content-center align-items-end px-x px-lg-4">
+              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+                <%= f.label :year_eq, 'Anno', class: "form-label" %>
+                <%= f.select :year_eq,
+                             options_for_select(@years_range.map{ | year | [year, year] }, @search.year_eq),
+                             { include_blank: "Tutti gli anni" },
+                             class: 'form-control'
+                %>
+              </div>
 
-        <%= link_to @count.stats_default_path, class: "btn btn-primary mx-2" do %>
-          <i class="fas fa-filter" aria-hidden="true"></i> Reset
-        <% end %>
+              <div class="pb-3 d-flex">
+                <button type="submit" class="btn btn-success mx-2">
+                  <i class="fas fa-search"></i> Cerca
+                </button>
+
+                <%= link_to @count.stats_default_path, class: "btn btn-primary mx-2" do %>
+                  <i class="fas fa-filter" aria-hidden="true"></i> Reset
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
       </div>
     </div>
-  <% end %>
+  </div>
 
 
 
   <!-- Grafico che riporta la giacenza sul conto alla fine di ogni mese / anno -->
-  <div class="mb-5 pb-5">
+  <div class="rounded shadow border border-secondary bg-white mb-5 py-2 px-1">
     <% chart_title = "Giacenza sul #{@count.name} #{@year.present? ? 'nel ' + @year : 'negli anni'}" %>
     <% min_value = @grouped_count_final_amounts.values.min.to_f.round(2) %>
     <%= line_chart @grouped_count_final_amounts,
@@ -44,7 +57,7 @@
 
 
   <!-- Grafico che riporta l'ammontare complessivo di tutte le entrate e di tutte le uscite alla fine di ogni mese / anno  -->
-  <div class="my-5 py-5">
+  <div class="rounded shadow border border-secondary bg-white mb-5 py-2 px-1">
     <% chart_title = "Entrate/Uscite sul #{@count.name} #{@year.present? ? 'nel ' + @year : 'negli anni'}" %>
     <%= column_chart @in_out_global_amounts,
                      stacked: false,
@@ -60,27 +73,29 @@
 
 
   <!-- Grafici che riportano l'ammontare complessivo per ogni voce di spesa alla fine di ogni mese / anno -->
-  <div class="my-5 py-5 row">
+  <div class="row my-5 py-5">
     <% @movements_global_amount_by_expense_items.keys.sort_by{ | key | @movements_global_amount_by_expense_items[key]['total'] * -1 }.each do | expense_item | %>
-      <div class="col-12 col-md-6 col-xl-4 py-5">
-        <% chart_title_compact = "#{expense_item.description} #{@year.present? ? 'nel ' + @year : 'negli anni'}" %>
-        <% chart_title = "#{chart_title_compact}: #{to_visible_amount(@movements_global_amount_by_expense_items[expense_item]['total'])}€" %>
-        <% chart_color = expense_item.color.upcase != '#FFFFFF' ? expense_item.color : '#F2F2F2'%>
-        <% @movements_global_amount_by_expense_items[expense_item].delete('total') %>
-        <%= column_chart @movements_global_amount_by_expense_items[expense_item],
-                         title: chart_title,
-                         max: (@movements_max_amount * 1.1).to_f.round(2),
-                         colors: [chart_color, chart_color],
-                         download: {filename: chart_title_compact, background: "#ffffff"},
-                         loading: "Caricamento...",
-                         empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                         suffix: "€"
-        %>
-        <div class="d-flex justify-content-center mt-4">
-          <% filters = { 'movement_type_eq': 'out', 'expense_item_id_eq': expense_item.id } %>
-          <% filters = { **filters, 'emitted_at_gteq': "#{@year}-01-01", 'emitted_at_lteq': "#{@year}-12-31" } if @year.present? %>
-          <% filters = { **filters, 'emitted_at_gteq': "#{min_year}-01-01", 'emitted_at_lteq': "#{max_year}-12-31" } unless @year.present? %>
-          <%= link_to 'Vedi movimenti', count_movements_path(@count, q: filters) %>
+      <div class="col-12 col-md-6 col-xl-4 p-2">
+        <div class="rounded shadow border border-secondary bg-white py-2 px-1">
+          <% chart_title_compact = "#{expense_item.description} #{@year.present? ? 'nel ' + @year : 'negli anni'}" %>
+          <% chart_title = "#{chart_title_compact}: #{to_visible_amount(@movements_global_amount_by_expense_items[expense_item]['total'])}€" %>
+          <% chart_color = expense_item.color.upcase != '#FFFFFF' ? expense_item.color : '#F2F2F2'%>
+          <% @movements_global_amount_by_expense_items[expense_item].delete('total') %>
+          <%= column_chart @movements_global_amount_by_expense_items[expense_item],
+                           title: chart_title,
+                           max: (@movements_max_amount * 1.1).to_f.round(2),
+                           colors: [chart_color, chart_color],
+                           download: {filename: chart_title_compact, background: "#ffffff"},
+                           loading: "Caricamento...",
+                           empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                           suffix: "€"
+          %>
+          <div class="d-flex justify-content-center mt-4">
+            <% filters = { 'movement_type_eq': 'out', 'expense_item_id_eq': expense_item.id } %>
+            <% filters = { **filters, 'emitted_at_gteq': "#{@year}-01-01", 'emitted_at_lteq': "#{@year}-12-31" } if @year.present? %>
+            <% filters = { **filters, 'emitted_at_gteq': "#{min_year}-01-01", 'emitted_at_lteq': "#{max_year}-12-31" } unless @year.present? %>
+            <%= link_to 'Vedi movimenti', count_movements_path(@count, q: filters) %>
+          </div>
         </div>
       </div>
     <% end %>

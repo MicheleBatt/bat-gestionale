@@ -1,0 +1,23 @@
+<% movements.each do |movement| %>
+  <div class="row w-100 m-auto">
+    <% if movement.movement_type == 'out' %>
+      <%= render movement, expense_items: expense_items, movement_types: movement_types %>
+      <div class="col-6 d-none d-lg-flex"></div>
+    <% else %>
+      <div class="col-6 d-none d-lg-flex"></div>
+      <%= render movement, expense_items: expense_items, movement_types: movement_types %>
+    <% end %>
+  </div>
+<% end %>
+
+<% if movements.count >= per_page %>
+  <div id="movements-container-<%= page.to_i %>">
+    <div class="d-flex justify-content-center my-5">
+      <%= link_to 'Carica Altri',
+                  count_movements_path(count_id: count.id, q: { **params[:q]&.to_unsafe_h }, page: page.to_i),
+                  data: { turbo_stream: true },
+                  method: :get
+      %>
+    </div>
+  </div>
+<% end %>

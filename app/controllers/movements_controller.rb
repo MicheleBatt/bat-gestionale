@@ -5,6 +5,8 @@ class MovementsController < ApplicationController
   before_action :set_movement, only: %i[ update destroy ]
 
   include ApplicationHelper
+  include MovementsHelper
+  include ExpenseItemsHelper
 
   # GET /movements or /movements.json
   def index
@@ -15,6 +17,7 @@ class MovementsController < ApplicationController
 
     @search = @count.movements.ransack(params[:q])
     @movements = @search.result
+    @movements_count = @movements.length
 
     out_movements = @movements.where(movement_type: 'out')
     in_movements = @movements.where(movement_type: 'in')
@@ -29,11 +32,26 @@ class MovementsController < ApplicationController
       @final_amount = @start_amount + @total_movements_amount
     end
 
-    @movements = @movements.order(emitted_at: :asc, id: :asc).includes(:expense_item)
+    @movement_types = movement_types_for_select
+    @expense_items = expense_items_for_select
+
+    @page = params[:page] || 1
+    @per_page = params[:per_page] || DEFAULT_PER_PAGE_PARAM
+    frame_name = "movements-container-#{@page.to_i}"
+
+    @movements =
+      @movements
+      .order(emitted_at: :asc, id: :asc)
+      .includes(:expense_item)
+      .page(@page)
+      .per(@per_page)
 
     @table_titles = @count.movements_list_table_titles(@year, @month, params[:q] ? params[:q][:emitted_at_gteq] : nil, params[:q] ? params[:q][:emitted_at_lteq] : nil)
 
     respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update(frame_name, partial: "movements/index", locals: { movements: @movements, count: @count, movement_types: @movement_types, expense_items: @expense_items, page: @page.to_i + 1, per_page: @per_page })
+      end
       format.html { render 'index' }
       format.json { render json: @movements, status: :ok }
       format.xlsx {

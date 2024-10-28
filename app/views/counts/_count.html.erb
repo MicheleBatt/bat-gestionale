@@ -1,22 +1,10 @@
-<div class="rounded border shadow mx-2 mx-md-4 my-4 px-4 pb-4 pt-1">
-  <div class="d-flex justify-content-end align-items-end mb-4 mb-sm-0">
-    <button type="button" class="btn btn-link text-secondary text-decoration-none mx-1 p-0" data-bs-toggle="modal" data-bs-target="#countEditingModal_<%= count.id %>">
-      <i class="fas fa-fw fa-edit"></i>
-    </button>
-
-    <% if count.movements.blank? %>
-      <%= button_to count, method: :delete, class: "btn btn-link text-danger text-decoration-none mx-3 p-0" do %>
-        <i class="fas fa-fw fa-trash"></i>
-      <% end %>
-    <% end %>
-  </div>
-
-  <h4 class="my-0">
+<div class="rounded shadow border border-secondary bg-white my-4 px-3 px-md-4 py-2">
+  <h4 class="mb-0">
     <%= link_to count.name, count.movements_default_path, class: "text-dark text-decoration-none" %>
   </h4>
 
   <h6 class=""><%= count.description %></h6>
-  <h6 class="my-0 text-secondary">
+  <h6 class="mt-4 mb-0 text-secondary">
     <% if count.iban.present? %>
       <span id="count_<%= count.id %>_iban"><%= count.iban %></span>
       <i class="fas fa-copy"
@@ -27,6 +15,18 @@
     <% end %>
   </h6>
   <h6 class="my-0 text-secondary">Giacenza attuale: <%= to_visible_amount(count.current_amount) %>€</h6>
+
+  <div class="d-flex justify-content-end align-items-end mb-0">
+    <button type="button" class="btn btn-link text-secondary text-decoration-none p-0" data-bs-toggle="modal" data-bs-target="#countEditingModal_<%= count.id %>">
+      <i class="fas fa-fw fa-edit"></i>
+    </button>
+
+    <% if count.movements.blank? %>
+      <%= button_to count, method: :delete, class: "btn btn-link text-danger text-decoration-none ml-3 p-0" do %>
+        <i class="fas fa-fw fa-trash"></i>
+      <% end %>
+    <% end %>
+  </div>
 </div>
 
 <!-- Modale per la cancellazione / modifica di un conto corrente -->

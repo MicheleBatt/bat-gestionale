@@ -2,22 +2,22 @@
   <%= form.hidden_field :modal_id, value: modal_id %>
 
   <div class="m-4">
-    <%= form.label :name, 'Nome', class: "font-weight-bold" %>
+    <%= form.label :name, 'Nome', class: "form-label" %>
     <%= form.text_field :name, class: "form-control" %>
   </div>
 
   <div class="m-4">
-    <%= form.label :description, 'Descrizione (opzionale)', class: "font-weight-bold" %>
+    <%= form.label :description, 'Descrizione (opzionale)', class: "form-label" %>
     <%= form.text_area :description, class: "form-control" %>
   </div>
 
   <div class="m-4">
-    <%= form.label :iban, 'Codice IBAN', class: "font-weight-bold" %>
+    <%= form.label :iban, 'Codice IBAN', class: "form-label" %>
     <%= form.text_field :iban, class: "form-control" %>
   </div>
 
   <div class="m-4">
-    <%= form.label :monitoring_scope, 'Monitoraggio', class: "font-weight-bold" %>
+    <%= form.label :monitoring_scope, 'Monitoraggio', class: "form-label" %>
     <%= form.select :monitoring_scope,
                     options_for_select(monitoring_scopes_for_select, count.monitoring_scope),
                     { include_blank: false },
@@ -26,12 +26,12 @@
   </div>
 
   <div class="m-4">
-    <%= form.label :initial_amount, 'Giacenza Iniziale', class: "font-weight-bold" %>
+    <%= form.label :initial_amount, 'Giacenza Iniziale', class: "form-label" %>
     <%= form.number_field :initial_amount, step: :any, class: "form-control" %>
   </div>
 
   <div class="m-4">
-    <%= form.label :ordering_number, 'Ordinamento', class: "font-weight-bold" %>
+    <%= form.label :ordering_number, 'Ordinamento', class: "form-label" %>
     <%= form.number_field :ordering_number, class: "form-control" %>
   </div>
 

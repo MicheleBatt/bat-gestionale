@@ -1,15 +1,16 @@
+<% expense_item = movement.expense_item %>
 
-<div class="col-12 col-lg-6" id="<%= dom_id movement %>" style="background-color: <%= movement.expense_item&.color %>">
+<div class="col-12 col-lg-6" id="<%= dom_id movement %>" style="background-color: <%= expense_item.present? ? expense_item.color : 'white' %>">
   <div class="row">
-    <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark">
+    <div class="col-3 col-sm-2 d-flex justify-content-center align-items-center border border-dark">
       <%= parse_date(movement.emitted_at, '%d.%m.%y') %>
     </div>
-    <div class="col-6 col-sm-8 d-flex justify-content-center border border-dark">
+    <div class="col-6 col-sm-8 d-flex justify-content-center align-items-center border border-dark">
       <button type="button" class="btn btn-link text-dark text-decoration-none mx-1 p-0" data-bs-toggle="modal" data-bs-target="#movementEditingModal_<%= movement.id %>">
         <%= movement.causal %>
       </button>
     </div>
-    <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark">
+    <div class="col-3 col-sm-2 d-flex justify-content-center align-items-center border border-dark">
       <% visible_amount = to_visible_amount(movement.amount) %>
       <span class="d-flex d-lg-none m-0"><%= movement.movement_type == 'in' ? '+' : '-' %></span> <%= visible_amount %>€
     </div>

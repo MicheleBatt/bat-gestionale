@@ -4,7 +4,9 @@ class DeadlinesController < ApplicationController
   # GET /deadlines or /deadlines.json
   def index
     @search = Deadline.all.ransack(params[:q])
-    @deadlines_by_year = @search.result.order(expired_at: :asc).group_by(&:year)
+    @dealines = @search.result
+    @deadlines_count = @dealines.length
+    @deadlines_by_year = @dealines.order(expired_at: :asc).group_by(&:year)
 
     respond_to do |format|
       format.html { render 'index' }

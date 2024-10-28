@@ -1,5 +1,8 @@
 module ApplicationHelper
 
+  DEFAULT_PAGE = 1.freeze
+  DEFAULT_PER_PAGE_PARAM = 50.freeze
+
   ITALIAN_MONTHS = {
     1 => "Gennaio",
     2 => "Febbraio",

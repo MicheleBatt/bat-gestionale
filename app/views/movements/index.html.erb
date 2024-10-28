@@ -1,255 +1,248 @@
-<% movement_types = movement_types_for_select %>
-<% expense_items = expense_items_for_select %>
-
-
-<div class="d-flex flex-wrap justify-content-around align-items-end rounded shadow border mx-2 my-5 py-3">
-  <%= search_form_for [@count, @search] do |f| %>
-    <div class="d-flex flex-wrap justify-content-center align-items-end">
-      <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-        <%= f.label :causal_cont, 'Causale', class: 'font-weight-bold' %>
-        <%= f.text_field :causal_cont, placeholder: 'Filtra per causale', class: 'form-control' %>
-      </div>
-
-      <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-        <%= f.label :movement_type_eq, 'Tipo di movimento', class: "font-weight-bold" %>
-        <%= f.select :movement_type_eq,
-                        options_for_select(movement_types, @search.movement_type_eq),
-                        { include_blank: 'Qualunque tipo' },
-                        class: 'form-control'
-        %>
-      </div>
-
-      <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-        <%= f.label :expense_item_id_eq, 'Tipo di spesa', class: "font-weight-bold" %>
-        <%= f.select :expense_item_id_eq,
-                        options_for_select(expense_items, @search.expense_item_id_eq),
-                        { include_blank: 'Qualunque voce di spesa' },
-                        class: 'form-control'
-        %>
-      </div>
-
-      <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-        <%= f.label :emitted_at_gteq, 'A partire dal', class: 'font-weight-bold' %>
-        <%= f.date_field :emitted_at_gteq, attribute: 'date', class: 'form-control' %>
-      </div>
-
-
-      <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-        <%= f.label :emitted_at_lteq, 'Entro il', class: 'font-weight-bold' %>
-        <%= f.date_field :emitted_at_lteq, attribute: 'date', class: 'form-control' %>
-      </div>
-
-      <div class="pb-3 d-flex">
-        <button type="submit" class="btn btn-success mx-2">
-          <i class="fas fa-search"></i> Cerca
+<div class="container-fluid pt-2">
+  <div class="accordion rounded shadow border border-secondary bg-light-gray mb-4" id="filtersAccordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button class="accordion-button bg-light-gray" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          <b>Filtri</b>
         </button>
+      </h2>
+      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
+        <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
+          <%= search_form_for [@count, @search] do |f| %>
+            <div class="d-flex flex-wrap justify-content-center align-items-end">
+              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+                <%= f.label :causal_cont, 'Causale', class: 'form-label' %>
+                <%= f.text_field :causal_cont, placeholder: 'Filtra per causale', class: 'form-control' %>
+              </div>
 
-        <%= link_to @count.movements_default_path, class: "btn btn-primary mx-2" do %>
-          <i class="fas fa-filter" aria-hidden="true"></i> Reset
+              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+                <%= f.label :movement_type_eq, 'Tipo di movimento', class: "form-label" %>
+                <%= f.select :movement_type_eq,
+                             options_for_select(@movement_types, @search.movement_type_eq),
+                             { include_blank: 'Qualunque tipo' },
+                             class: 'form-control'
+                %>
+              </div>
+
+              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+                <%= f.label :expense_item_id_eq, 'Tipo di spesa', class: "form-label" %>
+                <%= f.select :expense_item_id_eq,
+                             options_for_select(@expense_items, @search.expense_item_id_eq),
+                             { include_blank: 'Qualunque voce di spesa' },
+                             class: 'form-control'
+                %>
+              </div>
+
+              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+                <%= f.label :emitted_at_gteq, 'A partire dal', class: 'form-label' %>
+                <%= f.date_field :emitted_at_gteq, attribute: 'date', class: 'form-control' %>
+              </div>
+
+
+              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+                <%= f.label :emitted_at_lteq, 'Entro il', class: 'form-label' %>
+                <%= f.date_field :emitted_at_lteq, attribute: 'date', class: 'form-control' %>
+              </div>
+
+              <div class="pb-3 d-flex">
+                <button type="submit" class="btn btn-success mx-2">
+                  <i class="fas fa-search"></i> Cerca
+                </button>
+
+                <%= link_to @count.movements_default_path, class: "btn btn-primary mx-2" do %>
+                  <i class="fas fa-filter" aria-hidden="true"></i> Reset
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="d-flex justify-content-center flex-wrap">
+            <%= link_to count_movements_path(count_id: @count.id, q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-warning mb-3 mx-2 text-white" do %>
+              <i class="fas fa-download" aria-hidden="true"></i> Esporta movimenti
+            <% end %>
+
+            <%= link_to @count.stats_default_path, class: "btn btn-info mb-3 mx-2 text-white" do %>
+              <i class="fas fa-line-chart" aria-hidden="true"></i> Grafici
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="movements" class="container-fluid rounded shadow border border-secondary bg-light-gray px-0 pb-3 mb-5">
+    <div class="d-flex flex-wrap justify-content-center justify-content-sm-between align-items-end">
+      <button type="button" class="btn btn-danger mt-3 mb-5 mx-2" data-bs-toggle="modal" data-bs-target="#outMovementCreationModal">
+        Aggiungi uscita
+      </button>
+
+      <button type="button" class="btn btn-success mt-3 mb-5 mx-2" data-bs-toggle="modal" data-bs-target="#inMovementCreationModal">
+        Aggiungi entrata
+      </button>
+    </div>
+
+    <!-- TESTATA DELLA TABELLA -->
+    <div class="row w-100 m-auto pb-4">
+      <div class="col-12 d-flex justify-content-between align-items-end text-center">
+        <% movements_list_links = @count.fast_movements_list_links(@year, @month) if @time_range_report  %>
+        <% if movements_list_links.present? %>
+          <div class="mx-2">
+            <%= link_to movements_list_links[0], class: "text-dark text-decoration-none" do %>
+              <i class="fa-solid fa-chevron-left"></i>
+            <% end %>
+          </div>
+        <% end %>
+
+        <h4 class="my-0">
+          <%= @table_titles[:main_title] %>
+        </h4>
+
+        <% if movements_list_links.present? %>
+          <div class="mx-2">
+            <%= link_to movements_list_links[1], class: "text-dark text-decoration-none" do %>
+              <i class="fa-solid fa-chevron-right"></i>
+            <% end %>
+          </div>
         <% end %>
       </div>
     </div>
-  <% end %>
 
-  <div class="d-flex justify-content-center">
-    <%= link_to count_movements_path(q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-warning mb-3 mx-2 text-white" do %>
-      <i class="fas fa-download" aria-hidden="true"></i> Esporta movimenti
-    <% end %>
-
-    <%= link_to @count.stats_default_path, class: "btn btn-info mb-3 mx-2 text-white" do %>
-      <i class="fas fa-line-chart" aria-hidden="true"></i> Grafici
-    <% end %>
-  </div>
-</div>
-
-
-<div id="movements" class="px-0 mx-lg-4">
-  <div class="d-flex flex-wrap justify-content-center justify-content-sm-between align-items-end">
-    <button type="button" class="btn btn-danger mt-2 mb-5 mx-2" data-bs-toggle="modal" data-bs-target="#outMovementCreationModal">
-      Aggiungi uscita
-    </button>
-
-    <button type="button" class="btn btn-success mt-2 mb-5 mx-2" data-bs-toggle="modal" data-bs-target="#inMovementCreationModal">
-      Aggiungi entrata
-    </button>
-  </div>
-
-  <!-- TESTATA DELLA TABELA -->
-  <div class="row">
-    <div class="col-12 d-flex justify-content-between text-center border border-dark">
-      <% movements_list_links = @count.fast_movements_list_links(@year, @month) if @time_range_report  %>
-      <% if movements_list_links.present? %>
-        <div class="mx-2">
-          <%= link_to movements_list_links[0], class: "text-dark text-decoration-none" do %>
-            <i class="fa-solid fa-chevron-left"></i>
-          <% end %>
-        </div>
-      <% end %>
-
-      <h4 class="my-0">
-        <%= @table_titles[:main_title] %>
-      </h4>
-
-      <% if movements_list_links.present? %>
-        <div class="mx-2">
-          <%= link_to movements_list_links[1], class: "text-dark text-decoration-none" do %>
-            <i class="fa-solid fa-chevron-right"></i>
-          <% end %>
-        </div>
-      <% end %>
+    <div class="row px-3 py-4 pb-sm-3 pt-sm-0">
+      <span><b><%= @movements_count %></b> moviment<%= @movements_count == 1 ? 'o' : 'i' %></span>
     </div>
-  </div>
 
-  <div class="row d-none d-lg-flex">
-    <div class="col-6 d-flex justify-content-center align-items-center border border-dark">
-      <h4 class="my-0">Uscite</h4>
-    </div>
-    <div class="col-6 d-flex justify-content-center align-items-center border border-dark">
-      <h4 class="my-0">Entrate</h4>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12 col-lg-6">
-      <div class="row">
-        <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark"><b>Data</b></div>
-        <div class="col-6 col-sm-8 d-flex justify-content-center border border-dark"><b>Causale</b></div>
-        <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark"><b>Importo</b></div>
+    <div class="row w-100 m-auto d-none d-lg-flex">
+      <div class="col-6 d-flex justify-content-center align-items-center border border-dark">
+        <h4 class="my-0">Uscite</h4>
+      </div>
+      <div class="col-6 d-flex justify-content-center align-items-center border border-dark">
+        <h4 class="my-0">Entrate</h4>
       </div>
     </div>
-    <div class="col-6 d-none d-lg-block">
-      <div class="row">
-        <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark"><b>Data</b></div>
-        <div class="col-6 col-sm-8 d-flex justify-content-center border border-dark"><b>Causale</b></div>
-        <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark"><b>Importo</b></div>
-      </div>
-    </div>
-  </div>
 
-
-  <!-- ELENCO DI TUTTI I MOVIMENTI -->
-  <% @movements.each do |movement| %>
-    <div class="row">
-      <% if movement.movement_type == 'out' %>
-        <%= render movement, expense_items: expense_items, movement_types: movement_types %>
-        <div class="col-6 d-none d-lg-flex"></div>
-      <% else %>
-        <div class="col-6 d-none d-lg-flex"></div>
-        <%= render movement, expense_items: expense_items, movement_types: movement_types %>
-      <% end %>
-    </div>
-  <% end %>
-
-  <div class="row">
-    <div class="col-12 col-lg-6">&nbsp;</div>
-    <div class="col-6 d-none d-lg-flex">&nbsp;</div>
-  </div>
-
-
-  <!-- SEZIONE DEDICATA AI TOTALI -->
-  <div class="row d-none d-lg-flex">
-    <div class="col-6">
-      <div class="row">
-        <div class="col-9 col-sm-10 d-flex justify-content-end border border-dark">
-          <b>TOTALE:</b>
-        </div>
-        <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark bg-danger">
-          <%= to_visible_amount(@total_out_movements_amount) %>€
-        </div>
-      </div>
-    </div>
-    <div class="col-6">
-      <div class="row">
-        <div class="col-9 col-sm-10 d-flex justify-content-end border border-dark">
-          <b>TOTALE:</b>
-        </div>
-        <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark bg-success">
-          <%= to_visible_amount(@total_in_movements_amount) %>€
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-12 col-lg-6">&nbsp;</div>
-    <div class="col-6 d-none d-lg-flex">&nbsp;</div>
-  </div>
-  <div class="row">
-    <div class="col-6 d-none d-lg-flex">&nbsp;</div>
-    <div class="col-6 d-none d-lg-flex">&nbsp;</div>
-  </div>
-
-  <% if @time_range_report.present? %>
-    <div class="row">
-      <div class="col-6 d-none d-lg-flex"></div>
+    <div class="row w-100 m-auto">
       <div class="col-12 col-lg-6">
+        <div class="row">
+          <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark"><b>Data</b></div>
+          <div class="col-6 col-sm-8 d-flex justify-content-center border border-dark"><b>Causale</b></div>
+          <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark"><b>Importo</b></div>
+        </div>
+      </div>
+      <div class="col-6 d-none d-lg-block">
+        <div class="row">
+          <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark"><b>Data</b></div>
+          <div class="col-6 col-sm-8 d-flex justify-content-center border border-dark"><b>Causale</b></div>
+          <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark"><b>Importo</b></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ELENCO DI TUTTI I MOVIMENTI -->
+    <%= render 'index', movements: @movements, count: @count, expense_items: @expense_items, movement_types: @movement_types, page: @page + 1, per_page: @per_page %>
+
+    <div class="row w-100 m-auto">
+      <div class="col-12 col-lg-6">&nbsp;</div>
+      <div class="col-6 d-none d-lg-flex">&nbsp;</div>
+    </div>
+
+
+    <!-- SEZIONE DEDICATA AI TOTALI -->
+    <div class="row w-100 m-auto d-none d-lg-flex">
+      <div class="col-6">
         <div class="row">
           <div class="col-9 col-sm-10 d-flex justify-content-end border border-dark">
-            <b><%= @table_titles[:start_amount_title].upcase %></b>
+            <b>TOTALE:</b>
           </div>
-          <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark">
-            <%= to_visible_amount(@start_amount, false) %>€
+          <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark bg-danger">
+            <%= to_visible_amount(@total_out_movements_amount) %>€
           </div>
         </div>
       </div>
-    </div>
-  <% end %>
-
-  <div class="row">
-    <div class="col-6 d-none d-lg-flex"></div>
-    <div class="col-12 col-lg-6">
-      <div class="row">
-        <div class="col-9 col-sm-10 d-flex justify-content-end border border-dark">
-          <b><%= @table_titles[:total_amount_title].upcase %></b>
-        </div>
-        <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark bg-<%= @total_movements_amount <= 0 ? 'danger' : 'success' %>">
-          <%= to_visible_amount(@total_movements_amount, false) %>€
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <% if @time_range_report.present? %>
-    <div class="row">
-      <div class="col-6 d-none d-lg-flex"></div>
-      <div class="col-12 col-lg-6">
+      <div class="col-6">
         <div class="row">
           <div class="col-9 col-sm-10 d-flex justify-content-end border border-dark">
-            <b><%= @table_titles[:final_amount_title].upcase %></b>
+            <b>TOTALE:</b>
           </div>
-          <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark">
-            <%= to_visible_amount(@final_amount, false) %>€
+          <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark bg-success">
+            <%= to_visible_amount(@total_in_movements_amount) %>€
           </div>
         </div>
       </div>
     </div>
-  <% end %>
 
-  <div class="row">
-    <div class="col-12 col-lg-6">&nbsp;</div>
-    <div class="col-6 d-none d-lg-flex">&nbsp;</div>
-  </div>
-  <div class="row">
-    <div class="col-12 col-lg-6">&nbsp;</div>
-    <div class="col-6 d-none d-lg-flex">&nbsp;</div>
-  </div>
-
-
-  <!-- SEZIONE DEDICATA AI TOTALI DIFFERENZIATI PER VOCI DI SPESA -->
-  <% @movements_amounts_by_expense_items.each do | expense_item, amount | %>
+    <div class="row w-100 m-auto">
+      <div class="col-12 col-lg-6">&nbsp;</div>
+      <div class="col-6 d-none d-lg-flex">&nbsp;</div>
+    </div>
     <div class="row">
-      <div class="col-6 d-none d-lg-flex"></div>
-      <div class="col-12 col-lg-6">
-        <div class="row">
-          <div class="col-9 col-sm-10 d-flex justify-content-end border border-dark" style="background-color: <%= expense_item.color %>">
-            <b>AMMONTARE COMPLESSIVO <%= expense_item.description.upcase %>:</b>
-          </div>
-          <div class="col-3 col-sm-2 d-flex justify-content-center border border-dark">
-            <%= to_visible_amount(amount) %>€
-          </div>
+      <div class="col-6 d-none d-lg-flex">&nbsp;</div>
+      <div class="col-6 d-none d-lg-flex">&nbsp;</div>
+    </div>
+
+    <% if @time_range_report.present? %>
+      <div class="row w-100 m-auto">
+        <div class="col-9 col-sm-10 col-lg-11 d-flex justify-content-end text-end border border-dark">
+          <b><%= @table_titles[:start_amount_title].upcase %></b>
+        </div>
+        <div class="col-3 col-sm-2 col-lg-1 d-flex justify-content-center align-items-end border border-dark">
+          <%= to_visible_amount(@start_amount, false) %>€
         </div>
       </div>
+    <% end %>
+
+    <div class="row w-100 m-auto">
+      <div class="col-9 col-sm-10 col-lg-11 d-flex justify-content-end text-end border border-dark">
+        <b><%= @table_titles[:total_amount_title].upcase %></b>
+      </div>
+      <div class="col-3 col-sm-2 col-lg-1 d-flex justify-content-center align-items-end border border-dark bg-<%= @total_movements_amount <= 0 ? 'danger' : 'success' %>">
+        <%= to_visible_amount(@total_movements_amount, false) %>€
+      </div>
     </div>
-  <% end %>
+
+    <% if @time_range_report.present? %>
+      <div class="row w-100 m-auto">
+        <div class="col-9 col-sm-10 col-lg-11 d-flex justify-content-end text-end border border-dark">
+          <b><%= @table_titles[:final_amount_title].upcase %></b>
+        </div>
+        <div class="col-3 col-sm-2 col-lg-1 d-flex justify-content-center align-items-end border border-dark">
+          <%= to_visible_amount(@final_amount, false) %>€
+        </div>
+      </div>
+    <% end %>
+
+    <div class="row w-100 m-auto">
+      <div class="col-12 col-lg-6">&nbsp;</div>
+      <div class="col-6 d-none d-lg-flex">&nbsp;</div>
+    </div>
+    <div class="row w-100 m-auto">
+      <div class="col-12 col-lg-6">&nbsp;</div>
+      <div class="col-6 d-none d-lg-flex">&nbsp;</div>
+    </div>
+
+
+    <!-- SEZIONE DEDICATA AI TOTALI DIFFERENZIATI PER VOCI DI SPESA -->
+    <% @movements_amounts_by_expense_items.each do | expense_item, amount | %>
+      <div class="row w-100 m-auto" style="background-color: <%= expense_item.color %>">
+        <div class="col-9 col-sm-10 col-lg-11 d-flex justify-content-end text-end border border-dark">
+          <b>AMMONTARE COMPLESSIVO <%= expense_item.description.upcase %>:</b>
+        </div>
+        <div class="col-3 col-sm-2 col-lg-1 d-flex justify-content-center align-items-end border border-dark">
+          <%= to_visible_amount(amount) %>€
+        </div>
+      </div>
+    <% end %>
+
+    <div class="row w-100 m-auto">
+      <div class="col-12 col-lg-6">&nbsp;</div>
+      <div class="col-6 d-none d-lg-flex">&nbsp;</div>
+    </div>
+    <div class="row w-100 m-auto">
+      <div class="col-12 col-lg-6">&nbsp;</div>
+      <div class="col-6 d-none d-lg-flex">&nbsp;</div>
+    </div>
+  </div>
 </div>
 
 
@@ -258,8 +251,8 @@
            modal_id: "outMovementCreationModal",
            title: "Aggiungi Uscita",
            movement: @new_out_movement,
-           expense_items: expense_items,
-           movement_types: movement_types,
+           expense_items: @expense_items,
+           movement_types: @movement_types,
            deletion_button_txt: nil,
            deletion_path: nil
 %>
@@ -270,8 +263,8 @@
            modal_id: "inMovementCreationModal",
            title: "Aggiungi Entrata",
            movement: @new_in_movement,
-           expense_items: expense_items,
-           movement_types: movement_types,
+           expense_items: @expense_items,
+           movement_types: @movement_types,
            deletion_button_txt: nil,
            deletion_path: nil
 %>

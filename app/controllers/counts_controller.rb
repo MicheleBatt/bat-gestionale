@@ -7,8 +7,14 @@ class CountsController < ApplicationController
   def index
     @search = Count.all.ransack(params[:q])
     @counts = @search.result
+    @counts_count = @counts.length
     @counts_global_amount = @counts.sum(:current_amount).to_f.round(2)
-    @counts = @counts.order(ordering_number: :asc).includes(:movements)
+    @counts =
+      @counts
+      .order(ordering_number: :asc)
+      .includes(:movements)
+      .page(params[:page] || DEFAULT_PAGE)
+      .per(params[:per_page] || DEFAULT_PER_PAGE_PARAM)
   end
 
   # GET /counts/1/edit

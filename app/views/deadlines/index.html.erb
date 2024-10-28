@@ -1,68 +1,83 @@
-
-
-<div class="d-flex flex-wrap justify-content-around align-items-end px-2 px-lg-4 my-5">
-  <%= search_form_for @search do |f| %>
-    <div class="d-flex flex-wrap justify-content-center align-items-end">
-      <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-        <%= f.label :description_cont, 'Descrizione', class: 'font-weight-bold' %>
-        <%= f.text_field :description_cont, placeholder: 'Filtra per descrizione', class: 'form-control' %>
-      </div>
-
-      <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-        <%= f.label :year_eq, 'Mese', class: 'font-weight-bold' %>
-        <%= f.select :year_eq,
-                     options_for_select(((Deadline.minimum('year') || Time.now.year)..(Deadline.maximum('year') || Time.now.year)).map{ | year | [year, year] }, @search.year_eq),
-                     { include_blank: "Qualsiasi anno" },
-                     class: 'form-control'
-        %>
-      </div>
-
-      <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-        <%= f.label :month_eq, 'Mese', class: 'font-weight-bold' %>
-        <%= f.select :month_eq,
-                     options_for_select(italian_months_for_select, @search.month_eq),
-                     { include_blank: "Qualsiasi mese" },
-                     class: 'form-control'
-        %>
-      </div>
-
-      <div class="pb-3 d-flex">
-        <button type="submit" class="btn btn-success mx-2">
-          <i class="fas fa-search"></i> Cerca
+<div class="container-fluid pt-2">
+  <div class="accordion rounded shadow border border-secondary bg-light-gray mb-4" id="filtersAccordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button class="accordion-button bg-light-gray" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          <b>Filtri</b>
         </button>
+      </h2>
+      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
+        <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
+          <%= search_form_for @search do |f| %>
+            <div class="d-flex flex-wrap justify-content-center align-items-end">
+              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+                <%= f.label :description_cont, 'Descrizione', class: 'form-label' %>
+                <%= f.text_field :description_cont, placeholder: 'Filtra per descrizione', class: 'form-control' %>
+              </div>
 
-        <%= link_to deadlines_path, class: "btn btn-primary mx-2" do %>
-          <i class="fas fa-filter" aria-hidden="true"></i> Reset
-        <% end %>
+              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+                <%= f.label :year_eq, 'Mese', class: 'form-label' %>
+                <%= f.select :year_eq,
+                             options_for_select(((Deadline.minimum('year') || Time.now.year)..(Deadline.maximum('year') || Time.now.year)).map{ | year | [year, year] }, @search.year_eq),
+                             { include_blank: "Qualsiasi anno" },
+                             class: 'form-control'
+                %>
+              </div>
+
+              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+                <%= f.label :month_eq, 'Mese', class: 'form-label' %>
+                <%= f.select :month_eq,
+                             options_for_select(italian_months_for_select, @search.month_eq),
+                             { include_blank: "Qualsiasi mese" },
+                             class: 'form-control'
+                %>
+              </div>
+
+              <div class="pb-3 d-flex">
+                <button type="submit" class="btn btn-success mx-2">
+                  <i class="fas fa-search"></i> Cerca
+                </button>
+
+                <%= link_to deadlines_path, class: "btn btn-primary mx-2" do %>
+                  <i class="fas fa-filter" aria-hidden="true"></i> Reset
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="d-flex justify-content-center flex-wrap">
+            <%= link_to deadlines_path(q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-warning mb-3 mx-2 text-white" do %>
+              <i class="fas fa-download" aria-hidden="true"></i> Esporta scadenziario
+            <% end %>
+
+            <button type="button" class="btn btn-success mb-3 mx-2" data-bs-toggle="modal" data-bs-target="#deadlineCreationModal">
+              Nuova scadenza
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-  <% end %>
+  </div>
 
-  <div class="d-flex justify-content-center">
-    <%= link_to deadlines_path(q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-warning mb-3 mx-2 text-white" do %>
-      <i class="fas fa-download" aria-hidden="true"></i> Export xls
-    <% end %>
 
-    <button type="button" class="btn btn-success mb-3 mx-2" data-bs-toggle="modal" data-bs-target="#deadlineCreationModal">
-      Nuova scadenza
-    </button>
+  <div class="d-flex justify-content-center mb-5">
+    <div id="deadlines" class="d-block mx-xl-5">
+      <div class="mt-4">
+        <span><b><%= @deadlines_count %></b> scadenz<%= @deadlines_count == 1 ? 'a' : 'e' %></span>
+      </div>
+
+      <% @deadlines_by_year.keys.each do | year | %>
+        <div class="rounded shadow border border-secondary bg-white my-3 p-3">
+          <h4 class="text-secondary pl-2"><%= year %></h4>
+          <% @deadlines_by_year[year].each do | deadline | %>
+            <%= render deadline %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   </div>
 </div>
 
-
-
-
-
-<div id="deadlines">
-  <% @deadlines_by_year.keys.each do | year | %>
-    <div class="mx-2 mx-md-5 my-5">
-      <h4 class="text-secondary"><%= year %></h4>
-      <% @deadlines_by_year[year].each do | deadline | %>
-        <%= render deadline %>
-      <% end %>
-    </div>
-  <% end %>
-</div>
 
 
 

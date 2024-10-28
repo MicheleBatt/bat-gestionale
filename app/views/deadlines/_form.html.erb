@@ -2,12 +2,12 @@
   <%= form.hidden_field :modal_id, value: modal_id %>
 
   <div class="m-4">
-    <%= form.label :description, 'Descrizione', class: "font-weight-bold" %>
+    <%= form.label :description, 'Descrizione', class: "form-label" %>
     <%= form.text_field :description, class: "form-control" %>
   </div>
 
   <div class="m-4">
-    <%= form.label :expired_at, 'Data', class: "font-weight-bold" %>
+    <%= form.label :expired_at, 'Data', class: "form-label" %>
     <%= form.date_field :expired_at, attribute: 'date', class: "form-control" %>
   </div>
 

@@ -5,7 +5,7 @@
 
   <% if movement.movement_type == 'out' %>
     <div class="my-4 mx-2 mx-sm-4">
-      <%= form.label :expense_item_id, 'Voce di spesa', class: "font-weight-bold" %>
+      <%= form.label :expense_item_id, 'Voce di spesa', class: "form-label" %>
       <%= form.select :expense_item_id,
                       options_for_select(expense_items, movement.expense_item_id),
                       { include_blank: 'Seleziona una voce di spesa' },
@@ -15,17 +15,17 @@
   <% end %>
 
   <div class="my-4 mx-2 mx-sm-4">
-    <%= form.label :emitted_at, 'Data', class: "font-weight-bold" %>
+    <%= form.label :emitted_at, 'Data', class: "form-label" %>
     <%= form.date_field :emitted_at, attribute: 'date', class: "form-control" %>
   </div>
 
   <div class="my-4 mx-2 mx-sm-4">
-    <%= form.label :causal, 'Causale', class: "font-weight-bold" %>
+    <%= form.label :causal, 'Causale', class: "form-label" %>
     <%= form.text_field :causal, class: "form-control" %>
   </div>
 
   <div class="my-4 mx-2 mx-sm-4">
-    <%= form.label :amount, 'Importo', class: "font-weight-bold" %>
+    <%= form.label :amount, 'Importo', class: "form-label" %>
     <%= form.number_field :amount, step: :any, class: "form-control" %>
   </div>
 
