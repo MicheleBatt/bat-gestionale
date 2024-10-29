@@ -43,6 +43,9 @@ class ExpenseItemsController < ApplicationController
     
     respond_to do |format|
       if @expense_item.update(expense_item_params)
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("expense_item_#{@expense_item.id}", partial: "expense_items/expense_item", locals: { expense_item: @expense_item })
+        end
         format.html { redirect_to expense_items_path, notice: "Voce di spesa aggiornata correttamente" }
         format.json { render :index, status: :ok, location: @expense_item }
       else
@@ -60,6 +63,9 @@ class ExpenseItemsController < ApplicationController
     @expense_item.destroy!
 
     respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace("expense_item_#{@expense_item.id}", partial: "layouts/modal_closing")
+      end
       format.html { redirect_to expense_items_path, status: :see_other, notice: "Voce di spesa rimossa dalla lista" }
       format.json { head :no_content }
     end

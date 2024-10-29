@@ -1,6 +1,4 @@
-<% expense_item = movement.expense_item %>
-
-<div class="col-12 col-lg-6" id="<%= dom_id movement %>" style="background-color: <%= expense_item.present? ? expense_item.color : 'white' %>">
+<div class="col-12 col-lg-6" id="movement_<%= movement.id %>" style="background-color: <%= movement.expense_item&.color || 'white' %>">
   <div class="row">
     <div class="col-3 col-sm-2 d-flex justify-content-center align-items-center border border-dark">
       <%= parse_date(movement.emitted_at, '%d.%m.%y') %>
@@ -15,15 +13,18 @@
       <span class="d-flex d-lg-none m-0"><%= movement.movement_type == 'in' ? '+' : '-' %></span> <%= visible_amount %>€
     </div>
   </div>
+
+  <!-- Modale per la cancellazione / modifica di un movimento di cassa -->
+  <div id="movement_modal_<%= movement.id %>">
+    <%= render "modal",
+               modal_id: "movementEditingModal_#{movement.id}",
+               title: "Modifica Uscita",
+               movement: movement,
+               expense_items: expense_items,
+               movement_types: movement_types,
+               deletion_button_txt: 'Rimuovi dal conto',
+               deletion_path: count_movement_path(@count, movement)
+    %>
+  </div>
 </div>
 
-<!-- Modale per la cancellazione / modifica di un movimento di cassa -->
-<%= render "modal",
-           modal_id: "movementEditingModal_#{movement.id}",
-           title: "Modifica Uscita",
-           movement: movement,
-           expense_items: expense_items,
-           movement_types: movement_types,
-           deletion_button_txt: 'Rimuovi dal conto',
-           deletion_path: count_movement_path(@count, movement)
-%>

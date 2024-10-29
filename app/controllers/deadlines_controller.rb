@@ -45,6 +45,9 @@ class DeadlinesController < ApplicationController
 
     respond_to do |format|
       if @deadline.update(deadline_params)
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("deadline_#{@deadline.id}", partial: "deadlines/deadline", locals: { deadline: @deadline })
+        end
         format.html { redirect_to deadlines_path, notice: "Scadenza aggiornata correttamente" }
         format.json { render :show, status: :ok, location: @deadline }
       else
@@ -62,6 +65,9 @@ class DeadlinesController < ApplicationController
     @deadline.destroy!
 
     respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace("deadline_#{@deadline.id}", partial: "layouts/modal_closing")
+      end
       format.html { redirect_to deadlines_path, status: :see_other, notice: "Scadenza rimossa dallo scadenziario" }
       format.json { head :no_content }
     end

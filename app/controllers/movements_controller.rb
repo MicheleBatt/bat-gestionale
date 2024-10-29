@@ -3,6 +3,7 @@ class MovementsController < ApplicationController
   before_action :set_timerange, only: %i[ index ]
   before_action :check_timerange_report, only: %i[ index ]
   before_action :set_movement, only: %i[ update destroy ]
+  before_action :set_movement_types_and_expense_items, only: %i[ index update ]
 
   include ApplicationHelper
   include MovementsHelper
@@ -31,9 +32,6 @@ class MovementsController < ApplicationController
       @start_amount = @count.initial_amount_by_date(@splitted_emitted_at_gteq[0], @splitted_emitted_at_gteq[1], @splitted_emitted_at_gteq[2])
       @final_amount = @start_amount + @total_movements_amount
     end
-
-    @movement_types = movement_types_for_select
-    @expense_items = expense_items_for_select
 
     @page = params[:page] || 1
     @per_page = params[:per_page] || DEFAULT_PER_PAGE_PARAM
@@ -88,6 +86,9 @@ class MovementsController < ApplicationController
 
     respond_to do |format|
       if @movement.update(movement_params)
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("movement_#{@movement.id}", partial: "movements/movement", locals: { movement: @movement, movement_types: @movement_types, expense_items: @expense_items })
+        end
         format.html { redirect_to @count.movements_path_by_month(@movement.year, @movement.month), notice: "Movimento di cassa aggiornato correttamente" }
         format.json { render :show, status: :ok, location: @movement }
       else
@@ -107,6 +108,9 @@ class MovementsController < ApplicationController
     @movement.destroy!
 
     respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace("movement_#{@movement.id}", partial: "layouts/modal_closing")
+      end
       format.html { redirect_to @count.movements_path_by_month(year, month), status: :see_other, notice: "Movimento di cassa rimoso" }
       format.json { head :no_content }
     end
@@ -188,4 +192,9 @@ class MovementsController < ApplicationController
       end
       return true
     end
+
+  def set_movement_types_and_expense_items
+    @movement_types = movement_types_for_select
+    @expense_items = expense_items_for_select
+  end
 end

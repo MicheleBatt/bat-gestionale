@@ -38,12 +38,12 @@
   </div>
 
 
-  <div class="d-flex justify-content-center mb-5">
-    <div id="expense_items" class="d-block mx-md-5">
-      <div class="mt-4">
-        <span><b><%= @expense_items_count %></b> voc<%= @expense_items_count == 1 ? 'e' : 'i' %> di spesa</span>
-      </div>
+  <div class="d-block mb-5 mx-md-5">
+    <div class="border-bottom border-dark mt-5">
+      <span><b><%= @expense_items_count %></b> voc<%= @expense_items_count == 1 ? 'e' : 'i' %> di spesa</span>
+    </div>
 
+    <div id="expense_items" class="d-flex flex-wrap justify-content-center">
       <% @expense_items.each do |expense_item| %>
         <%= render expense_item %>
       <% end %>

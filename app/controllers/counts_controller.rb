@@ -48,6 +48,9 @@ class CountsController < ApplicationController
 
     respond_to do |format|
       if @count.update(count_params)
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("count_#{@count.id}", partial: "counts/count", locals: { count: @count })
+        end
         format.html { redirect_to counts_path, notice: "Conto corrente aggiornato correttamente" }
         format.json { render :show, status: :ok, location: @count }
       else
@@ -65,6 +68,9 @@ class CountsController < ApplicationController
     @count.destroy!
 
     respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace("count_#{@count.id}", partial: "layouts/modal_closing")
+      end
       format.html { redirect_to counts_path, status: :see_other, notice: "Conto rimosso dalla lista dei conti corrente" }
       format.json { head :no_content }
     end
