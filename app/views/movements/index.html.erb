@@ -243,6 +243,20 @@
       <div class="col-6 d-none d-lg-flex">&nbsp;</div>
     </div>
   </div>
+
+
+  <% chart_title = @table_titles[:expense_items_amounts_chart] %>
+  <div class="container-fluid rounded shadow border border-secondary bg-light-gray px-0 pb-3 mb-5">
+    <%= column_chart @movements_amounts_by_expense_items.to_a.map { | expense_item, amount | [expense_item.description, (amount * -1).to_f.round(2)] }.to_h,
+                     title: "#{chart_title} - #{to_visible_amount(@total_out_movements_amount)}€",
+                     max: (@movements_amounts_by_expense_items.values.min * -1.1).to_f.round(2),
+                     colors: @movements_amounts_by_expense_items.keys.map{ | expense_item | expense_item.color },
+                     download: {filename: "#{chart_title}", background: "#ffffff"},
+                     loading: "Caricamento...",
+                     empty: "Spiacenti, non ci sono dati disponibili",
+                     suffix: "€"
+    %>
+  </div>
 </div>
 
 

@@ -135,7 +135,8 @@ class Count < ApplicationRecord
           start_amount_title: "Fondo cassa a inizio anno:",
           total_amount_title: "#{total_amount_title} di fine anno:",
           final_amount_title: "Fondo cassa a fine anno:",
-          xlsx_file_name: "#{year}.xlsx"
+          xlsx_file_name: "#{year}.xlsx",
+          expense_items_amounts_chart: "Ammontare spese nel #{year}"
         }
       else
         {
@@ -143,7 +144,8 @@ class Count < ApplicationRecord
           start_amount_title: "Fondo cassa a inizio mese:",
           total_amount_title: "#{total_amount_title} di fine mese:",
           final_amount_title: "Fondo cassa a fine mese:",
-          xlsx_file_name: "#{month} - #{italian_month(month)}.xlsx"
+          xlsx_file_name: "#{month} - #{italian_month(month)}.xlsx",
+          expense_items_amounts_chart: "Ammontare spese #{italian_month(month)} #{year}"
         }
       end
     else
@@ -161,7 +163,8 @@ class Count < ApplicationRecord
         start_amount_title: "Fondo cassa#{from_italian_date ? ' al ' + from_italian_date : ''}:",
         total_amount_title: "#{total_amount_title}:",
         final_amount_title: "Fondo cassa#{to_italian_date ? ' al ' + to_italian_date : ''}:",
-        xlsx_file_name: "Rendiconto movimenti.xlsx"
+        xlsx_file_name: "Rendiconto movimenti.xlsx",
+        expense_items_amounts_chart: "Ammontare spese"
       }
     end
   end
