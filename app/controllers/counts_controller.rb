@@ -1,11 +1,12 @@
 class CountsController < ApplicationController
+  authorize_resource
   before_action :set_count, only: %i[ update destroy stats ]
 
   include ApplicationHelper
 
   # GET /counts or /counts.json
   def index
-    @search = Count.all.ransack(params[:q])
+    @search = @organization.counts.ransack(params[:q])
     @counts = @search.result
     @counts_count = @counts.length
     @counts_global_amount = @counts.sum(:current_amount).to_f.round(2)
@@ -29,13 +30,13 @@ class CountsController < ApplicationController
 
     respond_to do |format|
       if @count.save
-        format.html { redirect_to counts_path, notice: "Conto aggiunto correttamente alla lista dei conti corrente" }
+        format.html { redirect_to organization_counts_path(@organization), notice: "Conto aggiunto correttamente alla lista dei conti corrente" }
         format.json { render :show, status: :created, location: @count }
       else
         format.turbo_stream do
           render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @count })
         end
-        format.html { redirect_to counts_path, status: :unprocessable_entity }
+        format.html { redirect_to organization_counts_path(@organization), status: :unprocessable_entity }
         format.json { render json: @count.errors, status: :unprocessable_entity }
       end
     end
@@ -51,13 +52,13 @@ class CountsController < ApplicationController
         format.turbo_stream do
           render turbo_stream: turbo_stream.replace("count_#{@count.id}", partial: "counts/count", locals: { count: @count })
         end
-        format.html { redirect_to counts_path, notice: "Conto corrente aggiornato correttamente" }
+        format.html { redirect_to organization_counts_path(@organization), notice: "Conto corrente aggiornato correttamente" }
         format.json { render :show, status: :ok, location: @count }
       else
         format.turbo_stream do
           render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @count })
         end
-        format.html { redirect_to counts_path, status: :unprocessable_entity }
+        format.html { redirect_to organization_counts_path(@organization), status: :unprocessable_entity }
         format.json { render json: @count.errors, status: :unprocessable_entity }
       end
     end
@@ -71,7 +72,7 @@ class CountsController < ApplicationController
       format.turbo_stream do
         render turbo_stream: turbo_stream.replace("count_#{@count.id}", partial: "layouts/modal_closing")
       end
-      format.html { redirect_to counts_path, status: :see_other, notice: "Conto rimosso dalla lista dei conti corrente" }
+      format.html { redirect_to organization_counts_path(@organization), status: :see_other, notice: "Conto rimosso dalla lista dei conti corrente" }
       format.json { head :no_content }
     end
   end
@@ -141,11 +142,11 @@ class CountsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_count
-      @count = Count.find(params[:id])
+      @count = @organization.counts.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def count_params
-      params.require(:count).permit(:name, :description, :iban, :monitoring_scope, :initial_amount, :ordering_number)
+      params.require(:count).permit(:name, :description, :iban, :monitoring_scope, :initial_amount, :ordering_number, :organization_id)
     end
 end

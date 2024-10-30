@@ -33,11 +33,19 @@ body {
     margin-bottom: 0;
 }
 
+.accordion-button {
+    box-shadow: none !important;
+    color:black !important;
+}
+
 .accordion-button:not(.collapsed) {
     background-color: #f2f2f2;
 }
 
-.accordion-button {
-    box-shadow: none !important;
-    color:black !important;
+.entity-accordion-button:not(.collapsed) {
+    background-color: white !important;
+}
+
+.entity-accordion-button::after {
+    display: none;
 }

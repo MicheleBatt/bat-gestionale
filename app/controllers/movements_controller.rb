@@ -1,4 +1,5 @@
 class MovementsController < ApplicationController
+  authorize_resource
   before_action :set_count
   before_action :set_timerange, only: %i[ index ]
   before_action :check_timerange_report, only: %i[ index ]

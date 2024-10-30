@@ -8,7 +8,7 @@
       </h2>
       <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
         <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
-          <%= search_form_for @search do |f| %>
+          <%= search_form_for [@organization, @search] do |f| %>
             <div class="d-flex flex-wrap justify-content-center align-items-end">
               <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
                 <%= f.label :description_cont, 'Descrizione', class: 'form-label' %>
@@ -38,7 +38,7 @@
                   <i class="fas fa-search"></i> Cerca
                 </button>
 
-                <%= link_to deadlines_path, class: "btn btn-primary mx-2" do %>
+                <%= link_to organization_deadlines_path(@organization), class: "btn btn-primary mx-2" do %>
                   <i class="fas fa-filter" aria-hidden="true"></i> Reset
                 <% end %>
               </div>
@@ -46,7 +46,7 @@
           <% end %>
 
           <div class="d-flex justify-content-center flex-wrap">
-            <%= link_to deadlines_path(q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-warning mb-3 mx-2 text-white" do %>
+            <%= link_to organization_deadlines_path(@organization, q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-warning mb-3 mx-2 text-white" do %>
               <i class="fas fa-download" aria-hidden="true"></i> Esporta scadenziario
             <% end %>
 

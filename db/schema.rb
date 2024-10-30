@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_28_081525) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_30_113446) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -24,11 +24,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_28_081525) do
     t.float "current_amount", default: 0.0, null: false
     t.integer "ordering_number", default: 0, null: false
     t.string "monitoring_scope", default: "monthly", null: false
+    t.bigint "organization_id"
     t.index ["current_amount"], name: "index_counts_on_current_amount"
     t.index ["initial_amount"], name: "index_counts_on_initial_amount"
     t.index ["monitoring_scope"], name: "index_counts_on_monitoring_scope"
-    t.index ["name"], name: "index_counts_on_name", unique: true
+    t.index ["name", "organization_id"], name: "index_counts_on_name_and_organization_id", unique: true
+    t.index ["name"], name: "index_counts_on_name"
     t.index ["ordering_number"], name: "index_counts_on_ordering_number"
+    t.index ["organization_id"], name: "index_counts_on_organization_id"
   end
 
   create_table "deadlines", force: :cascade do |t|
@@ -38,10 +41,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_28_081525) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "month", null: false
+    t.bigint "organization_id"
     t.index ["description"], name: "index_deadlines_on_description"
     t.index ["expired_at"], name: "index_deadlines_on_expired_at"
     t.index ["month"], name: "index_deadlines_on_month"
-    t.index ["year", "description"], name: "index_deadlines_on_year_and_description", unique: true
+    t.index ["organization_id"], name: "index_deadlines_on_organization_id"
     t.index ["year"], name: "index_deadlines_on_year"
   end
 
@@ -50,8 +54,24 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_28_081525) do
     t.string "color", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["color"], name: "index_expense_items_on_color", unique: true
-    t.index ["description"], name: "index_expense_items_on_description", unique: true
+    t.bigint "organization_id"
+    t.index ["color", "organization_id"], name: "index_expense_items_on_color_and_organization_id", unique: true
+    t.index ["color"], name: "index_expense_items_on_color"
+    t.index ["description", "organization_id"], name: "index_expense_items_on_description_and_organization_id", unique: true
+    t.index ["description"], name: "index_expense_items_on_description"
+    t.index ["organization_id"], name: "index_expense_items_on_organization_id"
+  end
+
+  create_table "memberships", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "organization_id", null: false
+    t.string "role", default: "guest", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_memberships_on_organization_id"
+    t.index ["role"], name: "index_memberships_on_role"
+    t.index ["user_id", "organization_id"], name: "index_memberships_on_user_id_and_organization_id", unique: true
+    t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
   create_table "movements", force: :cascade do |t|
@@ -78,6 +98,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_28_081525) do
     t.index ["year_month_day"], name: "index_movements_on_year_month_day"
   end
 
+  create_table "organizations", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_organizations_on_name", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -86,10 +113,21 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_28_081525) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "first_name", null: false
+    t.string "last_name", null: false
+    t.string "role"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["first_name"], name: "index_users_on_first_name"
+    t.index ["last_name"], name: "index_users_on_last_name"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["role"], name: "index_users_on_role"
   end
 
+  add_foreign_key "counts", "organizations"
+  add_foreign_key "deadlines", "organizations"
+  add_foreign_key "expense_items", "organizations"
+  add_foreign_key "memberships", "organizations"
+  add_foreign_key "memberships", "users"
   add_foreign_key "movements", "counts"
   add_foreign_key "movements", "expense_items"
 end

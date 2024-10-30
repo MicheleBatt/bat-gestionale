@@ -12,7 +12,7 @@
     </button>
 
     <% if expense_item.movements.blank? %>
-      <%= button_to expense_item, method: :delete, class: "btn btn-link text-danger text-decoration-none mx-3 p-0" do %>
+      <%= button_to organization_expense_item_path(@organization, expense_item), method: :delete, class: "btn btn-link text-danger text-decoration-none mx-3 p-0" do %>
         <i class="fas fa-fw fa-trash"></i>
       <% end %>
     <% end %>

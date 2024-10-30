@@ -1,10 +1,12 @@
 class ExpenseItem < ApplicationRecord
   # Relations
+  belongs_to :organization
   has_many :movements, dependent: :destroy
 
   # Validations
-  validates :description, presence: true, uniqueness: true
-  validates :color, presence: true, uniqueness: true
+  validates :description, :color, presence: true
+  validates :description, :uniqueness => { scope: :organization }
+  validates :color, :uniqueness => { scope: :organization }
 
   # Callbacks
   before_validation { self.color = "##{self.color.to_s.gsub(' ', '').upcase}" if self.color.present? && !self.color.to_s.include?('#') }

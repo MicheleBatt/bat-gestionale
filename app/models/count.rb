@@ -4,14 +4,15 @@ class Count < ApplicationRecord
   include Rails.application.routes.url_helpers
 
   # Relations
+  belongs_to :organization
   has_many :movements, dependent: :destroy
   has_one :first_movement, -> { order(emitted_at: :asc, id: :asc) }, class_name: 'Movement', dependent: :destroy
   has_one :last_movement, -> { order(emitted_at: :desc, id: :desc) }, class_name: 'Movement', dependent: :destroy
   has_many :expense_items, through: :movements
 
   # Validations
-  validates :name, presence: true, uniqueness: true
-  validates :initial_amount, presence: true
+  validates :name, :initial_amount, presence: true
+  validates :name, :uniqueness => { scope: :organization }
   validates :ordering_number, numericality: { greater_than_or_equal_to: 0 }
   enum monitoring_scope: MONITORING_SCOPES.index_by(&:itself), _prefix: :monitoring_scope
 
@@ -55,11 +56,11 @@ class Count < ApplicationRecord
 
   def movements_path_by_month(year = nil, month = nil, format = :html)
     if year.present? && month.present?
-      count_movements_path(count_id: self.id, q: { 'emitted_at_gteq': "#{year}-#{month}-01", 'emitted_at_lteq': "#{year}-#{month}-#{Date.new(year.to_i, month.to_i, 1).end_of_month.day}" }, format: format)
+      organization_count_movements_path(organization_id: self.organization_id, count_id: self.id, q: { 'emitted_at_gteq': "#{year}-#{month}-01", 'emitted_at_lteq': "#{year}-#{month}-#{Date.new(year.to_i, month.to_i, 1).end_of_month.day}" }, format: format)
     elsif year.present?
-      count_movements_path(count_id: self.id, q: { 'emitted_at_gteq': "#{year}-01-01", 'emitted_at_lteq': "#{year}-12-31" }, format: format)
+      organization_count_movements_path(organization_id: self.organization_id, count_id: self.id, q: { 'emitted_at_gteq': "#{year}-01-01", 'emitted_at_lteq': "#{year}-12-31" }, format: format)
     else
-      count_movements_path(count_id: self.id, format: format)
+      organization_count_movements_path(organization_id: self.organization_id, count_id: self.id, format: format)
     end
   end
 
@@ -76,9 +77,9 @@ class Count < ApplicationRecord
 
   def stats_path_by_year(year = nil)
     if year.present?
-      stats_count_path(id: self.id, q: { 'year_eq': year })
+      stats_organization_count_path(organization_id: self.organization_id, id: self.id, q: { 'year_eq': year })
     else
-      stats_count_path(id: self.id)
+      stats_organization_count_path(organization_id: self.organization_id, id: self.id)
     end
   end
 

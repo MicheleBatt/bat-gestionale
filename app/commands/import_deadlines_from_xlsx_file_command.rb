@@ -1,7 +1,7 @@
 include ApplicationHelper
 
 module ImportDeadlinesFromXlsxFileCommand
-  def self.call(files)
+  def self.call(organization, files)
     files.each do |f|
       puts "START PARSE #{f} file"
 
@@ -24,6 +24,7 @@ module ImportDeadlinesFromXlsxFileCommand
         }
 
         Deadline.create!(
+          organization_id: organization.id,
           description: description,
           expired_at: expired_at
         )

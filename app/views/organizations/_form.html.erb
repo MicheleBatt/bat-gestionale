@@ -1,0 +1,15 @@
+<%= form_with(model: organization) do |form| %>
+  <%= form.hidden_field :modal_id, value: modal_id %>
+
+  <div class="m-4">
+    <%= form.label :name, 'Nome', class: "form-label" %>
+    <%= form.text_field :name, class: "form-control" %>
+  </div>
+
+  <div class="my-4 mx-2 mx-sm-4 d-flex justify-content-center justify-content-sm-end">
+    <%= form.button :submit, class: 'btn btn-success' do %>
+      Salva
+    <% end %>
+  </div>
+<% end %>
+

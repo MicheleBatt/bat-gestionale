@@ -1,0 +1,18 @@
+<div class="modal fade" id="<%= modal_id %>" tabindex="-1" aria-labelledby="<%= modal_id %>Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title fs-5" id="<%= modal_id %>Label"><%= title %></h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="<%= modal_id %>_error_messages"></div>
+
+        <%= render "memberships/form", membership: membership, organization: organization, modal_id: modal_id %>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<%= render "layouts/modal_closing" %>

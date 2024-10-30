@@ -1,0 +1,48 @@
+
+<div class="accordion-item rounded shadow border border-secondary bg-white my-3" id="organization_<%= organization.id %>">
+  <h2 class="accordion-header" id="organization_<%= organization.id %>_heading">
+    <div class="d-flex justify-content-between align-items-center">
+      <button class="accordion-button entity-accordion-button collapsed rounded px-2 px-sm-3" type="button" data-bs-toggle="collapse" data-bs-target="#organization_<%= organization.id %>_collapse" aria-expanded="true" aria-controls="organization_<%= organization.id %>_collapse">
+        <div class="d-block">
+          <p class="my-0">
+            <%= organization.name %>
+          </p>
+          <p class="my-0">
+            <% memberships_counts = organization.memberships.count %>
+            <small class="text-secondary"><%= memberships_counts %> membr<%= memberships_counts == 1 ? 'o' : 'i' %></small>
+          </p>
+        </div>
+      </button>
+
+      <div class="d-flex justify-content-end align-items-center px-2 px-sm-3">
+        <button type="button" class="btn btn-link text-secondary text-decoration-none mx-3 p-0" data-bs-toggle="modal" data-bs-target="#organizationEditingModal_<%= organization.id %>">
+          <i class="fas fa-fw fa-edit"></i>
+        </button>
+
+        <%# if organization.movements.blank? %>
+        <%= button_to organization, method: :delete, class: "btn btn-link text-danger text-decoration-none p-0 mb-2" do %>
+          <i class="fas fa-fw fa-trash"></i>
+        <% end %>
+        <%# end %>
+      </div>
+    </div>
+  </h2>
+
+  <div id="organization_<%= organization.id %>_collapse" class="accordion-collapse collapse show" aria-labelledby="organization_<%= organization.id %>_heading">
+    <div class="accordion-body rounded-bottom bg-white border-top border-dark px-0">
+      <%= render 'memberships/index',
+                 memberships: organization.memberships,
+                 organization: organization
+      %>
+    </div>
+  </div>
+
+
+
+  <!-- Modale per la cancellazione / modifica di una organizzazione -->
+  <%= render "modal",
+             modal_id: "organizationEditingModal_#{organization.id}",
+             title: "Modifica organizzazione",
+             organization: organization
+  %>
+</div>

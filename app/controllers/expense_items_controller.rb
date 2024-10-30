@@ -1,11 +1,12 @@
 class ExpenseItemsController < ApplicationController
+  authorize_resource
   before_action :set_expense_item, only: %i[ update destroy ]
 
   include ApplicationHelper
 
   # GET /expense_items or /expense_items.json
   def index
-    @search = ExpenseItem.all.ransack(params[:q])
+    @search = @organization.expense_items.ransack(params[:q])
     @expense_items = @search.result
     @expense_items_count = @expense_items.length
     @expense_items =
@@ -24,13 +25,13 @@ class ExpenseItemsController < ApplicationController
 
     respond_to do |format|
       if @expense_item.save
-        format.html { redirect_to expense_items_path, notice: "Voce di spesa aggiunta correttamente alla lista" }
+        format.html { redirect_to organization_expense_items_path(@organization), notice: "Voce di spesa aggiunta correttamente alla lista" }
         format.json { render :index, status: :created, location: @expense_item }
       else
         format.turbo_stream do
           render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @expense_item })
         end
-        format.html { redirect_to expense_items_path, status: :unprocessable_entity }
+        format.html { redirect_to organization_expense_items_path(@organization), status: :unprocessable_entity }
         format.json { render json: @expense_item.errors, status: :unprocessable_entity }
       end
     end
@@ -46,13 +47,13 @@ class ExpenseItemsController < ApplicationController
         format.turbo_stream do
           render turbo_stream: turbo_stream.replace("expense_item_#{@expense_item.id}", partial: "expense_items/expense_item", locals: { expense_item: @expense_item })
         end
-        format.html { redirect_to expense_items_path, notice: "Voce di spesa aggiornata correttamente" }
+        format.html { redirect_to organization_expense_items_path(@organization), notice: "Voce di spesa aggiornata correttamente" }
         format.json { render :index, status: :ok, location: @expense_item }
       else
         format.turbo_stream do
           render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @expense_item })
         end
-        format.html { redirect_to expense_items_path, status: :unprocessable_entity }
+        format.html { redirect_to organization_expense_items_path(@organization), status: :unprocessable_entity }
         format.json { render json: @expense_item.errors, status: :unprocessable_entity }
       end
     end
@@ -66,7 +67,7 @@ class ExpenseItemsController < ApplicationController
       format.turbo_stream do
         render turbo_stream: turbo_stream.replace("expense_item_#{@expense_item.id}", partial: "layouts/modal_closing")
       end
-      format.html { redirect_to expense_items_path, status: :see_other, notice: "Voce di spesa rimossa dalla lista" }
+      format.html { redirect_to organization_expense_items_path(@organization), status: :see_other, notice: "Voce di spesa rimossa dalla lista" }
       format.json { head :no_content }
     end
   end
@@ -74,11 +75,11 @@ class ExpenseItemsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_expense_item
-      @expense_item = ExpenseItem.find(params[:id])
+      @expense_item = @organization.expense_items.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def expense_item_params
-      params.require(:expense_item).permit(:description, :color)
+      params.require(:expense_item).permit(:description, :color, :organization_id)
     end
 end

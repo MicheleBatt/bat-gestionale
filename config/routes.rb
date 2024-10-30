@@ -1,14 +1,23 @@
 Rails.application.routes.draw do
   devise_for :users
-  root to: 'counts#index'
+  root to: 'deadlines#index'
 
-  resources :deadlines, except: [:show, :new, :edit]
-  resources :expense_items, except: [:show, :new, :edit]
-  resources :counts, except: [:show, :new, :edit] do
-    member do
-      get :stats, to: 'counts#stats'
+  resources :organizations, except: [:show, :new, :edit] do
+    resources :memberships, except: [:show, :new, :edit]
+    resources :deadlines, except: [:show, :new, :edit]
+    resources :expense_items, except: [:show, :new, :edit]
+    resources :counts, except: [:show, :new, :edit] do
+      member do
+        get :stats, to: 'counts#stats'
+      end
+      resources :movements, except: [:show, :new, :edit]
     end
-    resources :movements, except: [:show, :new, :edit]
+  end
+
+  resources :users, except: [:create, :show, :new, :edit] do
+    collection do
+      post 'add'
+    end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

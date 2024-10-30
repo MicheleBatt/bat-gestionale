@@ -8,7 +8,7 @@
       </h2>
       <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
         <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
-          <%= search_form_for [@count, @search] do |f| %>
+          <%= search_form_for [@organization, @count, @search] do |f| %>
             <div class="d-flex flex-wrap justify-content-center align-items-end">
               <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
                 <%= f.label :causal_cont, 'Causale', class: 'form-label' %>
@@ -58,7 +58,7 @@
 
           <% if @all_movements.present? %>
             <div class="d-flex justify-content-center flex-wrap">
-              <%= link_to count_movements_path(count_id: @count.id, q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-warning mb-3 mx-2 text-white" do %>
+              <%= link_to organization_count_movements_path(organization_id: @organization, count_id: @count.id, q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-warning mb-3 mx-2 text-white" do %>
                 <i class="fas fa-download" aria-hidden="true"></i> Esporta movimenti
               <% end %>
 

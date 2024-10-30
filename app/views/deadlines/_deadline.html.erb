@@ -12,7 +12,7 @@
       <i class="fas fa-fw fa-edit"></i>
     </button>
 
-    <%= button_to deadline, method: :delete, class: "btn btn-link text-danger text-decoration-none p-0" do %>
+    <%= button_to organization_deadline_path(@organization, deadline), method: :delete, class: "btn btn-link text-danger text-decoration-none p-0" do %>
       <i class="fas fa-fw fa-trash"></i>
     <% end %>
   </div>

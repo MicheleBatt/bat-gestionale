@@ -1,0 +1,31 @@
+<div class="d-flex justify-content-between w-100 my-2" id="membership_<%= membership.id %>">
+  <div class="d-flex align-items-center mx-2 mx-sm-3">
+    <div>
+      <%= membership.username %>
+    </div>
+
+    <div class="text-secondary mx-2">
+      <small><%= italian_role(membership.role) %></small>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end align-items-center px-2 px-sm-3">
+    <button type="button" class="btn btn-link text-secondary text-decoration-none mx-3 p-0" data-bs-toggle="modal" data-bs-target="#membershipEditingModal_<%= membership.id %>">
+      <i class="fas fa-fw fa-edit"></i>
+    </button>
+
+    <%= button_to organization_membership_path(membership, organization_id: organization.id), method: :delete, class: "btn btn-link text-danger text-decoration-none p-0" do %>
+      <i class="fas fa-fw fa-trash"></i>
+    <% end %>
+  </div>
+
+
+
+  <!-- Modale per la cancellazione / modifica di una membership -->
+  <%= render "memberships/modal",
+             modal_id: "membershipEditingModal_#{membership.id}",
+             title: "Modifica ruolo",
+             membership: membership,
+             organization: organization
+  %>
+</div>

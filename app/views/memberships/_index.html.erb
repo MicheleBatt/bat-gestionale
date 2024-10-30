@@ -1,0 +1,30 @@
+<div id="memberships_<% organization.id %>" class="d-block">
+  <% if memberships.present? %>
+    <% memberships.each do | membership | %>
+      <%= render 'memberships/membership', membership: membership, organization: organization %>
+    <% end %>
+  <% else %>
+    <p class="text-secondary px-3">
+      Al momento non ci sono membri per questa organizzazione
+    </p>
+  <% end %>
+
+  <div class="d-flex justify-content-center justify-content-md-end mt-5">
+    <button type="button" class="btn btn-success mx-2" data-bs-toggle="modal" data-bs-target="#membershipCreationModal<%= organization.id %>">
+      Aggiungi membro
+    </button>
+  </div>
+</div>
+
+
+
+<!-- Modale per la creazione di un nuova nuova organization translation -->
+<%= render "memberships/modal",
+           modal_id: "membershipCreationModal#{organization.id}",
+           title: "Aggiungi un membro a #{organization.name}",
+           membership: Membership.new,
+           organization: organization
+%>
+
+
+

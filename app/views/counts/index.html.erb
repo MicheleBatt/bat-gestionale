@@ -8,7 +8,7 @@
       </h2>
       <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
         <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
-          <%= search_form_for @search do |f| %>
+          <%= search_form_for [@organization, @search] do |f| %>
             <div class="d-flex flex-wrap justify-content-center align-items-end">
               <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
                 <%= f.label :name_cont, 'Nome', class: 'form-label' %>
@@ -20,7 +20,7 @@
                   <i class="fas fa-search"></i> Cerca
                 </button>
 
-                <%= link_to counts_path, class: "btn btn-primary mx-2" do %>
+                <%= link_to organization_counts_path(@organization), class: "btn btn-primary mx-2" do %>
                   <i class="fas fa-filter" aria-hidden="true"></i> Reset
                 <% end %>
               </div>
@@ -46,7 +46,7 @@
         </div>
 
         <div>
-          <span>Giacenza complessiva: <b><%= to_visible_amount(@counts_global_amount) %>€</b></span>
+          <span>&nbsp;&nbsp;&nbsp;Giacenza complessiva: <b><%= to_visible_amount(@counts_global_amount) %>€</b></span>
         </div>
       </div>
 

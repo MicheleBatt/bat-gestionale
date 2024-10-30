@@ -11,7 +11,7 @@
       </h2>
       <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
         <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
-          <%= search_form_for @search, url: stats_count_path(@count.id) do |f| %>
+          <%= search_form_for @search, url: stats_organization_count_path(organization_id: @organization.id, id: @count.id) do |f| %>
             <div class="d-flex flex-wrap justify-content-center align-items-end px-x px-lg-4">
               <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
                 <%= f.label :year_eq, 'Anno', class: "form-label" %>
@@ -94,7 +94,7 @@
             <% filters = { 'movement_type_eq': 'out', 'expense_item_id_eq': expense_item.id } %>
             <% filters = { **filters, 'emitted_at_gteq': "#{@year}-01-01", 'emitted_at_lteq': "#{@year}-12-31" } if @year.present? %>
             <% filters = { **filters, 'emitted_at_gteq': "#{min_year}-01-01", 'emitted_at_lteq': "#{max_year}-12-31" } unless @year.present? %>
-            <%= link_to 'Vedi movimenti', count_movements_path(@count, q: filters) %>
+            <%= link_to 'Vedi movimenti', organization_count_movements_path(@organization, @count, q: filters) %>
           </div>
         </div>
       </div>

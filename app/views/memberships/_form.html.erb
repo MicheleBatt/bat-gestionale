@@ -1,0 +1,28 @@
+<%= form_with(model: [organization, membership]) do |form| %>
+  <%= form.hidden_field :modal_id, value: modal_id %>
+  <%= form.hidden_field :organization_id, value: organization.id %>
+
+  <% if membership.id.blank? %>
+    <div class="m-4">
+      <%= form.label :email, 'Email utente', class: "form-label" %>
+      <%= form.text_field :email, class: "form-control" %>
+    </div>
+  <% end %>
+
+  <div class="m-4">
+    <%= form.label :role, 'Ruolo', class: "form-label" %>
+    <%= form.select :role,
+                 options_for_select(all_membership_roles_for_select, membership.role),
+                 { include_blank: 'Seleziona un ruolo' },
+                 class: 'form-control'
+    %>
+  </div>
+
+  <div class="my-4 mx-2 mx-sm-4 d-flex justify-content-center justify-content-sm-end">
+    <%= form.button :submit, class: 'btn btn-success' do %>
+      Salva
+    <% end %>
+  </div>
+<% end %>
+
+

@@ -1,5 +1,6 @@
 class Deadline < ApplicationRecord
   # Validations
+  belongs_to :organization
   validates :description, :expired_at, :year, :month, presence: true
   validates :description, :uniqueness => { scope: :year }
 

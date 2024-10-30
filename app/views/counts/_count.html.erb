@@ -22,7 +22,7 @@
     </button>
 
     <% if count.movements.blank? %>
-      <%= button_to count, method: :delete, class: "btn btn-link text-danger text-decoration-none ml-3 p-0" do %>
+      <%= button_to organization_count_path(@organization, count), method: :delete, class: "btn btn-link text-danger text-decoration-none ml-3 p-0" do %>
         <i class="fas fa-fw fa-trash"></i>
       <% end %>
     <% end %>

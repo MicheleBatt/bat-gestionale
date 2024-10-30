@@ -1,23 +1,25 @@
-<% new_upcoming_deadlines = upcoming_deadlines_count %>
+<% new_upcoming_deadlines = upcoming_deadlines_count(@organization) %>
+<% organizations = current_user.organizations %>
+<% multiple_organizations = organizations.size > 1 %>
 
 <nav class="navbar-expand-lg sticky-top py-2 mb-0 bg-light shadow">
-  <div class="d-flex align-items-center justify-content-end justify-content-lg-start">
+  <div class="d-flex align-items-center justify-content-<%= multiple_organizations ? 'between' : 'start' %> justify-content-lg-start">
     <div class="collapse navbar-collapse" id="navbar">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item mx-5">
-          <%= link_to counts_path, class: "nav-link #{'text-primary' if current_page?(counts_path)}" do %>
+        <li class="nav-item mx-4 mx-xl-5">
+          <%= link_to organization_counts_path(@organization), class: "nav-link #{'text-primary' if current_page?(organization_counts_path(@organization))}" do %>
             <i class="fas fa-fw fa-wallet"></i> Conti corrente
           <% end %>
         </li>
 
-        <li class="nav-item mx-5">
-          <%= link_to expense_items_path, class: "nav-link #{'text-primary' if current_page?(expense_items_path)}" do %>
+        <li class="nav-item mx-4 mx-xl-5">
+          <%= link_to organization_expense_items_path(@organization), class: "nav-link #{'text-primary' if current_page?(organization_expense_items_path(@organization))}" do %>
             <i class="fas fa-fw fa-tag"></i> Voci di spesa
           <% end %>
         </li>
 
-        <li class="nav-item mx-5">
-          <%= link_to deadlines_path, class: "nav-link #{'text-primary' if current_page?(deadlines_path)}" do %>
+        <li class="nav-item mx-4 mx-xl-5">
+          <%= link_to organization_deadlines_path(@organization), class: "nav-link #{'text-primary' if current_page?(organization_deadlines_path(@organization))}" do %>
             <i class="fas fa-fw fa-hourglass"></i> Scadenziario
             <% if new_upcoming_deadlines > 0 %>
               <span class="badge badge-warning rounded-circle"
@@ -27,28 +29,44 @@
             <% end %>
           <% end %>
         </li>
+
+        <% if can? :index, Organization %>
+          <li class="nav-item mx-4 mx-xl-5">
+            <%= link_to organizations_path, class: "nav-link #{'text-primary' if current_page?(organizations_path)}" do %>
+              <i class="fas fa-fw fa-users"></i> Organizzazioni
+            <% end %>
+          </li>
+        <% end %>
+
+        <% if can? :index, User %>
+          <li class="nav-item mx-4 mx-xl-5">
+            <%= link_to users_path, class: "nav-link #{'text-primary' if current_page?(users_path)}" do %>
+              <i class="fas fa-fw fa-user"></i> Utenti
+            <% end %>
+          </li>
+        <% end %>
       </ul>
     </div>
 
-    <div class="btn-group mx-5 d-block d-lg-none">
+    <div class="btn-group mx-4 mx-xl-5 d-block d-lg-none">
       <button type="button" class="btn btn-link text-dark text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="fas fa-bars"></i>
       </button>
       <ul class="dropdown-menu dropdown-menu-end">
         <li>
-          <%= link_to counts_path, class: "dropdown-item #{'text-primary' if current_page?(counts_path)}" do %>
+          <%= link_to organization_counts_path(@organization), class: "dropdown-item #{'text-primary' if current_page?(organization_counts_path(@organization))}" do %>
             <i class="fas fa-fw fa-wallet"></i> Conti corrente
           <% end %>
         </li>
 
         <li>
-          <%= link_to expense_items_path, class: "dropdown-item #{'text-primary' if current_page?(expense_items_path)}" do %>
+          <%= link_to organization_expense_items_path(@organization), class: "dropdown-item #{'text-primary' if current_page?(organization_expense_items_path(@organization))}" do %>
             <i class="fas fa-fw fa-tag"></i> Voci di spesa
           <% end %>
         </li>
 
         <li>
-          <%= link_to deadlines_path, class: "dropdown-item #{'text-primary' if current_page?(deadlines_path)}" do %>
+          <%= link_to organization_deadlines_path(@organization), class: "dropdown-item #{'text-primary' if current_page?(organization_deadlines_path(@organization))}" do %>
             <i class="fas fa-fw fa-hourglass"></i> Scadenziario
             <% if new_upcoming_deadlines > 0 %>
               <span class="badge badge-warning rounded-circle"
@@ -58,7 +76,50 @@
             <% end %>
           <% end %>
         </li>
+
+        <% if can? :index, Organization %>
+          <li>
+            <%= link_to organizations_path, class: "dropdown-item #{'text-primary' if current_page?(organizations_path)}" do %>
+              <i class="fas fa-fw fa-users"></i> Organizzazioni
+            <% end %>
+          </li>
+        <% end %>
+
+        <% if can? :index, User %>
+          <li>
+            <%= link_to users_path, class: "dropdown-item #{'text-primary' if current_page?(users_path)}" do %>
+              <i class="fas fa-fw fa-user"></i> Utenti
+            <% end %>
+          </li>
+        <% end %>
       </ul>
     </div>
+
+    <% if multiple_organizations %>
+      <div class="btn-group mx-4 mx-xl-5">
+        <button type="button" class="btn btn-link text-dark text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="d-flex align-items-center m-0 p-0">
+            <h6 class="my-0 mx-1"><%= @organization.name %></h6>
+            <i class="fa-solid fa-xs fa-chevron-down"></i>
+          </div>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <% organizations.each do | organization | %>
+            <li>
+              <% link =
+                 current_page?(organization_counts_path(@organization)) ? organization_counts_path(organization) :
+                   (current_page?(organization_expense_items_path(@organization)) ? organization_expense_items_path(organization) :
+                     (current_page?(organization_deadlines_path(@organization)) ? organization_deadlines_path(organization) :
+                       (current_page?(organizations_path) ? organizations_path :
+                         (current_page?(users_path) ? users_path : root_path))))
+              %>
+              <%= link_to link, class: "dropdown-item" do %>
+                <%= organization.name %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
   </div>
 </nav>

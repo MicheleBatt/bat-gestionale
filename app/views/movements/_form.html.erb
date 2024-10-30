@@ -1,4 +1,4 @@
-<%= form_with(model: [@count, movement]) do |form| %>
+<%= form_with(model: [@organization, @count, movement]) do |form| %>
   <%= form.hidden_field :count_id, value: @count.id %>
   <%= form.hidden_field :movement_type, value: movement.movement_type %>
   <%= form.hidden_field :modal_id, value: modal_id %>

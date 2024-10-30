@@ -18,24 +18,30 @@ namespace :initDB do
       Count.delete_all
 
 
-      ExpenseItem.where(description: 'Spese per Bollette', color: 'FFC000').first_or_create!
-      ExpenseItem.where(description: 'Spese per Acquisti', color: 'FF99FF').first_or_create!
-      ExpenseItem.where(description: 'Spese per Pasti fuori', color: 'F4B183').first_or_create!
-      ExpenseItem.where(description: 'Spese per Cibo', color: '92D050').first_or_create!
-      ExpenseItem.where(description: 'Spese di Lavoro', color: 'B4C7E7').first_or_create!
-      ExpenseItem.where(description: 'Spese per Abbonamenti', color: 'BFBFBF').first_or_create!
-      ExpenseItem.where(description: 'Spese per Trasporti', color: '7030A0').first_or_create!
-      ExpenseItem.where(description: 'Spese per Vacanze / Gite / Svaghi', color: 'A9D18E').first_or_create!
-      ExpenseItem.where(description: 'Spese Sanitare', color: '00B0F0').first_or_create!
-      ExpenseItem.where(description: 'Spese per Bimbe', color: 'FFD966').first_or_create!
-      ExpenseItem.where(description: 'Spese per Lavori sulla casa', color: 'C55A11').first_or_create!
-      ExpenseItem.where(description: 'Spese Varie', color: 'FFFFFF').first_or_create!
-      ExpenseItem.where(description: 'Trasferimenti su altri conti', color: 'FF5E4C').first_or_create!
-      ExpenseItem.where(description: 'Spese amministrative del conto', color: 'FFFF00').first_or_create!
+      # Creo la prima organizzazione
+      first_organization = Organization.where(name: 'Famiglia Battistelli').first_or_create!
 
 
-      # Creo alcuni record del db
+      # Creo le prime voci di spesa della prima organizzazione
+      ExpenseItem.where(organization_id: first_organization.id, description: 'Spese per Bollette', color: 'FFC000').first_or_create!
+      ExpenseItem.where(organization_id: first_organization.id, description: 'Spese per Acquisti', color: 'FF99FF').first_or_create!
+      ExpenseItem.where(organization_id: first_organization.id, description: 'Spese per Pasti fuori', color: 'F4B183').first_or_create!
+      ExpenseItem.where(organization_id: first_organization.id, description: 'Spese per Cibo', color: '92D050').first_or_create!
+      ExpenseItem.where(organization_id: first_organization.id, description: 'Spese di Lavoro', color: 'B4C7E7').first_or_create!
+      ExpenseItem.where(organization_id: first_organization.id, description: 'Spese per Abbonamenti', color: 'BFBFBF').first_or_create!
+      ExpenseItem.where(organization_id: first_organization.id, description: 'Spese per Trasporti', color: '7030A0').first_or_create!
+      ExpenseItem.where(organization_id: first_organization.id, description: 'Spese per Vacanze / Gite / Svaghi', color: 'A9D18E').first_or_create!
+      ExpenseItem.where(organization_id: first_organization.id, description: 'Spese Sanitare', color: '00B0F0').first_or_create!
+      ExpenseItem.where(organization_id: first_organization.id, description: 'Spese per Bimbe', color: 'FFD966').first_or_create!
+      ExpenseItem.where(organization_id: first_organization.id, description: 'Spese per Lavori sulla casa', color: 'C55A11').first_or_create!
+      ExpenseItem.where(organization_id: first_organization.id, description: 'Spese Varie', color: 'FFFFFF').first_or_create!
+      ExpenseItem.where(organization_id: first_organization.id, description: 'Trasferimenti su altri conti', color: 'FF5E4C').first_or_create!
+      ExpenseItem.where(organization_id: first_organization.id, description: 'Spese amministrative del conto', color: 'FFFF00').first_or_create!
+
+
+      # Creo i primi conti corrente della prima organizzazione
       Count.where(
+        organization_id: first_organization.id,
         name: 'Conto cointestato BPER per le spese di famiglia',
         description: 'Conto di famiglia per le spese di famiglia',
         iban: 'IT05B0538712153000003149242',
@@ -44,6 +50,7 @@ namespace :initDB do
       ).first_or_create!
 
       Count.where(
+        organization_id: first_organization.id,
         name: 'Conto cointestato INTESA SAN PAOLO per i risparmi di famiglia',
         description: 'Conto per i risparmi di famiglia',
         iban: 'IT34A0306912117100000010949',
@@ -52,6 +59,7 @@ namespace :initDB do
       ).first_or_create!
 
       Count.where(
+        organization_id: first_organization.id,
         name: 'Conto cointestato INTESA SAN PAOLO per i lavori sulla casa',
         description: 'Conto di famiglia per i lavori sulla casa e per le spese grosse a medio termine',
         iban: 'IT03Q0306912117100000091132',
@@ -60,6 +68,7 @@ namespace :initDB do
       ).first_or_create!
 
       Count.where(
+        organization_id: first_organization.id,
         name: 'Conto personale BANCO POSTE di Michele',
         description: 'Conto personale di Mariana presso Poste Italiane',
         iban: 'IT11k0760110700001021777204',
@@ -68,6 +77,7 @@ namespace :initDB do
       ).first_or_create!
 
       Count.where(
+        organization_id: first_organization.id,
         name: 'Conto personale BPER di Mariana',
         description: 'Conto personale di Mariana presso BPER banca',
         iban: 'IT47M0538712153000003212522',
@@ -76,6 +86,7 @@ namespace :initDB do
       ).first_or_create!
 
       Count.where(
+        organization_id: first_organization.id,
         name: 'Libretto BPER Valentina',
         description: 'Libretto dei risparmi di Valentina presso BPER banca',
         initial_amount: 0,
@@ -83,6 +94,7 @@ namespace :initDB do
       ).first_or_create!
 
       Count.where(
+        organization_id: first_organization.id,
         name: 'Libretto POSTALE Valentina',
         description: 'Libretto dei risparmi di Valentina presso Poste Italiane',
         iban: 'IT62E0760103384000053931207',
@@ -91,6 +103,7 @@ namespace :initDB do
       ).first_or_create!
 
       Count.where(
+        organization_id: first_organization.id,
         name: 'Libretto POSTALE Anastasia',
         description: 'Libretto dei risparmi di Anastasia presso Poste Italiane',
         iban: 'IT93B0760103384000053931597',
@@ -99,6 +112,7 @@ namespace :initDB do
       ).first_or_create!
 
       Count.where(
+        organization_id: first_organization.id,
         name: 'Certificato BPER',
         description: 'Piano di investimento su obbligazioni in BPER',
         initial_amount: 0,
@@ -106,6 +120,7 @@ namespace :initDB do
       ).first_or_create!
 
       Count.where(
+        organization_id: first_organization.id,
         name: 'Buoni POSTALI',
         description: 'Buoni fruttiferi postali',
         initial_amount: 0,
@@ -113,6 +128,7 @@ namespace :initDB do
       ).first_or_create!
 
       Count.where(
+        organization_id: first_organization.id,
         name: "Piano d'accumulo POSTALE Michele",
         description: "Piano d'accumulo mensile di Michele presso Poste Italiane",
         initial_amount: 18908.18,
@@ -120,6 +136,7 @@ namespace :initDB do
       ).first_or_create!
 
       Count.where(
+        organization_id: first_organization.id,
         name: "Piano d'accumulo BPER Mariana",
         description: "Piano d'accumulo mensile di Mariana presso BPER banca",
         initial_amount: 4987.48,
@@ -159,6 +176,7 @@ namespace :initDB do
 
   # Importer da file excel dello scadenziario
   task import_deadlines_data: :environment do
-    ImportDeadlinesFromXlsxFileCommand.call(['private/import-xlsx/deadlines/SCADENZIARIO.xlsx'])
+    organization = Organization.find_by(name: 'Famiglia Battistelli')
+    ImportDeadlinesFromXlsxFileCommand.call(organization, ['private/import-xlsx/deadlines/SCADENZIARIO.xlsx'])
   end
 end
