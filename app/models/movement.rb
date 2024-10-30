@@ -21,9 +21,9 @@ class Movement < ApplicationRecord
   before_save { self.causal = self.causal.to_s.strip if self.causal }
   before_save { self.amount = self.amount.to_f.round(2) if self.amount }
 
-  after_save { set_count_current_amount }
-  after_update { set_count_current_amount }
-  after_destroy { set_count_current_amount }
+  after_save { self.count.set_current_amount }
+  after_update { self.count.set_current_amount }
+  after_destroy { self.count.set_current_amount }
 
 
   # Instance Methods
@@ -32,7 +32,7 @@ class Movement < ApplicationRecord
   end
 
   def self.ransackable_attributes(auth_object = nil)
-    %w(causal movement_type expense_item_id emitted_at year month)
+    %w(causal movement_type expense_item_id emitted_at year month count_id)
   end
 
   def self.ransackable_associations(auth_object = nil)
@@ -56,10 +56,5 @@ class Movement < ApplicationRecord
     if self.movement_type == 'in' && self.expense_item_id.present?
       errors.add(:expense_item_id, "La voce di spesa può essere selezionata solo per movimenti di cassa in uscita!")
     end
-  end
-
-  def set_count_current_amount
-    count = self.count
-    count.update!(current_amount: count.initial_amount + self.count.movements.sum(:amount))
   end
 end

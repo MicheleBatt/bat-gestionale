@@ -44,6 +44,7 @@ namespace :initDB do
         organization_id: first_organization.id,
         name: 'Conto cointestato BPER per le spese di famiglia',
         description: 'Conto di famiglia per le spese di famiglia',
+        count_type: 'bank_account',
         iban: 'IT05B0538712153000003149242',
         initial_amount: 546.5,
         ordering_number: 1
@@ -53,6 +54,7 @@ namespace :initDB do
         organization_id: first_organization.id,
         name: 'Conto cointestato INTESA SAN PAOLO per i risparmi di famiglia',
         description: 'Conto per i risparmi di famiglia',
+        count_type: 'savings_account',
         iban: 'IT34A0306912117100000010949',
         initial_amount: 12478.99,
         ordering_number: 2
@@ -62,6 +64,7 @@ namespace :initDB do
         organization_id: first_organization.id,
         name: 'Conto cointestato INTESA SAN PAOLO per i lavori sulla casa',
         description: 'Conto di famiglia per i lavori sulla casa e per le spese grosse a medio termine',
+        count_type: 'bank_account',
         iban: 'IT03Q0306912117100000091132',
         initial_amount: 6.89,
         ordering_number: 3
@@ -70,7 +73,8 @@ namespace :initDB do
       Count.where(
         organization_id: first_organization.id,
         name: 'Conto personale BANCO POSTE di Michele',
-        description: 'Conto personale di Mariana presso Poste Italiane',
+        description: 'Conto personale di Michele presso Poste Italiane',
+        count_type: 'bank_account',
         iban: 'IT11k0760110700001021777204',
         initial_amount: 4533.18,
         ordering_number: 4
@@ -80,6 +84,7 @@ namespace :initDB do
         organization_id: first_organization.id,
         name: 'Conto personale BPER di Mariana',
         description: 'Conto personale di Mariana presso BPER banca',
+        count_type: 'bank_account',
         iban: 'IT47M0538712153000003212522',
         initial_amount: 4883.14,
         ordering_number: 5
@@ -89,6 +94,7 @@ namespace :initDB do
         organization_id: first_organization.id,
         name: 'Libretto BPER Valentina',
         description: 'Libretto dei risparmi di Valentina presso BPER banca',
+        count_type: 'savings_booklet',
         initial_amount: 0,
         ordering_number: 6
       ).first_or_create!
@@ -97,6 +103,7 @@ namespace :initDB do
         organization_id: first_organization.id,
         name: 'Libretto POSTALE Valentina',
         description: 'Libretto dei risparmi di Valentina presso Poste Italiane',
+        count_type: 'savings_booklet',
         iban: 'IT62E0760103384000053931207',
         initial_amount: 0,
         ordering_number: 7
@@ -106,6 +113,7 @@ namespace :initDB do
         organization_id: first_organization.id,
         name: 'Libretto POSTALE Anastasia',
         description: 'Libretto dei risparmi di Anastasia presso Poste Italiane',
+        count_type: 'savings_booklet',
         iban: 'IT93B0760103384000053931597',
         initial_amount: 0,
         ordering_number: 8
@@ -115,6 +123,7 @@ namespace :initDB do
         organization_id: first_organization.id,
         name: 'Certificato BPER',
         description: 'Piano di investimento su obbligazioni in BPER',
+        count_type: 'investments_account',
         initial_amount: 0,
         ordering_number: 9
       ).first_or_create!
@@ -123,6 +132,7 @@ namespace :initDB do
         organization_id: first_organization.id,
         name: 'Buoni POSTALI',
         description: 'Buoni fruttiferi postali',
+        count_type: 'postal_savings_bond',
         initial_amount: 0,
         ordering_number: 10
       ).first_or_create!
@@ -131,6 +141,7 @@ namespace :initDB do
         organization_id: first_organization.id,
         name: "Piano d'accumulo POSTALE Michele",
         description: "Piano d'accumulo mensile di Michele presso Poste Italiane",
+        count_type: 'accumulation_plan',
         initial_amount: 18908.18,
         ordering_number: 11
       ).first_or_create!
@@ -139,6 +150,7 @@ namespace :initDB do
         organization_id: first_organization.id,
         name: "Piano d'accumulo BPER Mariana",
         description: "Piano d'accumulo mensile di Mariana presso BPER banca",
+        count_type: 'accumulation_plan',
         initial_amount: 4987.48,
         ordering_number: 12
       ).first_or_create!

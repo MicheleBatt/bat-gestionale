@@ -15,6 +15,10 @@
       </button>
 
       <div class="d-flex justify-content-end align-items-center px-2 px-sm-3">
+        <%= link_to organization_counts_path(organization), class: "btn btn-link text-secondary text-decoration-none mx-1 p-0" do %>
+          <i class="fas fa-fw fa-eye"></i>
+        <% end %>
+
         <button type="button" class="btn btn-link text-secondary text-decoration-none mx-3 p-0" data-bs-toggle="modal" data-bs-target="#organizationEditingModal_<%= organization.id %>">
           <i class="fas fa-fw fa-edit"></i>
         </button>

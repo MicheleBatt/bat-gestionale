@@ -13,6 +13,15 @@
   </div>
 
   <div class="m-4">
+    <%= form.label :count_type, 'Tipo', class: "form-label" %>
+    <%= form.select :count_type,
+                    options_for_select(count_types_for_select, count.count_type),
+                    { include_blank: 'Specifica il tipo di conto' },
+                    class: 'form-control'
+    %>
+  </div>
+
+  <div class="m-4">
     <%= form.label :iban, 'Codice IBAN', class: "form-label" %>
     <%= form.text_field :iban, class: "form-control" %>
   </div>

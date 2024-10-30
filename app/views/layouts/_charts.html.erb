@@ -1,0 +1,111 @@
+<% min_year = entity.min_year %>
+<% max_year = entity.max_year %>
+
+<!-- Grafico che riporta la giacenza complessiva alla fine di ogni mese / anno -->
+<div class="rounded shadow border border-secondary bg-white mb-5 py-2 px-1">
+  <% chart_title = "Giacenza #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
+  <% min_value = final_amounts_by_date.values.min.to_f.round(2) %>
+  <%= line_chart final_amounts_by_date,
+                 title: chart_title,
+                 min: (min_value - (min_value * 0.1)).to_f.round(2),
+                 download: {filename: chart_title, background: "#ffffff"},
+                 loading: "Caricamento...",
+                 empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                 suffix: "€"
+  %>
+</div>
+
+
+
+<!-- Grafico che riporta la giacenza corrente sui vari conti -->
+<% if movements_global_amount_by_counts.present? %>
+  <div class="rounded shadow border border-secondary bg-white mb-5 py-2 px-1">
+    <% chart_title = "Giacenza sui vari conti #{year.present? ? 'a fine ' + year : 'attuale'}" %>
+    <%= pie_chart movements_global_amount_by_counts,
+                     library: {
+                       plugins: {
+                         legend: { position: 'right' },
+                         title: { display: true, text: chart_title, padding: { bottom: 20 } }
+                       }
+                     },
+                     title: chart_title,
+                     download: {filename: chart_title, background: "#ffffff"},
+                     loading: "Caricamento...",
+                     empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                     suffix: "€"
+    %>
+  </div>
+<% end %>
+
+
+
+<!-- Grafico che riporta la composizione corrente del portafoglio risparmi -->
+<% if savings_global_amount_by_counts.present? %>
+  <div class="rounded shadow border border-secondary bg-white mb-5 py-2 px-1">
+    <% chart_title = "Portafoglio risparmi #{year.present? ? 'a fine ' + year : 'attuale'}" %>
+    <%= pie_chart savings_global_amount_by_counts,
+                  library: {
+                    plugins: {
+                      legend: { position: 'right' },
+                      title: { display: true, text: chart_title, padding: { bottom: 20 } }
+                    }
+                  },
+                  title: chart_title,
+                  download: {filename: chart_title, background: "#ffffff"},
+                  loading: "Caricamento...",
+                  empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                  suffix: "€"
+    %>
+  </div>
+<% end %>
+
+
+
+<!-- Grafico che riporta l'ammontare complessivo di tutte le entrate e di tutte le uscite alla fine di ogni mese / anno  -->
+<div class="rounded shadow border border-secondary bg-white mb-5 py-2 px-1">
+  <% chart_title = "Entrate/Uscite #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
+  <%= column_chart in_out_global_amounts,
+                   stacked: false,
+                   title: chart_title,
+                   download: {filename: chart_title, background: "#ffffff"},
+                   colors: ["#DC3545", "#198754"],
+                   loading: "Caricamento...",
+                   empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                   suffix: "€"
+  %>
+</div>
+
+
+
+<!-- Grafici che riportano l'ammontare complessivo per ogni voce di spesa alla fine di ogni mese / anno -->
+<div class="row my-5 py-5">
+  <% movements_global_amount_by_expense_items.keys.sort_by{ | key | movements_global_amount_by_expense_items[key]['total'] * -1 }.each do | expense_item | %>
+    <div class="col-12 col-md-6 col-xl-4 p-2">
+      <div class="rounded shadow border border-secondary bg-white py-2 px-1">
+        <% chart_title_compact = "#{expense_item.description} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
+        <% chart_title = "#{chart_title_compact}: #{to_visible_amount(movements_global_amount_by_expense_items[expense_item]['total'])}€" %>
+        <% chart_color = expense_item.color.upcase != '#FFFFFF' ? expense_item.color : '#F2F2F2'%>
+        <% movements_global_amount_by_expense_items[expense_item].delete('total') %>
+        <%= column_chart movements_global_amount_by_expense_items[expense_item],
+                         title: chart_title,
+                         max: (@movements_max_amount * 1.1).to_f.round(2),
+                         colors: [chart_color, chart_color],
+                         download: {filename: chart_title_compact, background: "#ffffff"},
+                         loading: "Caricamento...",
+                         empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                         suffix: "€"
+        %>
+
+        <div class="d-flex justify-content-center mt-4">
+          <% filters = { 'movement_type_eq': 'out', 'expense_item_id_eq': expense_item.id } %>
+          <% filters = { **filters, 'emitted_at_gteq': "#{year}-01-01", 'emitted_at_lteq': "#{year}-12-31" } if year.present? %>
+          <% filters = { **filters, 'emitted_at_gteq': "#{min_year}-01-01", 'emitted_at_lteq': "#{max_year}-12-31" } unless year.present? %>
+          <% if count.present? %>
+            <%= link_to 'Vedi movimenti', organization_count_movements_path(count.organization, count, q: filters) %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+

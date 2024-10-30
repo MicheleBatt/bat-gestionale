@@ -6,6 +6,9 @@ Rails.application.routes.draw do
     resources :memberships, except: [:show, :new, :edit]
     resources :deadlines, except: [:show, :new, :edit]
     resources :expense_items, except: [:show, :new, :edit]
+    member do
+      get :stats, to: 'organizations#stats'
+    end
     resources :counts, except: [:show, :new, :edit] do
       member do
         get :stats, to: 'counts#stats'

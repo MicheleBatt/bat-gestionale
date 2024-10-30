@@ -8,7 +8,7 @@
       </h2>
       <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
         <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
-          <%= search_form_for @search, url: stats_organization_count_path(organization_id: @organization.id, id: @count.id) do |f| %>
+          <%= search_form_for @search, url: stats_organization_path(id: @organization.id) do |f| %>
             <div class="d-flex flex-wrap justify-content-center align-items-end px-x px-lg-4">
               <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
                 <%= f.label :year_eq, 'Anno', class: "form-label" %>
@@ -19,12 +19,21 @@
                 %>
               </div>
 
+              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+                <%= f.label :count_id_eq, 'Conto', class: "form-label" %>
+                <%= f.select :count_id_eq,
+                             options_for_select(@organization.counts.map{ | count | [count.name, count.id] }, @search.count_id_eq),
+                             { include_blank: "Tutti i conti" },
+                             class: 'form-control'
+                %>
+              </div>
+
               <div class="pb-3 d-flex">
                 <button type="submit" class="btn btn-success mx-2">
                   <i class="fas fa-search"></i> Cerca
                 </button>
 
-                <%= link_to @count.stats_default_path, class: "btn btn-primary mx-2" do %>
+                <%= link_to stats_organization_path(id: @organization.id), class: "btn btn-primary mx-2" do %>
                   <i class="fas fa-filter" aria-hidden="true"></i> Reset
                 <% end %>
               </div>
@@ -39,17 +48,17 @@
 
   <!-- SEZIONE DEDICATI AI GRAFICI -->
   <%= render 'layouts/charts',
-             entity: @count,
+             entity: @organization,
              count: @count,
              year: @year,
              final_amounts_by_date: @final_amounts_by_date,
              in_out_global_amounts: @in_out_global_amounts,
              movements_global_amount_by_expense_items: @movements_global_amount_by_expense_items,
              movements_max_amount: @movements_max_amount,
-             min_year: @count.min_year,
-             max_year: @count.max_year,
-             movements_global_amount_by_counts: nil,
-             savings_global_amount_by_counts: nil
+             min_year: @organization.min_year,
+             max_year: @organization.max_year,
+             movements_global_amount_by_counts: @movements_global_amount_by_counts,
+             savings_global_amount_by_counts: @savings_global_amount_by_counts
   %>
 </div>
 

@@ -1,6 +1,6 @@
 class OrganizationsController < ApplicationController
   authorize_resource
-  before_action :set_current_organization, only: %i[ update destroy ]
+  before_action :set_current_organization, only: %i[ update destroy stats ]
 
   include ApplicationHelper
 
@@ -69,6 +69,34 @@ class OrganizationsController < ApplicationController
       end
       format.html { redirect_to organizations_path, status: :see_other, notice: "Organizzazione rimossa dalla lista" }
       format.json { head :no_content }
+    end
+  end
+
+  def stats
+    @search = @organization.movements.ransack(params[:q])
+    movements = @search.result
+
+    @count = @organization.counts.find(params[:q][:count_id_eq]) if params[:q].present? && params[:q][:count_id_eq].present?
+
+    @years_range,
+    @final_amounts_by_date,
+    @movements_global_amount_by_expense_items,
+    @year,
+    @movements_max_amount,
+    @in_out_global_amounts = stats_for_charts(@count || @organization, movements, params)
+
+    if @count.blank?
+      @movements_global_amount_by_counts = {}
+      @savings_global_amount_by_counts = {}
+      @organization.counts.each do | count |
+        if @year.present?
+          global_amount = count.initial_amount_by_date(@year.to_i + 1, 1, 1)
+        else
+          global_amount = count.initial_amount_by_date(count.max_year + 1, 1, 1)
+        end
+        @movements_global_amount_by_counts[count.name] = global_amount
+        @savings_global_amount_by_counts[count.name] = global_amount if count.count_type != 'bank_account'
+      end
     end
   end
 

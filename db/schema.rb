@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_30_113446) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_30_153327) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -25,6 +25,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_30_113446) do
     t.integer "ordering_number", default: 0, null: false
     t.string "monitoring_scope", default: "monthly", null: false
     t.bigint "organization_id"
+    t.string "count_type", default: "bank_account", null: false
+    t.index ["count_type"], name: "index_counts_on_count_type"
     t.index ["current_amount"], name: "index_counts_on_current_amount"
     t.index ["initial_amount"], name: "index_counts_on_initial_amount"
     t.index ["monitoring_scope"], name: "index_counts_on_monitoring_scope"

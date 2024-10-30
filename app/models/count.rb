@@ -11,10 +11,11 @@ class Count < ApplicationRecord
   has_many :expense_items, through: :movements
 
   # Validations
-  validates :name, :initial_amount, presence: true
+  validates :name, :initial_amount, :count_type, presence: true
   validates :name, :uniqueness => { scope: :organization }
   validates :ordering_number, numericality: { greater_than_or_equal_to: 0 }
   enum monitoring_scope: MONITORING_SCOPES.index_by(&:itself), _prefix: :monitoring_scope
+  enum count_type: ALL_COUNT_TYPES.keys.index_by(&:itself), _prefix: :count_type
 
   # Callbacks
   before_save { self.description = self.description.to_s.strip if self.description }
@@ -31,27 +32,11 @@ class Count < ApplicationRecord
   end
 
   def self.ransackable_attributes(auth_object = nil)
-    %w(name)
+    %w(name count_type)
   end
 
   def self.ransackable_associations(auth_object = nil)
     %i[]
-  end
-
-  def min_year
-    self.movements.minimum('year') || Time.now.year
-  end
-
-  def max_year
-    self.movements.maximum('year') || Time.now.year
-  end
-
-  def years_range
-    (self.min_year..self.max_year).to_a
-  end
-
-  def max_month
-    self.movements.where(year: self.max_year).maximum('month') || Time.now.month
   end
 
   def movements_path_by_month(year = nil, month = nil, format = :html)
@@ -90,10 +75,6 @@ class Count < ApplicationRecord
     else
       self.stats_path_by_year
     end
-  end
-
-  def initial_amount_by_date(year, month, day)
-    (self.initial_amount.to_f + self.movements.where('movements.year_month_day < ? ', date_to_integer(year, month, day)).sum(&:amount)).to_f.round(2)
   end
 
   def first_movement_emission_date
@@ -170,7 +151,31 @@ class Count < ApplicationRecord
     end
   end
 
+  def min_year
+    min_year_by(self)
+  end
+
+  def max_year
+    max_year_by(self)
+  end
+
+  def years_range
+    years_range_by(self)
+  end
+
+  def max_month
+    max_month_by(self)
+  end
+
+  def initial_amount_by_date(year, month, day)
+    initial_amount_by(self, year, month, day)
+  end
+
+  def get_current_amount(movements = self.movements)
+    (self.initial_amount.to_f + movements.sum(&:amount)).to_f.round(2)
+  end
+
   def set_current_amount
-    self.update_columns(current_amount: self.initial_amount + self.movements.sum(:amount))
+    self.update_columns(current_amount: self.get_current_amount)
   end
 end
