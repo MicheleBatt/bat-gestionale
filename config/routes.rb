@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :users, except: [:create, :show, :new, :edit] do
+  resources :users, except: [:create, :show, :new] do
     collection do
       post 'add'
     end

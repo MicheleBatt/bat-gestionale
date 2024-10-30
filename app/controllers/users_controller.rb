@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   authorize_resource
-  before_action :set_user, only: %i[ update destroy ]
+  before_action :set_user, only: %i[ edit update destroy ]
 
   include ApplicationHelper
 
@@ -34,6 +34,9 @@ class UsersController < ApplicationController
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def edit
   end
 
   # PATCH/PUT /users/1 or /users/1.json

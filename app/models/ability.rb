@@ -11,7 +11,9 @@ class Ability
       can :manage, :all
     elsif user.memberships.present?
       can :manage, [Count, Movement, ExpenseItem, Deadline]
-      cannot :manage, [Organization, User, Membership]
+      cannot :manage, [Organization, Membership]
+      can [:edit, :update], User
+      cannot [:idex, :add, :destroy], User
     end
   end
 end
