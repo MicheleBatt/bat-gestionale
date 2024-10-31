@@ -1,1 +1,20 @@
-<p>Hello <%= @user.full_name %>!</p>
+<%= render 'layouts/navbar' %>
+
+<div class="d-block mb-5 mx-2 mx-md-5">
+  <div class="border-bottom border-dark mt-5">
+    <span>Utenti > <%= @user.full_name %></span>
+  </div>
+
+  <div class="d-block d-sm-flex justify-content-center">
+    <div class="rounded border border-dark px-2 px-sm-4 mt-4 mx-1 mx-md-2 shadow bg-white">
+      <div id="_error_messages"></div>
+
+      <%= render "form",
+                 user: @user,
+                 modal_id: nil,
+                 path: user_path(@user),
+                 method: :patch
+      %>
+    </div>
+  </div>
+</div>

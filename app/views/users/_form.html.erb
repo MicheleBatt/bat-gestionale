@@ -1,43 +1,64 @@
-<%= form_with model: user, url: path, method: method do |form| %>
-  <%= form.hidden_field :modal_id, value: modal_id %>
+<div class="d-block">
 
-  <div class="m-4">
-    <%= form.label :first_name, 'Nome', class: "form-label" %>
-    <%= form.text_field :first_name, class: "form-control" %>
-  </div>
+  <%= form_with model: user, url: path, method: method do |form| %>
+    <%= form.hidden_field :modal_id, value: modal_id %>
 
-  <div class="m-4">
-    <%= form.label :last_name, 'Cognome', class: "form-label" %>
-    <%= form.text_field :last_name, class: "form-control" %>
-  </div>
+    <% unless modal_id.present? %>
+      <%= render "layouts/error_messages", obj: user %>
 
-
-  <div class="m-4">
-    <%= form.label :email, 'Email', class: "form-label" %>
-    <%= form.email_field :email, class: "form-control" %>
-  </div>
-
-
-  <div class="m-4">
-    <%= form.label :password, 'Password', class: "form-label" %>
-    <%= form.password_field :password, class: "form-control" %>
-  </div>
-
-
-  <div class="m-4">
-    <%= form.label :role, 'Ruolo', class: "form-label" %>
-    <%= form.select :role,
-                    options_for_select(all_user_roles_for_select, user.role),
-                    { include_blank: 'Nessun ruolo particolare' },
-                    class: 'form-control'
-    %>
-  </div>
-
-
-  <div class="my-4 mx-2 mx-sm-4 d-flex justify-content-center justify-content-sm-end">
-    <%= form.button :submit, class: 'btn btn-success' do %>
-      Salva
+      <div class="border-bottom border-dark mt-4">
+        Le tue Generalità
+      </div>
     <% end %>
-  </div>
-<% end %>
+
+    <div class="d-block <%= modal_id.present? ? '' : 'd-sm-flex flex-wrap justify-content-center' %>">
+      <div class="my-4 mx-2 mx-md-4">
+        <%= form.label :first_name, 'Nome', class: "form-label" %>
+        <%= form.text_field :first_name, class: "form-control" %>
+      </div>
+
+      <div class="my-4 mx-2 mx-md-4">
+        <%= form.label :last_name, 'Cognome', class: "form-label" %>
+        <%= form.text_field :last_name, class: "form-control" %>
+      </div>
+    </div>
+
+
+    <% unless modal_id.present? %>
+      <div class="border-bottom border-dark mt-5">
+        Il tuo Account
+      </div>
+    <% end %>
+
+    <div class="d-block <%= modal_id.present? ? '' : 'd-sm-flex flex-wrap justify-content-center' %>">
+      <div class="my-4 mx-2 mx-md-4">
+        <%= form.label :email, 'Email', class: "form-label" %>
+        <%= form.email_field :email, class: "form-control" %>
+      </div>
+
+
+      <div class="my-4 mx-2 mx-md-4">
+        <%= form.label :password, 'Password', class: "form-label" %>
+        <%= form.password_field :password, class: "form-control" %>
+      </div>
+    </div>
+
+    <% if can? :add, User %>
+      <div class="mb-4 mt-0 mx-2 mx-md-4">
+        <%= form.label :role, 'Ruolo', class: "form-label" %>
+        <%= form.select :role,
+                        options_for_select(all_user_roles_for_select, user.role),
+                        { include_blank: 'Nessun ruolo particolare' },
+                        class: 'form-control'
+        %>
+      </div>
+    <% end %>
+
+    <div class="my-4 mx-2 mx-smy-4 mx-2 mx-md-4 d-flex justify-content-center justify-content-sm-end">
+      <%= form.button :submit, class: "btn btn-success #{!modal_id.present? ? 'mt-4' : ''}" do %>
+        Salva
+      <% end %>
+    </div>
+  <% end %>
+</div>
 

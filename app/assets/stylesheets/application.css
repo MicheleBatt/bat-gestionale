@@ -16,12 +16,16 @@
 
 body {
     font-family: 'Jost';
-    background-color: #D6F8DF;
+    background-color: #F5F5DC;
     min-height: 100vh;
 }
 
 .bg-light-gray {
     background-color: #f2f2f2;
+}
+
+.border-bottom-gray {
+    border-bottom: 1px #C7C7C7 solid;
 }
 
 .form-label {

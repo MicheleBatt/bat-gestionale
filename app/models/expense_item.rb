@@ -9,9 +9,8 @@ class ExpenseItem < ApplicationRecord
   validates :color, :uniqueness => { scope: :organization }
 
   # Callbacks
-  before_validation { self.color = "##{self.color.to_s.gsub(' ', '').upcase}" if self.color.present? && !self.color.to_s.include?('#') }
-  before_save { self.color = self.color.to_s.gsub(' ', '').upcase if self.color }
-  before_save { self.description = self.description.to_s.strip.capitalize if self.description }
+  before_validation { parse_color }
+  before_validation { self.description = self.description.to_s.strip.capitalize if self.description }
 
 
   # Instance Methods
@@ -25,5 +24,13 @@ class ExpenseItem < ApplicationRecord
 
   def self.ransackable_associations(auth_object = nil)
     %i[]
+  end
+
+  def parse_color
+    if self.color.present?
+      parsed_color = self.color.to_s.gsub(' ', '').upcase
+      parsed_color = "##{parsed_color}"  unless parsed_color.include?('#')
+      self.color = parsed_color
+    end
   end
 end

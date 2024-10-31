@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users
-  root to: 'deadlines#index'
+  root to: 'counts#index'
 
   resources :organizations, except: [:show, :new, :edit] do
     resources :memberships, except: [:show, :new, :edit]

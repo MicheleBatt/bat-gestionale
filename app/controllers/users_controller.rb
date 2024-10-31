@@ -43,13 +43,19 @@ class UsersController < ApplicationController
   def update
     modal_id = params[:user][:modal_id]
     params[:user].delete(:modal_id)
-    
+
     respond_to do |format|
-      if @user.update(user_params)
+      outcome = @user.update(user_params) if params.dig(:user, :password).present?
+      outcome = @user.update_without_password(user_params) if params.dig(:user, :password).blank?
+      if outcome
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("user_#{@user.id}", partial: "users/user", locals: { user: @user })
+          if modal_id.present?
+            render turbo_stream: turbo_stream.replace("user_#{@user.id}", partial: "users/user", locals: { user: @user })
+          else
+            redirect_to edit_user_path(@user), notice: "Account aggiornato correttamente"
+          end
         end
-        format.html { redirect_to users_path, notice: "Utente aggiornato correttamente" }
+        format.html { redirect_to edit_user_path(@user), notice: "Account aggiornato correttamente" }
         format.json { render :index, status: :ok, location: @user }
       else
         format.turbo_stream do

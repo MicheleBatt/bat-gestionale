@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_30_153327) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_31_204448) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -24,7 +24,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_30_153327) do
     t.float "current_amount", default: 0.0, null: false
     t.integer "ordering_number", default: 0, null: false
     t.string "monitoring_scope", default: "monthly", null: false
-    t.bigint "organization_id"
+    t.bigint "organization_id", null: false
     t.string "count_type", default: "bank_account", null: false
     t.index ["count_type"], name: "index_counts_on_count_type"
     t.index ["current_amount"], name: "index_counts_on_current_amount"
@@ -43,7 +43,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_30_153327) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "month", null: false
-    t.bigint "organization_id"
+    t.bigint "organization_id", null: false
     t.index ["description"], name: "index_deadlines_on_description"
     t.index ["expired_at"], name: "index_deadlines_on_expired_at"
     t.index ["month"], name: "index_deadlines_on_month"
@@ -56,7 +56,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_30_153327) do
     t.string "color", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "organization_id"
+    t.bigint "organization_id", null: false
     t.index ["color", "organization_id"], name: "index_expense_items_on_color_and_organization_id", unique: true
     t.index ["color"], name: "index_expense_items_on_color"
     t.index ["description", "organization_id"], name: "index_expense_items_on_description_and_organization_id", unique: true

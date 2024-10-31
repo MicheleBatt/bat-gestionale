@@ -13,7 +13,7 @@ class Ability
       can :manage, [Count, Movement, ExpenseItem, Deadline]
       cannot :manage, [Organization, Membership]
       can [:edit, :update], User
-      cannot [:idex, :add, :destroy], User
+      cannot [:index, :add, :destroy], User
     end
   end
 end
