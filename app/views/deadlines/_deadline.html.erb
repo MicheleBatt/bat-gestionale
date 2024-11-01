@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-between align-items-center mx-2 mx-xl-4 my-2" id="deadline_<%= deadline.id %>">
+<div class="d-flex justify-content-between align-items-center mx-2 mx-xl-4 my-2 <%= 'bg-warning' if deadline.upcoming? %>" id="deadline_<%= deadline.id %>">
   <div class="d-flex align-items-center">
     <div>
       <strong><%= parse_date(deadline.expired_at, "%d") %> <%= italian_month(deadline.month) %>:</strong>

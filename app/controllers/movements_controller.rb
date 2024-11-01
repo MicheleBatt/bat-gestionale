@@ -197,6 +197,6 @@ class MovementsController < ApplicationController
 
   def set_movement_types_and_expense_items
     @movement_types = movement_types_for_select
-    @expense_items = expense_items_for_select
+    @expense_items = expense_items_for_select(@organization)
   end
 end

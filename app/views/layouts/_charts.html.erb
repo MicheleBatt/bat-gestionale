@@ -17,47 +17,53 @@
 
 
 
-<!-- Grafico che riporta la giacenza corrente sui vari conti -->
-<% if movements_global_amount_by_counts.present? %>
-  <div class="rounded shadow border border-secondary bg-white mb-5 py-2 px-1">
-    <% chart_title = "Giacenza sui vari conti #{year.present? ? 'a fine ' + year : 'attuale'}" %>
-    <%= pie_chart movements_global_amount_by_counts,
-                     library: {
-                       plugins: {
-                         legend: { position: 'right' },
-                         title: { display: true, text: chart_title, padding: { bottom: 20 } }
-                       }
-                     },
-                     title: chart_title,
-                     download: {filename: chart_title, background: "#ffffff"},
-                     loading: "Caricamento...",
-                     empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                     suffix: "€"
-    %>
+<div class="row">
+  <div class="col-12 <%= 'col-xl-6' if savings_global_amount_by_counts.present? %>">
+    <!-- Grafico che riporta la giacenza corrente sui vari conti -->
+    <% if movements_global_amount_by_counts.present? %>
+      <div class="rounded shadow border border-secondary bg-white mb-5 py-2 px-1">
+        <% chart_title = "Giacenza sui vari conti #{year.present? ? 'a fine ' + year : 'attuale'}" %>
+        <%= pie_chart movements_global_amount_by_counts,
+                      library: {
+                        plugins: {
+                          legend: { position: 'right' },
+                          title: { display: true, text: chart_title, padding: { bottom: 20 } }
+                        }
+                      },
+                      title: chart_title,
+                      download: {filename: chart_title, background: "#ffffff"},
+                      loading: "Caricamento...",
+                      empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                      suffix: "€"
+        %>
+      </div>
+    <% end %>
   </div>
-<% end %>
 
 
 
-<!-- Grafico che riporta la composizione corrente del portafoglio risparmi -->
-<% if savings_global_amount_by_counts.present? %>
-  <div class="rounded shadow border border-secondary bg-white mb-5 py-2 px-1">
-    <% chart_title = "Portafoglio risparmi #{year.present? ? 'a fine ' + year : 'attuale'}" %>
-    <%= pie_chart savings_global_amount_by_counts,
-                  library: {
-                    plugins: {
-                      legend: { position: 'right' },
-                      title: { display: true, text: chart_title, padding: { bottom: 20 } }
-                    }
-                  },
-                  title: chart_title,
-                  download: {filename: chart_title, background: "#ffffff"},
-                  loading: "Caricamento...",
-                  empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                  suffix: "€"
-    %>
+  <div class="col-12 <%= 'col-xl-6' if movements_global_amount_by_counts.present? %>">
+    <!-- Grafico che riporta la composizione corrente del portafoglio risparmi -->
+    <% if savings_global_amount_by_counts.present? %>
+      <div class="rounded shadow border border-secondary bg-white mb-5 py-2 px-1">
+        <% chart_title = "Portafoglio risparmi #{year.present? ? 'a fine ' + year : 'attuale'}" %>
+        <%= pie_chart savings_global_amount_by_counts,
+                      library: {
+                        plugins: {
+                          legend: { position: 'right' },
+                          title: { display: true, text: chart_title, padding: { bottom: 20 } }
+                        }
+                      },
+                      title: chart_title,
+                      download: {filename: chart_title, background: "#ffffff"},
+                      loading: "Caricamento...",
+                      empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                      suffix: "€"
+        %>
+      </div>
+    <% end %>
   </div>
-<% end %>
+</div>
 
 
 

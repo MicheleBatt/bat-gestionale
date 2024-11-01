@@ -82,8 +82,11 @@ module ApplicationHelper
     movements_max_amount = 0
     out_global_amounts = []
     in_global_amounts = []
+    now = Time.now
     time_ranges = year.present? ? months : years_range
     time_ranges.each do | time_range |
+      break if year.present? && year.to_i >= now.year && time_range > now.month
+
       it_month = italian_month(time_range) if year.present?
 
       # Calcolo la giacenza finale globale a fine di ogni mese / anno

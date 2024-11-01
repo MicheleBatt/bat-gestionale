@@ -22,4 +22,9 @@ class Deadline < ApplicationRecord
   def self.ransackable_associations(auth_object = nil)
     %i[]
   end
+
+  def upcoming?
+    now = Time.now
+    self.year == now.year && self.month == now.month
+  end
 end

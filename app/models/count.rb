@@ -15,7 +15,7 @@ class Count < ApplicationRecord
   validates :name, :uniqueness => { scope: :organization }
   validates :ordering_number, numericality: { greater_than_or_equal_to: 0 }
   enum monitoring_scope: MONITORING_SCOPES.index_by(&:itself), _prefix: :monitoring_scope
-  enum count_type: ALL_COUNT_TYPES.keys.index_by(&:itself), _prefix: :count_type
+  enum count_type: ALL_COUNT_TYPES.keys.map { | key | key.to_s }.index_by(&:itself), _prefix: :count_type
 
   # Callbacks
   before_save { self.description = self.description.to_s.strip if self.description }
