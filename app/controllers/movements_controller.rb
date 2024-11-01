@@ -46,7 +46,7 @@ class MovementsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         @movements = @movements.page(@page).per(@per_page)
-        render turbo_stream: turbo_stream.update(frame_name, partial: "movements/index", locals: { movements: @movements, count: @count, movement_types: @movement_types, expense_items: @expense_items, page: @page.to_i + 1, per_page: @per_page })
+        render turbo_stream: turbo_stream.update(frame_name, partial: "movements/index", locals: { movements: @movements, organization: @organization, count: @count, movement_types: @movement_types, expense_items: @expense_items, page: @page.to_i + 1, per_page: @per_page })
       end
       format.html {
         @movements = @movements.page(@page).per(@per_page)

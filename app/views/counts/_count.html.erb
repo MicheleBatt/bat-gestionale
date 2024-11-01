@@ -1,7 +1,7 @@
 <div class="rounded shadow border border-secondary bg-white my-4 px-3 px-md-5 py-2" id="count_<%= count.id %>">
-  <h4 class="mb-0">
+  <h5 class="mb-0">
     <%= link_to count.name, count.movements_default_path, class: "text-dark text-decoration-none" %>
-  </h4>
+  </h5>
 
   <h6 class=""><%= count.description %></h6>
   <h6 class="mt-4 mb-0 text-secondary">
@@ -14,18 +14,21 @@
       ></i>
     <% end %>
   </h6>
-  <h6 class="my-0 text-secondary">Giacenza attuale: <%= to_visible_amount(count.current_amount) %>€</h6>
 
-  <div class="d-flex justify-content-end align-items-end mb-0">
-    <button type="button" class="btn btn-link text-secondary text-decoration-none p-0" data-bs-toggle="modal" data-bs-target="#countEditingModal_<%= count.id %>">
-      <i class="fas fa-fw fa-edit"></i>
-    </button>
+  <div class="d-flex justify-content-between align-items-end mb-0">
+    <div class="d-flex justify-content-start">
+      <button type="button" class="btn btn-link text-secondary text-decoration-none p-0" data-bs-toggle="modal" data-bs-target="#countEditingModal_<%= count.id %>">
+        <i class="fas fa-fw fa-edit"></i>
+      </button>
 
-    <% if count.movements.blank? %>
-      <%= button_to organization_count_path(@organization, count), method: :delete, class: "btn btn-link text-danger text-decoration-none ml-3 p-0" do %>
-        <i class="fas fa-fw fa-trash"></i>
+      <% if count.movements.blank? %>
+        <%= button_to organization_count_path(@organization, count), method: :delete, class: "btn btn-link text-danger text-decoration-none ml-3 p-0" do %>
+          <i class="fas fa-fw fa-trash"></i>
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
+
+    <h6 class="my-0 text-secondary text-end">Giacenza attuale:<br><%= to_visible_amount(count.current_amount) %>€</h6>
   </div>
 
   <!-- Modale per la cancellazione / modifica di un conto corrente -->

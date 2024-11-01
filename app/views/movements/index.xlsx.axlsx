@@ -200,5 +200,6 @@ wb.add_worksheet(name: "Movimenti del mese") do |sheet|
 
 
   # IMPOSTO UNA LARGHEZZA FISSA PER LE COLONNE DEL FILE EXCEL GENERATO
-  sheet.column_widths 10, 80, 15, 10, 80, 15
+  causal_col_width = @year.present? || @month.present? ? 65 : 80
+  sheet.column_widths 10, causal_col_width, 15, 10, causal_col_width, 15
 end
