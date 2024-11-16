@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_31_204448) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_01_231919) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -26,6 +26,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_31_204448) do
     t.string "monitoring_scope", default: "monthly", null: false
     t.bigint "organization_id", null: false
     t.string "count_type", default: "bank_account", null: false
+    t.string "currency", default: "EUR", null: false
     t.index ["count_type"], name: "index_counts_on_count_type"
     t.index ["current_amount"], name: "index_counts_on_current_amount"
     t.index ["initial_amount"], name: "index_counts_on_initial_amount"
@@ -74,6 +75,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_31_204448) do
     t.index ["role"], name: "index_memberships_on_role"
     t.index ["user_id", "organization_id"], name: "index_memberships_on_user_id_and_organization_id", unique: true
     t.index ["user_id"], name: "index_memberships_on_user_id"
+  end
+
+  create_table "metal_values", force: :cascade do |t|
+    t.string "metal", null: false
+    t.float "value", null: false
+    t.float "karat", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["karat"], name: "index_metal_values_on_karat"
+    t.index ["metal", "karat"], name: "index_metal_values_on_metal_and_karat", unique: true
+    t.index ["metal"], name: "index_metal_values_on_metal"
+    t.index ["value"], name: "index_metal_values_on_value"
   end
 
   create_table "movements", force: :cascade do |t|

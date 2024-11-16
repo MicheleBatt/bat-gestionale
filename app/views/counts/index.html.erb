@@ -60,12 +60,12 @@
   <div class="d-flex justify-content-center mb-5">
     <div id="counts" class="d-block mx-md-4">
       <div class="d-block d-sm-flex justify-content-between border-bottom border-dark mt-4">
-        <div>
+        <div class="me-md-5 pe-md-5">
           <span><b><%= @counts_count %></b> cont<%= @counts_count == 1 ? 'o' : 'i' %></span>
         </div>
 
-        <div>
-          <span>&nbsp;&nbsp;&nbsp;Giacenza complessiva: <b><%= to_visible_amount(@counts_global_amount) %>€</b></span>
+        <div class="ms-md-5 ps-md-5">
+          <span>Giacenza complessiva: <b class="text-<%= @counts_global_amount < 0 ? 'danger' : '' %>"><%= to_visible_amount(@counts_global_amount, false) %>€</b></span>
         </div>
       </div>
 

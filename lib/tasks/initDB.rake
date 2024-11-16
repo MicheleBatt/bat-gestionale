@@ -12,10 +12,15 @@ namespace :initDB do
 
     if Rails.env.test? || response.downcase == 'y'
       # Svuoto il db
+      MetalValue.delete_all
       Deadline.delete_all
       Movement.delete_all
       ExpenseItem.delete_all
       Count.delete_all
+
+
+      # Salvo il valore corrente dell'oro e dell'argento
+      GetRealTimeGoldPriceCommand.call
 
 
       # Creo la prima organizzazione
@@ -92,11 +97,37 @@ namespace :initDB do
 
       Count.where(
         organization_id: first_organization.id,
+        name: 'Conto personale BPER di Mariana',
+        description: 'Conto personale di Mariana presso BPER banca',
+        count_type: 'bank_account',
+        iban: 'IT47M0538712153000003212522',
+        initial_amount: 4883.14,
+        ordering_number: 5
+      ).first_or_create!
+
+      Count.where(
+        organization_id: first_organization.id,
+        name: "Piano d'accumulo di famiglia sull'oro",
+        count_type: 'xau_investment_account',
+        initial_amount: 0,
+        ordering_number: 6
+      ).first_or_create!
+
+      Count.where(
+        organization_id: first_organization.id,
+        name: "Piano d'accumulo di famiglia sull'argento",
+        count_type: 'xag_investment_account',
+        initial_amount: 0,
+        ordering_number: 7
+      ).first_or_create!
+
+      Count.where(
+        organization_id: first_organization.id,
         name: 'Libretto BPER Valentina',
         description: 'Libretto dei risparmi di Valentina presso BPER banca',
         count_type: 'savings_booklet',
         initial_amount: 0,
-        ordering_number: 6
+        ordering_number: 8
       ).first_or_create!
 
       Count.where(
@@ -106,7 +137,7 @@ namespace :initDB do
         count_type: 'savings_booklet',
         iban: 'IT62E0760103384000053931207',
         initial_amount: 0,
-        ordering_number: 7
+        ordering_number: 9
       ).first_or_create!
 
       Count.where(
@@ -116,7 +147,7 @@ namespace :initDB do
         count_type: 'savings_booklet',
         iban: 'IT93B0760103384000053931597',
         initial_amount: 0,
-        ordering_number: 8
+        ordering_number: 10
       ).first_or_create!
 
       Count.where(
@@ -125,7 +156,7 @@ namespace :initDB do
         description: 'Piano di investimento su obbligazioni in BPER',
         count_type: 'investments_account',
         initial_amount: 0,
-        ordering_number: 9
+        ordering_number: 11
       ).first_or_create!
 
       Count.where(
@@ -134,7 +165,7 @@ namespace :initDB do
         description: 'Buoni fruttiferi postali',
         count_type: 'postal_savings_bond',
         initial_amount: 0,
-        ordering_number: 10
+        ordering_number: 12
       ).first_or_create!
 
       Count.where(
@@ -143,7 +174,7 @@ namespace :initDB do
         description: "Piano d'accumulo mensile di Michele presso Poste Italiane",
         count_type: 'accumulation_plan',
         initial_amount: 18908.18,
-        ordering_number: 11
+        ordering_number: 13
       ).first_or_create!
 
       Count.where(
@@ -152,7 +183,7 @@ namespace :initDB do
         description: "Piano d'accumulo mensile di Mariana presso BPER banca",
         count_type: 'accumulation_plan',
         initial_amount: 4987.48,
-        ordering_number: 12
+        ordering_number: 14
       ).first_or_create!
     else
       puts '****** RAKE ABORTED!!! ******'

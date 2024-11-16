@@ -28,7 +28,10 @@
       <% end %>
     </div>
 
-    <h6 class="my-0 text-secondary text-end">Giacenza attuale:<br><%= to_visible_amount(count.current_amount) %>€</h6>
+    <h6 class="my-0 text-secondary text-end">
+      Giacenza attuale:<br>
+      <span class="text-<%= count.current_amount < 0 ? 'danger' : 'secondary' %>"><%= to_visible_amount(count.current_amount, false) %>€</span>
+    </h6>
   </div>
 
   <!-- Modale per la cancellazione / modifica di un conto corrente -->

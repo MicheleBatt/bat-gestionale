@@ -6,8 +6,10 @@
     <%= form.text_field :name, class: "form-control" %>
   </div>
 
-  <div class="my-4 mx-2 mx-sm-4 d-flex justify-content-center justify-content-sm-end">
-    <%= form.button :submit, class: 'btn btn-success' do %>
+  <div class="mt-4 mb-5 d-flex flex-wrap justify-content-between">
+    <button type="button" class="btn btn-secondary mx-2 mx-sm-4 my-2" data-bs-dismiss="modal">Annulla</button>
+
+    <%= form.button :submit, class: 'btn btn-success mx-2 mx-sm-4 my-2' do %>
       Salva
     <% end %>
   </div>

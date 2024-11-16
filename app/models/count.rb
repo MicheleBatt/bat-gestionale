@@ -16,8 +16,10 @@ class Count < ApplicationRecord
   validates :ordering_number, numericality: { greater_than_or_equal_to: 0 }
   enum monitoring_scope: MONITORING_SCOPES.index_by(&:itself), _prefix: :monitoring_scope
   enum count_type: ALL_COUNT_TYPES.keys.map { | key | key.to_s }.index_by(&:itself), _prefix: :count_type
+  enum currency: ALL_CURRENCIES.index_by(&:itself), _prefix: :count_type
 
   # Callbacks
+  before_validation { set_currency }
   before_save { self.description = self.description.to_s.strip if self.description }
   before_save { self.iban = self.iban.to_s.gsub(' ', '') if self.iban }
   before_save { self.initial_amount = self.initial_amount.to_f.round(2) if self.initial_amount }
@@ -49,12 +51,12 @@ class Count < ApplicationRecord
     end
   end
 
-  def movements_default_path
+  def movements_default_path(year = self.max_year, month = self.max_month)
     case self.monitoring_scope
     when 'monthly'
-      self.movements_path_by_month(self.max_year, self.max_month)
+      self.movements_path_by_month(year, month)
     when 'annual'
-      self.movements_path_by_month(self.max_year)
+      self.movements_path_by_month(year)
     else
       self.movements_path_by_month
     end
@@ -173,6 +175,11 @@ class Count < ApplicationRecord
 
   def get_current_amount(movements = self.movements)
     (self.initial_amount.to_f + movements.sum(&:amount)).to_f.round(2)
+  end
+
+  def set_currency
+    metal_investment_accounts = ALL_METALS.keys.uniq.map{ | metal | "#{metal.downcase}_investment_account"}
+    self.currency = 'grams' if metal_investment_accounts.include?(self.count_type)
   end
 
   def set_current_amount
