@@ -65,7 +65,7 @@ module ApplicationHelper
   end
 
   def date_to_integer(year, month, day)
-    "#{year.to_i}#{month.to_i.to_s.to_s.rjust(2, '0')}.split('-')#{day.to_i.to_s.to_s.rjust(2, '0')}".to_i
+    "#{year.to_i}#{month.to_i.to_s.rjust(2, '0')}#{day.to_i.to_s.rjust(2, '0')}".to_i
   end
 
   def stats_for_charts(entity, movements, params = nil)
