@@ -26,6 +26,7 @@ module ImportCountMovementsFromXlsxFileCommand
           cell_style = workbook.stylesheet.cell_xfs[ruby_cell.style_index]
           fill_id = cell_style&.fill_id
           fill_color = workbook.stylesheet.fills[fill_id].pattern_fill&.fg_color&.rgb
+          puts "fill_color: #{fill_color}"
           color_hex = fill_color[2..-1]
           expense_item_id = expense_items_by_colors[color_hex.upcase]
         end
