@@ -28,8 +28,8 @@ class ExpenseItem < ApplicationRecord
 
   def parse_color
     if self.color.present?
-      parsed_color = self.color.to_s.gsub(' ', '').upcase
-      parsed_color = "##{parsed_color}"  unless parsed_color.include?('#')
+      parsed_color = self.color.to_s.delete(' ').upcase
+      parsed_color = "##{parsed_color}"  unless parsed_color.start_with?('#')
       self.color = parsed_color
     end
   end
