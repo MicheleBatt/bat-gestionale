@@ -5,12 +5,12 @@ namespace :initDB do
 
   # Script che svuota il db e lo ri-popola con una struttura vergine
   task :init_db => :environment do
-    if Rails.env != 'test'
-      puts 'Are you sure you want to re-initialize the database? [y/n]'
-      response = STDIN.gets.chomp
-    end
+    # if Rails.env != 'test'
+    #   puts 'Are you sure you want to re-initialize the database? [y/n]'
+    #   response = STDIN.gets.chomp
+    # end
 
-    if Rails.env.test? || response.downcase == 'y'
+    if Rails.env.test? # || response.downcase == 'y'
       # Svuoto il db
       MetalValue.delete_all
       Deadline.delete_all
@@ -22,9 +22,12 @@ namespace :initDB do
       # Salvo il valore corrente dell'oro e dell'argento
       GetRealTimeGoldPriceCommand.call
 
+      first_user = User.create!(email: 'm.battistelli@aigrading.com', password: '111111', first_name: 'Michele', last_name: 'Battistelli', role: 'admin')
 
       # Creo la prima organizzazione
       first_organization = Organization.where(name: 'Famiglia Battistelli').first_or_create!
+
+      Membership.create!(user_id: first_user.id, organization_id: first_organization.id, role: 'editor')
 
 
       # Creo le prime voci di spesa della prima organizzazione
