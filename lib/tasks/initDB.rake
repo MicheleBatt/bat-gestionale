@@ -10,7 +10,7 @@ namespace :initDB do
     #   response = STDIN.gets.chomp
     # end
 
-    if Rails.env.test? # || response.downcase == 'y'
+    # if Rails.env.test? || response.downcase == 'y'
       # Svuoto il db
       MetalValue.delete_all
       Deadline.delete_all
@@ -188,9 +188,9 @@ namespace :initDB do
         initial_amount: 4987.48,
         ordering_number: 14
       ).first_or_create!
-    else
-      puts '****** RAKE ABORTED!!! ******'
-    end
+    # else
+    #   puts '****** RAKE ABORTED!!! ******'
+    # end
   end
 
 
