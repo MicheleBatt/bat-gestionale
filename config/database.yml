@@ -20,5 +20,5 @@ staging:
   database: batgestionale_staging
 
 production:
-  <<: *default
-  database: batgestionale_production
+  adapter: postgresql
+  url: <%= ENV['DATABASE_URL'] %>
