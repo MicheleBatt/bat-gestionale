@@ -13,7 +13,7 @@ test:
 
 simulation:
   <<: *default
-  database: batgestionale_development
+  database: batgestionale_simulation
 
 staging:
   <<: *default
@@ -21,4 +21,4 @@ staging:
 
 production:
   <<: *default
-  database: batgestionale_development
+  database: batgestionale_production
