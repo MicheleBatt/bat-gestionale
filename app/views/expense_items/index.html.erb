@@ -1,37 +1,57 @@
 <%= render 'layouts/navbar' %>
 
-<div class="container-fluid pt-2">
-  <div class="accordion rounded shadow border border-secondary bg-light-gray mb-4" id="filtersAccordion">
-    <div class="accordion-item">
+<div class="counts-header">
+  <div class="container-xl">
+    <h1 class="text-center mb-3">Voci di Spesa</h1>
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-4">
+        <div class="counts-stats text-muted">
+          <div class="d-flex justify-content-center align-items-center">
+            <div class="text-center">
+              <small>Voc<%= @expense_items_count == 1 ? 'e' : 'i' %> di Spesa Total<%= @expense_items_count == 1 ? 'e' : 'i' %></small>
+              <h5 class="mb-0 balance-positive"><%= @expense_items_count %></h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-xl py-4">
+  <div class="accordion filters-card mb-4" id="filtersAccordion">
+    <div class="accordion-item border-0">
       <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button bg-light-gray" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          <b>Filtri</b>
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          <h6 class="mb-0">Filtri di Ricerca</h6>
         </button>
       </h2>
       <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
-        <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
+        <div class="accordion-body">
           <%= search_form_for [@organization, @search] do |f| %>
-            <div class="d-flex flex-wrap justify-content-around align-items-end">
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+            <div class="row align-items-end">
+              <div class="col-md-8 mb-3">
                 <%= f.label :description_cont, 'Descrizione', class: 'form-label' %>
-                <%= f.text_field :description_cont, placeholder: 'Filtra per descrizione', class: 'form-control' %>
+                <%= f.text_field :description_cont, placeholder: 'Cerca per descrizione...', class: 'form-control' %>
               </div>
 
-              <div class="pb-3 d-flex">
-                <button type="submit" class="btn btn-success mx-2">
-                  <i class="fas fa-search"></i> Cerca
-                </button>
+              <div class="col-md-4 mb-3">
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-gradient-primary flex-fill">
+                    <i class="fas fa-search me-1"></i> Cerca
+                  </button>
 
-                <%= link_to organization_expense_items_path(@organization), class: "btn btn-primary mx-2" do %>
-                  <i class="fas fa-filter" aria-hidden="true"></i> Reset
-                <% end %>
+                  <%= link_to organization_expense_items_path(@organization), class: "btn btn-outline-secondary" do %>
+                    <i class="fas fa-undo"></i> Reset
+                  <% end %>
+                </div>
               </div>
             </div>
           <% end %>
 
-          <div class="d-flex justify-content-center flex-wrap">
-            <button type="button" class="btn btn-success mb-3 mx-2" data-bs-toggle="modal" data-bs-target="#expense_itemCreationModal">
-              Nuova voce di spesa
+          <div class="action-buttons d-flex justify-content-center gap-2 mt-3">
+            <button type="button" class="btn btn-gradient-success" data-bs-toggle="modal" data-bs-target="#expense_itemCreationModal">
+              <i class="fas fa-plus-circle me-1"></i> Nuova Voce di Spesa
             </button>
           </div>
         </div>
@@ -40,17 +60,28 @@
   </div>
 
 
-  <div class="d-block mb-5 mx-md-5">
-    <div class="border-bottom border-dark mt-5">
-      <span><b><%= @expense_items_count %></b> voc<%= @expense_items_count == 1 ? 'e' : 'i' %> di spesa</span>
-    </div>
+</div>
 
-    <div id="expense_items" class="d-flex flex-wrap justify-content-center">
-      <% @expense_items.each do |expense_item| %>
-        <%= render expense_item %>
+<div class="px-3 px-xl-5 py-4">
+  <div class="row justify-content-center mb-5">
+    <div class="col-12">
+      <div id="expense_items" class="row d-flex justify-content-center g-4">
+        <% @expense_items.each do |expense_item| %>
+          <div class="col-12 col-md-6 col-xl-4">
+            <%= render expense_item %>
+          </div>
+        <% end %>
+      </div>
+      
+      <% if @expense_items.empty? %>
+        <div class="text-center py-5">
+          <i class="fas fa-tags fa-4x text-muted mb-3"></i>
+          <h4 class="text-muted">Nessuna voce di spesa trovata</h4>
+          <p class="text-muted">Inizia creando la tua prima voce di spesa</p>
+        </div>
       <% end %>
-
-      <div class="d-flex justify-content-center">
+      
+      <div class="d-flex justify-content-center mt-4">
         <%= paginate @expense_items %>
       </div>
     </div>

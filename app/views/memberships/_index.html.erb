@@ -1,16 +1,18 @@
-<div id="memberships_<% organization.id %>" class="d-block">
-  <% if memberships.present? %>
-    <% memberships.each do | membership | %>
-      <%= render 'memberships/membership', membership: membership, organization: organization %>
+<div id="memberships_<% organization.id %>" class="d-flex flex-column h-100">
+  <div class="flex-grow-1">
+    <% if memberships.present? %>
+      <% memberships.each do | membership | %>
+        <%= render 'memberships/membership', membership: membership, organization: organization %>
+      <% end %>
+    <% else %>
+      <p class="text-secondary px-3">
+        Al momento non ci sono membri per questa organizzazione
+      </p>
     <% end %>
-  <% else %>
-    <p class="text-secondary px-3">
-      Al momento non ci sono membri per questa organizzazione
-    </p>
-  <% end %>
+  </div>
 
-  <div class="d-flex justify-content-center justify-content-md-end mt-5">
-    <button type="button" class="btn btn-success mx-2" data-bs-toggle="modal" data-bs-target="#membershipCreationModal<%= organization.id %>">
+  <div class="d-flex justify-content-center justify-content-md-end mt-auto pt-3">
+    <button type="button" class="btn btn-gradient-success mx-2" data-bs-toggle="modal" data-bs-target="#membershipCreationModal<%= organization.id %>">
       Aggiungi membro
     </button>
   </div>

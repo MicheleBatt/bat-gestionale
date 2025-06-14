@@ -1,20 +1,42 @@
 <%= render 'layouts/navbar' %>
 
-<div class="d-block mb-5 mx-2 mx-md-5">
-  <div class="border-bottom border-dark mt-5">
-    <span>Utenti > <%= @user.full_name %></span>
+<div class="counts-header">
+  <div class="container-xl">
+    <h2 class="text-center mb-3">Modifica Utente</h2>
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-4">
+        <div class="counts-stats text-muted">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <small>Nome</small>
+              <h5 class="mb-0 balance-positive"><%= @user.first_name %></h5>
+            </div>
+            <div class="text-end">
+              <small>Cognome</small>
+              <h5 class="mb-0 balance-positive"><%= @user.last_name %></h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-xl py-4">
+  <div class="chart-card">
+    <div id="_error_messages"></div>
+
+    <%= render "form",
+               user: @user,
+               modal_id: nil,
+               path: user_path(@user),
+               method: :patch
+    %>
   </div>
 
-  <div class="d-block d-sm-flex justify-content-center">
-    <div class="rounded border border-dark px-2 px-sm-4 mt-4 mx-1 mx-md-2 shadow bg-white">
-      <div id="_error_messages"></div>
-
-      <%= render "form",
-                 user: @user,
-                 modal_id: nil,
-                 path: user_path(@user),
-                 method: :patch
-      %>
-    </div>
+  <div class="action-buttons d-flex justify-content-center gap-2 mt-3">
+    <%= link_to users_path, class: "btn btn-gradient-info" do %>
+      <i class="fas fa-arrow-left me-1"></i> Torna agli Utenti
+    <% end %>
   </div>
 </div>

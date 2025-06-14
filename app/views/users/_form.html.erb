@@ -60,17 +60,17 @@
     <% end %>
 
     <% if modal_id.present? %>
-      <div class="mt-4 mb-5 d-flex flex-wrap justify-content-between">
-        <button type="button" class="btn btn-secondary mx-2 mx-sm-4 my-2" data-bs-dismiss="modal">Annulla</button>
+      <div class="my-3 d-flex flex-wrap justify-content-between">
+        <button type="button" class="btn btn-outline-secondary mx-2 mx-sm-3 my-2 px-3" data-bs-dismiss="modal">ANNULLA</button>
 
-        <%= form.button :submit, class: 'btn btn-success mx-2 mx-sm-4 my-2' do %>
-          Salva
+        <%= form.button :submit, class: 'btn btn-gradient-primary mx-2 mx-sm-3 my-2 px-4' do %>
+          SALVA
         <% end %>
       </div>
     <% else %>
-      <div class="mt-5 mb-4 mx-2 mx-smy-4 mx-2 mx-md-4 d-flex justify-content-center justify-content-sm-end">
-        <%= form.button :submit, class: "btn btn-success" do %>
-          Salva
+      <div class="mt-5 mb-4 mx-2 mx-md-4 d-flex justify-content-center justify-content-sm-end">
+        <%= form.button :submit, class: "btn btn-gradient-primary" do %>
+          SALVA
         <% end %>
       </div>
     <% end %>

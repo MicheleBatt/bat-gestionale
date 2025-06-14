@@ -1,59 +1,79 @@
 <%= render 'layouts/navbar' %>
 
-<div class="container-fluid pt-2">
-  <div class="accordion rounded shadow border border-secondary bg-light-gray mb-4" id="filtersAccordion">
-    <div class="accordion-item">
+<div class="counts-header">
+  <div class="container-xl">
+    <h1 class="text-center mb-3">Scadenze</h1>
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-4">
+        <div class="counts-stats text-muted">
+          <div class="d-flex justify-content-center align-items-center">
+            <div class="text-center">
+              <small>Scadenz<%= @deadlines_count == 1 ? 'a' : 'e' %> Total<%= @deadlines_count == 1 ? 'e' : 'i' %></small>
+              <h5 class="mb-0 balance-positive"><%= @deadlines_count %></h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-xl py-4">
+  <div class="accordion filters-card mb-4" id="filtersAccordion">
+    <div class="accordion-item border-0">
       <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button bg-light-gray" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          <b>Filtri</b>
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          <h6 class="mb-0">Filtri di Ricerca</h6>
         </button>
       </h2>
       <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
-        <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
+        <div class="accordion-body">
           <%= search_form_for [@organization, @search] do |f| %>
-            <div class="d-flex flex-wrap justify-content-center align-items-end">
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+            <div class="row align-items-end">
+              <div class="col-md-4 mb-3">
                 <%= f.label :description_cont, 'Descrizione', class: 'form-label' %>
-                <%= f.text_field :description_cont, placeholder: 'Filtra per descrizione', class: 'form-control' %>
+                <%= f.text_field :description_cont, placeholder: 'Cerca per descrizione...', class: 'form-control' %>
               </div>
 
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-                <%= f.label :year_eq, 'Mese', class: 'form-label' %>
+              <div class="col-md-3 mb-3">
+                <%= f.label :year_eq, 'Anno', class: 'form-label' %>
                 <%= f.select :year_eq,
                              options_for_select(((Deadline.minimum('year') || Time.now.year)..(Deadline.maximum('year') || Time.now.year)).map{ | year | [year, year] }, @search.year_eq),
-                             { include_blank: "Qualsiasi anno" },
+                             { include_blank: "Tutti gli anni" },
                              class: 'form-control'
                 %>
               </div>
 
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+              <div class="col-md-3 mb-3">
                 <%= f.label :month_eq, 'Mese', class: 'form-label' %>
                 <%= f.select :month_eq,
                              options_for_select(italian_months_for_select, @search.month_eq),
-                             { include_blank: "Qualsiasi mese" },
+                             { include_blank: "Tutti i mesi" },
                              class: 'form-control'
                 %>
               </div>
 
-              <div class="pb-3 d-flex">
-                <button type="submit" class="btn btn-success mx-2">
-                  <i class="fas fa-search"></i> Cerca
-                </button>
+              <div class="col-md-2 mb-3">
+                <div class="d-flex flex-column gap-2">
+                  <button type="submit" class="btn btn-gradient-primary">
+                    <i class="fas fa-search me-1"></i> Cerca
+                  </button>
 
-                <%= link_to organization_deadlines_path(@organization), class: "btn btn-primary mx-2" do %>
-                  <i class="fas fa-filter" aria-hidden="true"></i> Reset
-                <% end %>
+                  <%= link_to organization_deadlines_path(@organization), class: "btn btn-outline-secondary" do %>
+                    <i class="fas fa-undo"></i> Reset
+                  <% end %>
+                </div>
               </div>
             </div>
           <% end %>
 
-          <div class="d-flex justify-content-center flex-wrap">
-            <%= link_to organization_deadlines_path(@organization, q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-warning mb-3 mx-2 text-white" do %>
-              <i class="fas fa-download" aria-hidden="true"></i> Esporta scadenziario
+          <div class="action-buttons d-flex justify-content-center gap-2 mt-3">
+            <%= link_to organization_deadlines_path(@organization, q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-gradient-info" do %>
+              <i class="fas fa-download me-1"></i> Esporta Scadenziario
             <% end %>
 
-            <button type="button" class="btn btn-success mb-3 mx-2" data-bs-toggle="modal" data-bs-target="#deadlineCreationModal">
-              Nuova scadenza
+            <button type="button" class="btn btn-gradient-success" data-bs-toggle="modal" data-bs-target="#deadlineCreationModal">
+              <i class="fas fa-plus-circle me-1"></i> Nuova Scadenza
             </button>
           </div>
         </div>
@@ -62,18 +82,33 @@
   </div>
 
 
-  <div class="d-flex justify-content-center mb-5">
-    <div id="deadlines" class="d-block mx-xl-5">
-      <div class="mt-4 border-bottom border-dark ">
-        <span><b><%= @deadlines_count %></b> scadenz<%= @deadlines_count == 1 ? 'a' : 'e' %></span>
-      </div>
+</div>
 
-      <% @deadlines_by_year.keys.each do | year | %>
-        <div class="rounded shadow border border-secondary bg-white my-3 p-3">
-          <h4 class="text-secondary pl-2"><%= year %></h4>
-          <% @deadlines_by_year[year].each do | deadline | %>
-            <%= render deadline %>
-          <% end %>
+<div class="px-3 px-xl-5 py-4">
+  <div class="row justify-content-center mb-5">
+    <div class="col-12">
+      <div id="deadlines" class="row d-flex justify-content-center g-4">
+        <% @deadlines_by_year.keys.each do | year | %>
+          <div class="col-12">
+            <div class="deadline-year-card">
+              <div class="deadline-year-header">
+                <h4 class="mb-0 text-white"><%= year %></h4>
+              </div>
+              <div class="deadline-year-body">
+                <% @deadlines_by_year[year].each do | deadline | %>
+                  <%= render deadline %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      
+      <% if @deadlines_count == 0 %>
+        <div class="text-center py-5">
+          <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+          <h4 class="text-muted">Nessuna scadenza trovata</h4>
+          <p class="text-muted">Inizia creando la tua prima scadenza</p>
         </div>
       <% end %>
     </div>

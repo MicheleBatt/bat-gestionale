@@ -12,12 +12,13 @@
 
 <% if movements.count >= per_page %>
   <div id="movements-container-<%= page.to_i %>">
-    <div class="d-flex justify-content-center my-5">
-      <%= link_to 'Carica Altri',
-                  organization_count_movements_path(organization_id: organization, count_id: count.id, q: { **params[:q]&.to_unsafe_h }, page: page.to_i),
+    <div class="d-flex justify-content-center my-4">
+      <%= link_to organization_count_movements_path(organization_id: organization, count_id: count.id, q: { **params[:q]&.to_unsafe_h }, page: page.to_i),
+                  class: "btn btn-outline-secondary",
                   data: { turbo_stream: true },
-                  method: :get
-      %>
+                  method: :get do %>
+        <i class="fas fa-chevron-down me-1"></i> Carica Altri Movimenti
+      <% end %>
     </div>
   </div>
 <% end %>

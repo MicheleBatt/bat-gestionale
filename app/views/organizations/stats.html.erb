@@ -1,19 +1,41 @@
 <%= render 'layouts/navbar' %>
 
-<div class="container-fluid pt-2">
-  <div class="accordion rounded shadow border border-secondary bg-light-gray mb-4" id="filtersAccordion">
-    <div class="accordion-item">
+<div class="counts-header">
+  <div class="container-xl">
+    <h2 class="text-center mb-3">Statistiche - <%= @organization.name %></h2>
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-4">
+        <div class="counts-stats text-muted">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <small>Periodo</small>
+              <h5 class="mb-0 balance-positive"><%= @year || "Tutti gli anni" %></h5>
+            </div>
+            <div class="text-end">
+              <small>Organizzazione</small>
+              <h5 class="mb-0 balance-positive"><%= @organization.name %></h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-xl py-4">
+  <div class="accordion filters-card mb-4" id="filtersAccordion">
+    <div class="accordion-item border-0">
       <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button bg-light-gray" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          <b>Filtri</b>
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          <h6 class="mb-0">Filtri di Ricerca</h6>
         </button>
       </h2>
       <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
-        <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
+        <div class="accordion-body">
           <%= search_form_for @search, url: stats_organization_path(id: @organization.id) do |f| %>
-            <div class="d-flex flex-wrap justify-content-center align-items-end px-x px-lg-4">
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-                <%= f.label :year_eq, 'Anno', class: "form-label" %>
+            <div class="row align-items-end">
+              <div class="col-md-4 mb-3">
+                <%= f.label :year_eq, 'Anno', class: 'form-label' %>
                 <%= f.select :year_eq,
                              options_for_select(@years_range.map{ | year | [year, year] }, @search.year_eq),
                              { include_blank: "Tutti gli anni" },
@@ -21,8 +43,8 @@
                 %>
               </div>
 
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-                <%= f.label :count_id_eq, 'Conto', class: "form-label" %>
+              <div class="col-md-4 mb-3">
+                <%= f.label :count_id_eq, 'Conto', class: 'form-label' %>
                 <%= f.select :count_id_eq,
                              options_for_select(@organization.counts.map{ | count | [count.name, count.id] }, @search.count_id_eq),
                              { include_blank: "Tutti i conti" },
@@ -30,14 +52,16 @@
                 %>
               </div>
 
-              <div class="pb-3 d-flex">
-                <button type="submit" class="btn btn-success mx-2">
-                  <i class="fas fa-search"></i> Cerca
-                </button>
+              <div class="col-md-4 mb-3">
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-gradient-primary flex-fill">
+                    <i class="fas fa-search me-1"></i> Cerca
+                  </button>
 
-                <%= link_to stats_organization_path(id: @organization.id), class: "btn btn-primary mx-2" do %>
-                  <i class="fas fa-filter" aria-hidden="true"></i> Reset
-                <% end %>
+                  <%= link_to stats_organization_path(id: @organization.id), class: "btn btn-outline-secondary" do %>
+                    <i class="fas fa-undo"></i> Reset
+                  <% end %>
+                </div>
               </div>
             </div>
           <% end %>
@@ -45,6 +69,15 @@
       </div>
     </div>
   </div>
+
+  <div class="action-buttons d-flex justify-content-center gap-2 mt-3">
+    <%= link_to organizations_path, class: "btn btn-gradient-info" do %>
+      <i class="fas fa-arrow-left me-1"></i> Torna alle Organizzazioni
+    <% end %>
+  </div>
+</div>
+
+<div class="px-3 px-xl-5 py-4">
 
 
 

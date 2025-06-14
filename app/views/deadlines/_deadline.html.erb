@@ -1,19 +1,22 @@
-<div class="d-flex justify-content-between align-items-center mx-2 mx-xl-4 my-2 <%= 'bg-warning' if deadline.upcoming? %>" id="deadline_<%= deadline.id %>">
-  <div class="d-flex align-items-center">
-    <div>
-      <strong><%= parse_date(deadline.expired_at, "%d") %> <%= italian_month(deadline.month) %>:</strong>
+<div class="deadline-item <%= 'deadline-item-urgent' if deadline.upcoming? %>" id="deadline_<%= deadline.id %>">
+  <div class="deadline-item-content">
+    <div class="deadline-date">
+      <span class="deadline-day"><%= parse_date(deadline.expired_at, "%d") %></span>
+      <span class="deadline-month"><%= italian_month(deadline.month) %></span>
     </div>
-
-    <div class="mx-2"><%= deadline.description %></div>
+    
+    <div class="deadline-description">
+      <h6 class="mb-0"><%= deadline.description %></h6>
+    </div>
   </div>
 
-  <div class="d-flex align-items-center">
-    <button type="button" class="btn btn-link text-secondary text-decoration-none mx-1 p-0" data-bs-toggle="modal" data-bs-target="#deadlineEditingModal_<%= deadline.id %>">
-      <i class="fas fa-fw fa-edit"></i>
+  <div class="deadline-actions">
+    <button type="button" class="btn deadline-action-btn deadline-edit-btn" data-bs-toggle="modal" data-bs-target="#deadlineEditingModal_<%= deadline.id %>" title="Modifica">
+      <i class="fas fa-edit"></i>
     </button>
 
-    <%= button_to organization_deadline_path(@organization, deadline), method: :delete, class: "btn btn-link text-danger text-decoration-none p-0" do %>
-      <i class="fas fa-fw fa-trash"></i>
+    <%= button_to organization_deadline_path(@organization, deadline), method: :delete, class: "btn deadline-action-btn deadline-delete-btn", title: "Elimina" do %>
+      <i class="fas fa-trash"></i>
     <% end %>
   </div>
 

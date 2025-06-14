@@ -1,56 +1,76 @@
 <%= render 'layouts/navbar' %>
 
-<div class="container-fluid pt-2">
-  <div class="accordion rounded shadow border border-secondary bg-light-gray mb-4" id="filtersAccordion">
-    <div class="accordion-item">
+<div class="counts-header">
+  <div class="container-xl">
+    <h1 class="text-center mb-3">Utenti</h1>
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-4">
+        <div class="counts-stats text-muted">
+          <div class="d-flex justify-content-center align-items-center">
+            <div class="text-center">
+              <small>Utent<%= @users_count == 1 ? 'e' : 'i' %> Total<%= @users_count == 1 ? 'e' : 'i' %></small>
+              <h5 class="mb-0 balance-positive"><%= @users_count %></h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-xl py-4">
+  <div class="accordion filters-card mb-4" id="filtersAccordion">
+    <div class="accordion-item border-0">
       <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button bg-light-gray" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          <b>Filtri</b>
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          <h6 class="mb-0">Filtri di Ricerca</h6>
         </button>
       </h2>
       <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
-        <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
+        <div class="accordion-body">
           <%= search_form_for @search do |f| %>
-            <div class="d-flex flex-wrap justify-content-around align-items-end">
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+            <div class="row align-items-end">
+              <div class="col-md-3 mb-3">
                 <%= f.label :first_name_cont, 'Nome', class: 'form-label' %>
-                <%= f.text_field :first_name_cont, placeholder: 'Filtra per nome', class: 'form-control' %>
+                <%= f.text_field :first_name_cont, placeholder: 'Cerca per nome...', class: 'form-control' %>
               </div>
 
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+              <div class="col-md-3 mb-3">
                 <%= f.label :last_name_cont, 'Cognome', class: 'form-label' %>
-                <%= f.text_field :last_name_cont, placeholder: 'Filtra per cognome', class: 'form-control' %>
+                <%= f.text_field :last_name_cont, placeholder: 'Cerca per cognome...', class: 'form-control' %>
               </div>
 
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+              <div class="col-md-3 mb-3">
                 <%= f.label :email_cont, 'Email', class: 'form-label' %>
-                <%= f.text_field :email_cont, placeholder: 'Filtra per email', class: 'form-control' %>
+                <%= f.text_field :email_cont, placeholder: 'Cerca per email...', class: 'form-control' %>
               </div>
 
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
+              <div class="col-md-2 mb-3">
                 <%= f.label :role_eq, 'Ruolo', class: 'form-label' %>
                 <%= f.select :role_eq,
                              options_for_select(all_user_roles_for_select, @search.role_eq),
-                             { include_blank: "Qualsiasi ruolo" },
+                             { include_blank: "Tutti i ruoli" },
                              class: 'form-control'
                 %>
               </div>
 
-              <div class="pb-3 d-flex">
-                <button type="submit" class="btn btn-success mx-2">
-                  <i class="fas fa-search"></i> Cerca
-                </button>
+              <div class="col-md-1 mb-3">
+                <div class="d-flex flex-column gap-2">
+                  <button type="submit" class="btn btn-gradient-primary">
+                    <i class="fas fa-search"></i>
+                  </button>
 
-                <%= link_to users_path, class: "btn btn-primary mx-2" do %>
-                  <i class="fas fa-filter" aria-hidden="true"></i> Reset
-                <% end %>
+                  <%= link_to users_path, class: "btn btn-outline-secondary" do %>
+                    <i class="fas fa-undo"></i>
+                  <% end %>
+                </div>
               </div>
             </div>
           <% end %>
 
-          <div class="d-flex justify-content-center flex-wrap">
-            <button type="button" class="btn btn-success mb-3 mx-2" data-bs-toggle="modal" data-bs-target="#userCreationModal">
-              Nuovo utente
+          <div class="action-buttons d-flex justify-content-center gap-2 mt-3">
+            <button type="button" class="btn btn-gradient-success" data-bs-toggle="modal" data-bs-target="#userCreationModal">
+              <i class="fas fa-user-plus me-1"></i> Nuovo Utente
             </button>
           </div>
         </div>
@@ -59,17 +79,28 @@
   </div>
 
 
-  <div class="d-block mb-5 mx-md-5">
-    <div class="border-bottom border-dark mt-5">
-      <span><b><%= @users_count %></b> utent<%= @users_count == 1 ? 'e' : 'i' %></span>
-    </div>
+</div>
 
-    <div id="users" class="d-flex flex-wrap justify-content-center">
-      <% @users.each do |user| %>
-        <%= render user %>
+<div class="px-3 px-xl-5 py-4">
+  <div class="row justify-content-center mb-5">
+    <div class="col-12">
+      <div id="users" class="row d-flex justify-content-center g-4">
+        <% @users.each do |user| %>
+          <div class="col-12 col-md-6 col-lg-4">
+            <%= render user %>
+          </div>
+        <% end %>
+      </div>
+      
+      <% if @users.empty? %>
+        <div class="text-center py-5">
+          <i class="fas fa-users fa-4x text-muted mb-3"></i>
+          <h4 class="text-muted">Nessun utente trovato</h4>
+          <p class="text-muted">Inizia creando il tuo primo utente</p>
+        </div>
       <% end %>
-
-      <div class="d-flex justify-content-center">
+      
+      <div class="d-flex justify-content-center mt-4">
         <%= paginate @users %>
       </div>
     </div>

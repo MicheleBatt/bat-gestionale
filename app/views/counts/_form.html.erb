@@ -2,54 +2,68 @@
   <%= form.hidden_field :organization_id, value: @organization.id %>
   <%= form.hidden_field :modal_id, value: modal_id %>
 
-  <div class="m-4">
+  <div class="m-3">
     <%= form.label :name, 'Nome', class: "form-label" %>
     <%= form.text_field :name, class: "form-control" %>
   </div>
 
-  <div class="m-4">
+  <div class="m-3">
     <%= form.label :description, 'Descrizione (opzionale)', class: "form-label" %>
     <%= form.text_area :description, class: "form-control" %>
   </div>
 
-  <div class="m-4">
-    <%= form.label :count_type, 'Tipo', class: "form-label" %>
-    <%= form.select :count_type,
-                    options_for_select(count_types_for_select, count.count_type),
-                    { include_blank: 'Specifica il tipo di conto' },
-                    class: 'form-control'
-    %>
-  </div>
-
-  <div class="m-4">
+  <div class="mt-3 mx-3">
     <%= form.label :iban, 'Codice IBAN', class: "form-label" %>
     <%= form.text_field :iban, class: "form-control" %>
   </div>
 
-  <div class="m-4">
-    <%= form.label :monitoring_scope, 'Monitoraggio', class: "form-label" %>
-    <%= form.select :monitoring_scope,
-                    options_for_select(monitoring_scopes_for_select, count.monitoring_scope),
-                    { include_blank: false },
-                    class: 'form-control'
-    %>
+
+  <div class="row mx-2">
+    <div class="col-6">
+      <div class="my-3">
+        <%= form.label :count_type, 'Tipo', class: "form-label" %>
+        <%= form.select :count_type,
+                        options_for_select(count_types_for_select, count.count_type),
+                        { include_blank: 'Specifica il tipo di conto' },
+                        class: 'form-control'
+        %>
+      </div>
+    </div>
+
+    <div class="col-6">
+      <div class="my-3">
+        <%= form.label :monitoring_scope, 'Monitoraggio', class: "form-label" %>
+        <%= form.select :monitoring_scope,
+                        options_for_select(monitoring_scopes_for_select, count.monitoring_scope),
+                        { include_blank: false },
+                        class: 'form-control'
+        %>
+      </div>
+    </div>
+
+    <div class="col-6">
+      <div class="my-3">
+        <%= form.label :initial_amount, 'Giacenza Iniziale', class: "form-label" %>
+        <%= form.number_field :initial_amount, step: :any, class: "form-control" %>
+      </div>
+    </div>
+
+    <div class="col-6">
+      <div class="my-3">
+        <%= form.label :ordering_number, 'Ordinamento', class: "form-label" %>
+        <%= form.number_field :ordering_number, class: "form-control" %>
+      </div>
+    </div>
   </div>
 
-  <div class="m-4">
-    <%= form.label :initial_amount, 'Giacenza Iniziale', class: "form-label" %>
-    <%= form.number_field :initial_amount, step: :any, class: "form-control" %>
-  </div>
 
-  <div class="m-4">
-    <%= form.label :ordering_number, 'Ordinamento', class: "form-label" %>
-    <%= form.number_field :ordering_number, class: "form-control" %>
-  </div>
 
-  <div class="mt-4 mb-5 d-flex flex-wrap justify-content-between">
-    <button type="button" class="btn btn-secondary mx-2 mx-sm-4 my-2" data-bs-dismiss="modal">Annulla</button>
 
-    <%= form.button :submit, class: 'btn btn-success mx-2 mx-sm-4 my-2' do %>
-      Salva
+  <div class="my-3 d-flex flex-wrap justify-content-between">
+    <button type="button" class="btn btn-outline-secondary mx-2 mx-sm-3 my-2 px-3" data-bs-dismiss="modal">ANNULLA</button>
+
+    <%= form.button :submit, class: 'btn btn-gradient-primary mx-2 mx-sm-3 my-2 px-4' do %>
+      SALVA
     <% end %>
   </div>
 <% end %>

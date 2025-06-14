@@ -1,37 +1,60 @@
-<div class="rounded shadow border border-secondary bg-white my-4 px-3 px-md-5 py-2" id="count_<%= count.id %>">
-  <h5 class="mb-0">
-    <%= link_to count.name, count.movements_default_path, class: "text-dark text-decoration-none" %>
-  </h5>
-
-  <h6 class=""><%= count.description %></h6>
-  <h6 class="mt-4 mb-0 text-secondary">
-    <% if count.iban.present? %>
-      <span id="count_<%= count.id %>_iban"><%= count.iban %></span>
-      <i class="fas fa-copy"
-         role="button"
-         id="<%= count.id %>"
-         onclick="((event) => { navigator.clipboard.writeText(document.querySelector(`#count_${event.target.id}_iban`).innerHTML?.trim()) })(event)"
-      ></i>
-    <% end %>
-  </h6>
-
-  <div class="d-flex justify-content-between align-items-end mb-0">
-    <div class="d-flex justify-content-start">
-      <button type="button" class="btn btn-link text-secondary text-decoration-none p-0" data-bs-toggle="modal" data-bs-target="#countEditingModal_<%= count.id %>">
-        <i class="fas fa-fw fa-edit"></i>
-      </button>
-
-      <% if count.movements.blank? %>
-        <%= button_to organization_count_path(@organization, count), method: :delete, class: "btn btn-link text-danger text-decoration-none ml-3 p-0" do %>
-          <i class="fas fa-fw fa-trash"></i>
+<div class="count-card" id="count_<%= count.id %>">
+  <div class="count-card-header">
+    <div class="d-flex justify-content-between align-items-start">
+      <div class="count-info-container">
+        <h6 class="mb-1 text-white">
+          <%= link_to count.name, count.movements_default_path, class: "text-white text-decoration-none" %>
+        </h6>
+        <% if count.description.present? %>
+          <p class="text-muted mb-0"><small><%= count.description %></small></p>
         <% end %>
+      </div>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn count-action-btn count-edit-btn" data-bs-toggle="modal" data-bs-target="#countEditingModal_<%= count.id %>" title="Modifica">
+          <i class="fas fa-edit"></i>
+        </button>
+        <% if count.movements.blank? %>
+          <%= button_to organization_count_path(@organization, count), method: :delete, class: "btn count-action-btn count-delete-btn", title: "Elimina" do %>
+            <i class="fas fa-trash"></i>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="count-card-body">
+    <div class="iban-section mb-3">
+      <% if count.iban.present? %>
+        <small class="text-muted d-block mb-1">IBAN</small>
+        <div class="d-flex align-items-center">
+          <code class="me-2" id="count_<%= count.id %>_iban" style="font-size: 0.85rem;"><%= count.iban %></code>
+          <i class="fas fa-copy iban-copy-btn flex-shrink-0"
+             role="button"
+             id="<%= count.id %>"
+             onclick="((event) => { 
+               event.stopPropagation();
+               navigator.clipboard.writeText(document.querySelector(`#count_${event.target.id}_iban`).innerHTML?.trim());
+               event.target.classList.add('fa-check');
+               event.target.classList.remove('fa-copy');
+               setTimeout(() => {
+                 event.target.classList.add('fa-copy');
+                 event.target.classList.remove('fa-check');
+               }, 2000);
+             })(event)"
+             title="Copia IBAN"
+          ></i>
+        </div>
       <% end %>
     </div>
-
-    <h6 class="my-0 text-secondary text-end">
-      Giacenza attuale:<br>
-      <span class="text-<%= count.current_amount < 0 ? 'danger' : 'secondary' %>"><%= to_visible_amount(count.current_amount, false) %>€</span>
-    </h6>
+    
+    <div class="balance-section mt-auto">
+      <div class="balance-card">
+        <small class="text-muted d-block mb-1">Giacenza Attuale</small>
+        <h4 class="mb-0 <%= count.current_amount < 0 ? 'balance-negative' : 'balance-positive' %>">
+          <%= to_visible_amount(count.current_amount, false) %>€
+        </h4>
+      </div>
+    </div>
   </div>
 
   <!-- Modale per la cancellazione / modifica di un conto corrente -->
