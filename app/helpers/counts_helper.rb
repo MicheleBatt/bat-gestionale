@@ -12,7 +12,8 @@ module CountsHelper
     "investments_account": "fondo di investimento su azioni o obbligazioni",
     "accumulation_plan": "piano d'accumulo",
     "postal_savings_bond": "buoni fruttiferi postali",
-    "savings_booklet": "libretto dei risparmi"
+    "savings_booklet": "libretto dei risparmi",
+    "pension_fund": "fondo pensione"
    }
   metals = ALL_METALS.keys.map{ | key | ["#{key.downcase}_investment_account", "fondo di investimento su #{ALL_METALS[key][:italian_name]}"] }.uniq.to_h
   ALL_COUNT_TYPES = { **base_count_types, **metals }.freeze
