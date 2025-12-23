@@ -1,6 +1,6 @@
-<div class="col-12 col-lg-6 mb-2 ps-0" id="movement_<%= movement.id %>">
-  <div class="movement-row" style="background: linear-gradient(135deg, <%= movement.expense_item&.color || '#f8f9fa' %>15 0%, <%= movement.expense_item&.color || '#f8f9fa' %>08 100%); border-left: 4px solid <%= movement.expense_item&.color || '#dee2e6' %>;">
-    <div class="row align-items-center py-2 px-3">
+<div class="col-12 col-lg-6 mb-1 ps-0" id="movement_<%= movement.id %>">
+  <div class="movement-row" style="background: linear-gradient(135deg, <%= movement.expense_item&.color || '#f8f9fa' %>15 0%, <%= movement.expense_item&.color || '#f8f9fa' %>08 100%); border-left: 3px solid <%= movement.expense_item&.color || '#dee2e6' %>;">
+    <div class="row align-items-center py-1 px-2">
       <div class="col-3 col-sm-2 text-center">
         <div class="movement-date">
           <span class="fw-bold"><%= parse_date(movement.emitted_at, '%d.%m.%y') %></span>

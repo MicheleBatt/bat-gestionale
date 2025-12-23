@@ -2,7 +2,7 @@
 
 <div class="counts-header">
   <div class="container-xl">
-    <h2 class="text-center mb-3">Movimenti - <%= @count.name %></h2>
+    <h2 class="text-center mb-2" style="font-size: 1.25rem;">Movimenti - <%= @count.name %></h2>
     <div class="row justify-content-center">
       <div class="col-md-8 col-lg-6">
         <div class="counts-stats text-muted">
@@ -26,8 +26,8 @@
   </div>
 </div>
 
-<div class="container-xl py-4">
-  <div class="accordion filters-card mb-4" id="filtersAccordion">
+<div class="container-xl py-2">
+  <div class="accordion filters-card mb-2" id="filtersAccordion">
     <div class="accordion-item border-0">
       <h2 class="accordion-header" id="headingOne">
         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -38,12 +38,12 @@
         <div class="accordion-body">
           <%= search_form_for [@organization, @count, @search] do |f| %>
             <div class="row align-items-end">
-              <div class="col-md-4 mb-3">
+              <div class="col-md-4 mb-2">
                 <%= f.label :causal_cont, 'Causale', class: 'form-label' %>
                 <%= f.text_field :causal_cont, placeholder: 'Filtra per causale', class: 'form-control' %>
               </div>
 
-              <div class="col-md-4 mb-3">
+              <div class="col-md-4 mb-2">
                 <%= f.label :movement_type_eq, 'Tipo di movimento', class: "form-label" %>
                 <%= f.select :movement_type_eq,
                              options_for_select(@movement_types, @search.movement_type_eq),
@@ -52,7 +52,7 @@
                 %>
               </div>
 
-              <div class="col-md-4 mb-3">
+              <div class="col-md-4 mb-2">
                 <%= f.label :expense_item_id_eq, 'Tipo di spesa', class: "form-label" %>
                 <%= f.select :expense_item_id_eq,
                              options_for_select(@expense_items, @search.expense_item_id_eq),
@@ -61,17 +61,17 @@
                 %>
               </div>
 
-              <div class="col-md-3 mb-3">
+              <div class="col-md-3 mb-2">
                 <%= f.label :emitted_at_gteq, 'A partire dal', class: 'form-label' %>
                 <%= f.date_field :emitted_at_gteq, attribute: 'date', class: 'form-control' %>
               </div>
 
-              <div class="col-md-3 mb-3">
+              <div class="col-md-3 mb-2">
                 <%= f.label :emitted_at_lteq, 'Entro il', class: 'form-label' %>
                 <%= f.date_field :emitted_at_lteq, attribute: 'date', class: 'form-control' %>
               </div>
 
-              <div class="col-md-6 mb-3">
+              <div class="col-md-6 mb-2">
                 <div class="d-flex gap-2">
                   <button type="submit" class="btn btn-gradient-primary flex-fill">
                     <i class="fas fa-search me-1"></i> Cerca
@@ -89,7 +89,7 @@
     </div>
   </div>
 
-  <div class="action-buttons d-flex justify-content-center flex-wrap gap-2 mb-3">
+  <div class="action-buttons d-flex justify-content-center flex-wrap gap-2 mb-2">
     <% if @all_movements.present? %>
       <%= link_to organization_count_movements_path(organization_id: @organization, count_id: @count.id, q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-gradient-success" do %>
         <i class="fas fa-download me-1"></i> Esporta movimenti
@@ -99,7 +99,7 @@
         <i class="fas fa-line-chart me-1"></i> Grafici
       <% end %>
     <% end %>
-    
+
     <%= link_to organization_counts_path(@organization), class: "btn btn-gradient-primary" do %>
       <i class="fas fa-arrow-left me-1"></i> Torna ai Conti
     <% end %>
@@ -108,9 +108,9 @@
 
 
 
-<div class="px-3 px-xl-5 py-4">
-  <div class="chart-card">
-    <div class="d-flex flex-wrap justify-content-center justify-content-sm-between align-items-center mb-4">
+<div class="px-3 px-xl-4 py-2">
+  <div class="chart-card" style="padding: 1rem;">
+    <div class="d-flex flex-wrap justify-content-center justify-content-sm-between align-items-center mb-3">
       <button type="button" class="btn btn-gradient-primary" data-bs-toggle="modal" data-bs-target="#outMovementCreationModal">
         <i class="fas fa-minus me-1"></i> Aggiungi Uscita
       </button>
@@ -121,10 +121,10 @@
     </div>
 
     <!-- TESTATA DELLA TABELLA -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
       <% movements_list_links = @count.fast_movements_list_links(@year, @month) if @time_range_report  %>
       <% if movements_list_links.present? %>
-        <%= link_to movements_list_links[0], class: "btn btn-outline-secondary" do %>
+        <%= link_to movements_list_links[0], class: "btn btn-sm btn-outline-secondary" do %>
           <i class="fa-solid fa-chevron-left me-1"></i> Precedente
         <% end %>
       <% else %>
@@ -132,12 +132,12 @@
       <% end %>
 
       <div class="text-center">
-        <h4 class="mb-1"><%= @table_titles[:main_title] %></h4>
-        <span class="text-muted"><b><%= @movements_count %></b> moviment<%= @movements_count == 1 ? 'o' : 'i' %></span>
+        <h5 class="mb-0"><%= @table_titles[:main_title] %></h5>
+        <small class="text-muted"><b><%= @movements_count %></b> moviment<%= @movements_count == 1 ? 'o' : 'i' %></small>
       </div>
 
       <% if movements_list_links.present? %>
-        <%= link_to movements_list_links[1], class: "btn btn-outline-secondary" do %>
+        <%= link_to movements_list_links[1], class: "btn btn-sm btn-outline-secondary" do %>
           Successivo <i class="fa-solid fa-chevron-right ms-1"></i>
         <% end %>
       <% else %>
@@ -146,19 +146,19 @@
     </div>
 
     <!-- HEADERS MODERNI DELLE COLONNE -->
-    <div class="row d-none d-lg-flex mb-3">
+    <div class="row d-none d-lg-flex mb-2">
       <div class="col-6">
-        <div class="chart-card-small text-center">
-          <h5 class="mb-0">
-            <i class="fas fa-arrow-down me-2"></i>Uscite
-          </h5>
+        <div class="chart-card-small text-center" style="padding: 0.5rem;">
+          <h6 class="mb-0">
+            <i class="fas fa-arrow-down me-1"></i>Uscite
+          </h6>
         </div>
       </div>
       <div class="col-6">
-        <div class="chart-card-small text-center">
-          <h5 class="mb-0">
-            <i class="fas fa-arrow-up me-2"></i>Entrate
-          </h5>
+        <div class="chart-card-small text-center" style="padding: 0.5rem;">
+          <h6 class="mb-0">
+            <i class="fas fa-arrow-up me-1"></i>Entrate
+          </h6>
         </div>
       </div>
     </div>
@@ -170,51 +170,51 @@
 
     
     <!-- TOTALI USCITE/ENTRATE -->
-    <div class="row d-none d-lg-flex mt-5 mb-3">
+    <div class="row d-none d-lg-flex mt-3 mb-2">
       <div class="col-6">
-        <div class="d-flex justify-content-between align-items-center p-3 border rounded" style="background: linear-gradient(45deg, #fee2e2 0%, #fecaca 100%);">
-          <span class="fw-bold text-danger">
+        <div class="d-flex justify-content-between align-items-center p-2 border rounded" style="background: linear-gradient(45deg, #fee2e2 0%, #fecaca 100%);">
+          <span class="fw-bold text-danger" style="font-size: 0.85rem;">
             <i class="fas fa-arrow-down me-1"></i>TOTALE USCITE:
           </span>
-          <span class="badge bg-danger fs-6"><%= to_visible_amount(@total_out_movements_amount) %>€</span>
+          <span class="badge bg-danger"><%= to_visible_amount(@total_out_movements_amount) %>€</span>
         </div>
       </div>
       <div class="col-6">
-        <div class="d-flex justify-content-between align-items-center p-3 border rounded" style="background: linear-gradient(45deg, #dcfce7 0%, #bbf7d0 100%);">
-          <span class="fw-bold text-success">
+        <div class="d-flex justify-content-between align-items-center p-2 border rounded" style="background: linear-gradient(45deg, #dcfce7 0%, #bbf7d0 100%);">
+          <span class="fw-bold text-success" style="font-size: 0.85rem;">
             <i class="fas fa-arrow-up me-1"></i>TOTALE ENTRATE:
           </span>
-          <span class="badge bg-success fs-6"><%= to_visible_amount(@total_in_movements_amount) %>€</span>
+          <span class="badge bg-success"><%= to_visible_amount(@total_in_movements_amount) %>€</span>
         </div>
       </div>
     </div>
 
     <!-- SALDI PERIODO -->
-    <div class="mt-3">
+    <div class="mt-2">
       <% if @time_range_report.present? %>
-        <div class="d-flex justify-content-between align-items-center p-3 border rounded bg-light mb-2">
-          <span class="fw-bold">
+        <div class="d-flex justify-content-between align-items-center p-2 border rounded bg-light mb-1">
+          <span class="fw-bold" style="font-size: 0.85rem;">
             <i class="fas fa-clock me-1"></i><%= @table_titles[:start_amount_title].upcase %>
           </span>
-          <span class="badge bg-info fs-6"><%= to_visible_amount(@start_amount, false) %>€</span>
+          <span class="badge bg-info"><%= to_visible_amount(@start_amount, false) %>€</span>
         </div>
       <% end %>
 
-      <div class="d-flex justify-content-between align-items-center p-3 border rounded bg-light mb-2">
-        <span class="fw-bold">
+      <div class="d-flex justify-content-between align-items-center p-2 border rounded bg-light mb-1">
+        <span class="fw-bold" style="font-size: 0.85rem;">
           <i class="fas fa-balance-scale me-1"></i><%= @table_titles[:total_amount_title].upcase %>
         </span>
-        <span class="badge bg-<%= @total_movements_amount <= 0 ? 'danger' : 'success' %> fs-6">
+        <span class="badge bg-<%= @total_movements_amount <= 0 ? 'danger' : 'success' %>">
           <%= to_visible_amount(@total_movements_amount, false) %>€
         </span>
       </div>
 
       <% if @time_range_report.present? %>
-        <div class="d-flex justify-content-between align-items-center p-3 border rounded bg-light mb-2">
-          <span class="fw-bold">
+        <div class="d-flex justify-content-between align-items-center p-2 border rounded bg-light mb-1">
+          <span class="fw-bold" style="font-size: 0.85rem;">
             <i class="fas fa-wallet me-1"></i><%= @table_titles[:final_amount_title].upcase %>
           </span>
-          <span class="badge bg-primary fs-6"><%= to_visible_amount(@final_amount, false) %>€</span>
+          <span class="badge bg-primary"><%= to_visible_amount(@final_amount, false) %>€</span>
         </div>
       <% end %>
     </div>
@@ -222,11 +222,11 @@
     <!-- TOTALI PER VOCE DI SPESA -->
     <% if @movements_amounts_by_expense_items.present? %>
       <% @movements_amounts_by_expense_items.each do | expense_item, amount | %>
-        <div class="d-flex justify-content-between align-items-center p-3 border rounded mb-2" style="background-color: <%= expense_item.color %>15; border-color: <%= expense_item.color %>33;">
-          <span class="fw-bold" style="color: <%= expense_item.color %>;">
+        <div class="d-flex justify-content-between align-items-center p-2 border rounded mb-1" style="background-color: <%= expense_item.color %>15; border-color: <%= expense_item.color %>33;">
+          <span class="fw-bold" style="color: <%= expense_item.color %>; font-size: 0.85rem;">
             <i class="fas fa-tag me-1"></i>AMMONTARE <%= expense_item.description.upcase %>:
           </span>
-          <span class="badge fs-6" style="background-color: <%= expense_item.color %>">
+          <span class="badge" style="background-color: <%= expense_item.color %>">
             <%= to_visible_amount(amount) %>€
           </span>
         </div>
@@ -237,7 +237,7 @@
 
 
 <% if @movements_amounts_by_expense_items.present? %>
-  <div class="px-3 px-xl-5 py-4">
+  <div class="px-3 px-xl-4 py-2">
     <% chart_title = @table_titles[:expense_items_amounts_chart] %>
     <div class="chart-card">
       <%= column_chart @movements_amounts_by_expense_items.to_a.map { | expense_item, amount | [expense_item.description, (amount * -1).to_f.round(2)] }.to_h,
