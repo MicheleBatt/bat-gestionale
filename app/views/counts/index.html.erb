@@ -2,7 +2,7 @@
 
 <div class="counts-header">
   <div class="container-xl">
-    <h1 class="text-center mb-3">I Tuoi Conti</h1>
+    <h1 class="text-center mb-2">I Tuoi Conti</h1>
     <div class="row justify-content-center">
       <div class="col-md-6 col-lg-4">
         <div class="counts-stats text-muted">
@@ -22,8 +22,8 @@
   </div>
 </div>
 
-<div class="container-xl py-4">
-  <div class="accordion filters-card mb-4" id="filtersAccordion">
+<div class="container-xl py-2">
+  <div class="accordion filters-card mb-2" id="filtersAccordion">
     <div class="accordion-item border-0">
       <h2 class="accordion-header" id="headingOne">
         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -34,12 +34,12 @@
         <div class="accordion-body">
       <%= search_form_for [@organization, @search] do |f| %>
         <div class="row align-items-end">
-          <div class="col-md-4 mb-3">
+          <div class="col-md-4 mb-2">
             <%= f.label :name_cont, 'Nome', class: 'form-label' %>
             <%= f.text_field :name_cont, placeholder: 'Cerca per nome...', class: 'form-control' %>
           </div>
 
-          <div class="col-md-4 mb-3">
+          <div class="col-md-4 mb-2">
             <%= f.label :count_type_eq, 'Tipo di conto', class: "form-label" %>
             <%= f.select :count_type_eq,
                          options_for_select(count_types_for_select, @search.count_type_eq),
@@ -48,7 +48,7 @@
             %>
           </div>
 
-          <div class="col-md-4 mb-3">
+          <div class="col-md-4 mb-2">
             <div class="d-flex gap-2">
               <button type="submit" class="btn btn-gradient-primary flex-fill">
                 <i class="fas fa-search me-1"></i> Cerca
@@ -62,7 +62,7 @@
         </div>
       <% end %>
 
-      <div class="action-buttons d-flex justify-content-center gap-2 mt-3">
+      <div class="action-buttons d-flex justify-content-center gap-2 mt-2">
         <% if @organization.movements.present? %>
           <%= link_to stats_organization_path(id: @organization.id), class: "btn btn-gradient-info" do %>
             <i class="fas fa-chart-line me-1"></i> Visualizza Grafici
@@ -79,10 +79,10 @@
   </div>
 </div>
 
-<div class="px-3 px-xl-5 py-4">
-  <div class="row justify-content-center mb-5">
+<div class="px-3 px-xl-4 py-2">
+  <div class="row justify-content-center mb-3">
     <div class="col-12">
-      <div id="counts" class="row d-flex justify-content-center g-4">
+      <div id="counts" class="row d-flex justify-content-center g-3">
         <% @counts.each do | count | %>
           <div class="col-12 col-md-6 col-lg-4">
             <%= render count %>
@@ -91,10 +91,10 @@
       </div>
       
       <% if @counts.empty? %>
-        <div class="text-center py-5">
-          <i class="fas fa-piggy-bank fa-4x text-muted mb-3"></i>
-          <h4 class="text-muted">Nessun conto trovato</h4>
-          <p class="text-muted">Inizia creando il tuo primo conto corrente</p>
+        <div class="text-center py-4">
+          <i class="fas fa-piggy-bank fa-3x text-muted mb-2"></i>
+          <h5 class="text-muted mb-1">Nessun conto trovato</h5>
+          <p class="text-muted small mb-0">Inizia creando il tuo primo conto corrente</p>
         </div>
       <% end %>
     </div>

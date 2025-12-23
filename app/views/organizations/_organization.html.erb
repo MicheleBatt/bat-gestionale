@@ -1,15 +1,14 @@
-
 <div class="organization-card" id="organization_<%= organization.id %>">
   <div class="organization-card-header">
     <div class="d-flex justify-content-between align-items-center">
       <div class="organization-info-container">
-        <h6 class="mb-1 text-white">
+        <h6 class="mb-0 text-white">
           <%= link_to organization.name, organization_counts_path(organization), class: "text-white text-decoration-none" %>
         </h6>
         <% memberships_counts = organization.memberships.count %>
-        <p class="text-muted mb-0"><small><%= memberships_counts %> membr<%= memberships_counts == 1 ? 'o' : 'i' %></small></p>
+        <p class="text-muted mb-0"><%= memberships_counts %> membr<%= memberships_counts == 1 ? 'o' : 'i' %></p>
       </div>
-      <div class="d-flex gap-2">
+      <div class="d-flex gap-1">
         <button type="button" class="btn organization-action-btn organization-edit-btn" data-bs-toggle="modal" data-bs-target="#organizationEditingModal_<%= organization.id %>" title="Modifica">
           <i class="fas fa-edit"></i>
         </button>

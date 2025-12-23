@@ -4,9 +4,9 @@
       <div class="d-flex align-items-center expense-info-container">
         <div class="expense-color-box" style="background-color: <%= expense_item.color %>">
         </div>
-        <h6 class="mb-0 ms-3 text-white"><%= expense_item.description %></h6>
+        <h6 class="mb-0 ms-2 text-white"><%= expense_item.description %></h6>
       </div>
-      <div class="d-flex gap-2">
+      <div class="d-flex gap-1">
         <button type="button" class="btn expense-action-btn expense-edit-btn" data-bs-toggle="modal" data-bs-target="#expense_itemEditingModal_<%= expense_item.id %>" title="Modifica">
           <i class="fas fa-edit"></i>
         </button>

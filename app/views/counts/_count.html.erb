@@ -2,14 +2,14 @@
   <div class="count-card-header">
     <div class="d-flex justify-content-between align-items-start">
       <div class="count-info-container">
-        <h6 class="mb-1 text-white">
+        <h6 class="mb-0 text-white">
           <%= link_to count.name, count.movements_default_path, class: "text-white text-decoration-none" %>
         </h6>
         <% if count.description.present? %>
-          <p class="text-muted mb-0"><small><%= count.description %></small></p>
+          <p class="text-muted mb-0" style="font-size: 0.7rem;"><%= count.description %></p>
         <% end %>
       </div>
-      <div class="d-flex gap-2">
+      <div class="d-flex gap-1">
         <button type="button" class="btn count-action-btn count-edit-btn" data-bs-toggle="modal" data-bs-target="#countEditingModal_<%= count.id %>" title="Modifica">
           <i class="fas fa-edit"></i>
         </button>
@@ -23,11 +23,11 @@
   </div>
   
   <div class="count-card-body">
-    <div class="iban-section mb-3">
+    <div class="iban-section mb-2">
       <% if count.iban.present? %>
-        <small class="text-muted d-block mb-1">IBAN</small>
+        <small class="text-muted d-block mb-0">IBAN</small>
         <div class="d-flex align-items-center">
-          <code class="me-2" id="count_<%= count.id %>_iban" style="font-size: 0.85rem;"><%= count.iban %></code>
+          <code class="me-1" id="count_<%= count.id %>_iban" style="font-size: 0.75rem;"><%= count.iban %></code>
           <i class="fas fa-copy iban-copy-btn flex-shrink-0"
              role="button"
              id="<%= count.id %>"
@@ -49,8 +49,8 @@
     
     <div class="balance-section mt-auto">
       <div class="balance-card">
-        <small class="text-muted d-block mb-1">Giacenza Attuale</small>
-        <h4 class="mb-0 <%= count.current_amount < 0 ? 'balance-negative' : 'balance-positive' %>">
+        <small class="text-muted d-block mb-0">Giacenza Attuale</small>
+        <h4 class="mb-0 <%= count.current_amount < 0 ? 'balance-negative' : 'balance-positive' %>" style="font-size: 1.1rem;">
           <%= to_visible_amount(count.current_amount, false) %>€
         </h4>
       </div>
