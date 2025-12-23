@@ -2,7 +2,7 @@
 <% max_year = entity.max_year %>
 
 <!-- Grafico che riporta la giacenza complessiva alla fine di ogni mese / anno -->
-<div class="chart-card mb-5">
+<div class="chart-card mb-3">
   <% chart_title = "Giacenza #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
   <% min_value = final_amounts_by_date.values.min.to_f.round(2) %>
   <%= line_chart final_amounts_by_date,
@@ -21,7 +21,7 @@
   <div class="col-12 <%= 'col-xl-6' if savings_global_amount_by_counts.present? %>">
     <!-- Grafico che riporta la giacenza corrente sui vari conti -->
     <% if movements_global_amount_by_counts.present? %>
-      <div class="chart-card mb-5">
+      <div class="chart-card mb-3">
         <% chart_title = "Giacenza sui vari conti #{year.present? ? 'a fine ' + year : 'attuale'}" %>
         <%= pie_chart movements_global_amount_by_counts,
                       library: {
@@ -45,7 +45,7 @@
   <div class="col-12 <%= 'col-xl-6' if movements_global_amount_by_counts.present? %>">
     <!-- Grafico che riporta la composizione corrente del portafoglio risparmi -->
     <% if savings_global_amount_by_counts.present? %>
-      <div class="chart-card mb-5">
+      <div class="chart-card mb-3">
         <% chart_title = "Portafoglio risparmi #{year.present? ? 'a fine ' + year : 'attuale'}" %>
         <%= pie_chart savings_global_amount_by_counts,
                       library: {
@@ -68,7 +68,7 @@
 
 
 <!-- Grafico che riporta l'ammontare complessivo di tutte le entrate e di tutte le uscite alla fine di ogni mese / anno  -->
-<div class="chart-card mb-5">
+<div class="chart-card mb-3">
   <% chart_title = "Entrate/Uscite #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
   <%= column_chart in_out_global_amounts,
                    stacked: false,
@@ -84,7 +84,7 @@
 
 
 <!-- Grafici che riportano l'ammontare complessivo per ogni voce di spesa alla fine di ogni mese / anno -->
-<div class="row my-5 py-5">
+<div class="row my-3 py-3">
   <% movements_global_amount_by_expense_items.keys.sort_by{ | key | movements_global_amount_by_expense_items[key]['total'] * -1 }.each do | expense_item | %>
     <div class="col-12 col-md-6 col-xl-4 p-2">
       <div class="chart-card-small">
@@ -102,7 +102,7 @@
                          suffix: "€"
         %>
 
-        <div class="d-flex justify-content-center mt-4">
+        <div class="d-flex justify-content-center mt-2">
           <% filters = { 'movement_type_eq': 'out', 'expense_item_id_eq': expense_item.id } %>
           <% filters = { **filters, 'emitted_at_gteq': "#{year}-01-01", 'emitted_at_lteq': "#{year}-12-31" } if year.present? %>
           <% filters = { **filters, 'emitted_at_gteq': "#{min_year}-01-01", 'emitted_at_lteq': "#{max_year}-12-31" } unless year.present? %>

@@ -2,7 +2,7 @@
 
 <div class="counts-header">
   <div class="container-xl">
-    <h2 class="text-center mb-3">Statistiche - <%= @organization.name %></h2>
+    <h2 class="text-center mb-2" style="font-size: 1.25rem;">Statistiche - <%= @organization.name %></h2>
     <div class="row justify-content-center">
       <div class="col-md-6 col-lg-4">
         <div class="counts-stats text-muted">
@@ -22,8 +22,8 @@
   </div>
 </div>
 
-<div class="container-xl py-4">
-  <div class="accordion filters-card mb-4" id="filtersAccordion">
+<div class="container-xl py-2">
+  <div class="accordion filters-card mb-2" id="filtersAccordion">
     <div class="accordion-item border-0">
       <h2 class="accordion-header" id="headingOne">
         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -34,7 +34,7 @@
         <div class="accordion-body">
           <%= search_form_for @search, url: stats_organization_path(id: @organization.id) do |f| %>
             <div class="row align-items-end">
-              <div class="col-md-4 mb-3">
+              <div class="col-md-4 mb-2">
                 <%= f.label :year_eq, 'Anno', class: 'form-label' %>
                 <%= f.select :year_eq,
                              options_for_select(@years_range.map{ | year | [year, year] }, @search.year_eq),
@@ -43,7 +43,7 @@
                 %>
               </div>
 
-              <div class="col-md-4 mb-3">
+              <div class="col-md-4 mb-2">
                 <%= f.label :count_id_eq, 'Conto', class: 'form-label' %>
                 <%= f.select :count_id_eq,
                              options_for_select(@organization.counts.map{ | count | [count.name, count.id] }, @search.count_id_eq),
@@ -52,7 +52,7 @@
                 %>
               </div>
 
-              <div class="col-md-4 mb-3">
+              <div class="col-md-4 mb-2">
                 <div class="d-flex gap-2">
                   <button type="submit" class="btn btn-gradient-primary flex-fill">
                     <i class="fas fa-search me-1"></i> Cerca
@@ -70,14 +70,14 @@
     </div>
   </div>
 
-  <div class="action-buttons d-flex justify-content-center gap-2 mt-3">
+  <div class="action-buttons d-flex justify-content-center gap-2 mt-2">
     <%= link_to organizations_path, class: "btn btn-gradient-info" do %>
       <i class="fas fa-arrow-left me-1"></i> Torna alle Organizzazioni
     <% end %>
   </div>
 </div>
 
-<div class="px-3 px-xl-5 py-4">
+<div class="px-3 px-xl-4 py-2">
 
 
 
