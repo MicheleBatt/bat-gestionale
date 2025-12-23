@@ -45,7 +45,10 @@ class OrganizationsController < ApplicationController
     respond_to do |format|
       if @organization.update(organization_params)
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("organization_#{@organization.id}", partial: "organizations/organization", locals: { organization: @organization })
+          render turbo_stream: [
+            turbo_stream.replace("organization_#{@organization.id}", partial: "organizations/organization", locals: { organization: @organization }),
+            turbo_stream.append("modal-closer", partial: "layouts/modal_closing")
+          ]
         end
         format.html { redirect_to organizations_path, notice: "Organizzazione aggiornata correttamente" }
         format.json { render :index, status: :ok, location: @organization }

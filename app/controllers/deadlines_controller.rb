@@ -1,6 +1,6 @@
 class DeadlinesController < ApplicationController
   authorize_resource
-  before_action :set_deadline, only: %i[ update destroy ]
+  before_action :set_deadline, only: %i[ edit update destroy ]
 
   # GET /deadlines or /deadlines.json
   def index
@@ -17,6 +17,11 @@ class DeadlinesController < ApplicationController
         response.headers['Content-Disposition'] = "attachment; filename=SCADENZIARIO.xlsx"
       }
     end
+  end
+
+  # GET /deadlines/1/edit
+  def edit
+    render partial: "deadlines/edit_form", locals: { deadline: @deadline }
   end
 
   # POST /deadlines or /deadlines.json
@@ -47,7 +52,10 @@ class DeadlinesController < ApplicationController
     respond_to do |format|
       if @deadline.update(deadline_params)
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("deadline_#{@deadline.id}", partial: "deadlines/deadline", locals: { deadline: @deadline })
+          render turbo_stream: [
+            turbo_stream.replace("deadline_#{@deadline.id}", partial: "deadlines/deadline", locals: { deadline: @deadline }),
+            turbo_stream.append("modal-closer", partial: "layouts/modal_closing")
+          ]
         end
         format.html { redirect_to organization_deadlines_path(@organization), notice: "Scadenza aggiornata correttamente" }
         format.json { render :show, status: :ok, location: @deadline }

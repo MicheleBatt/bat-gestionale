@@ -50,7 +50,10 @@ class UsersController < ApplicationController
       if outcome
         format.turbo_stream do
           if modal_id.present?
-            render turbo_stream: turbo_stream.replace("user_#{@user.id}", partial: "users/user", locals: { user: @user })
+            render turbo_stream: [
+              turbo_stream.replace("user_#{@user.id}", partial: "users/user", locals: { user: @user }),
+              turbo_stream.append("modal-closer", partial: "layouts/modal_closing")
+            ]
           else
             redirect_to edit_user_path(@user), notice: "Account aggiornato correttamente"
           end

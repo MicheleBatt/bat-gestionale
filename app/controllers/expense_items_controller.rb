@@ -45,7 +45,10 @@ class ExpenseItemsController < ApplicationController
     respond_to do |format|
       if @expense_item.update(expense_item_params)
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("expense_item_#{@expense_item.id}", partial: "expense_items/expense_item", locals: { expense_item: @expense_item })
+          render turbo_stream: [
+            turbo_stream.replace("expense_item_#{@expense_item.id}", partial: "expense_items/expense_item", locals: { expense_item: @expense_item }),
+            turbo_stream.append("modal-closer", partial: "layouts/modal_closing")
+          ]
         end
         format.html { redirect_to organization_expense_items_path(@organization), notice: "Voce di spesa aggiornata correttamente" }
         format.json { render :index, status: :ok, location: @expense_item }

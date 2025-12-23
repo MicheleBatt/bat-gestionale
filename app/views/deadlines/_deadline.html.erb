@@ -11,9 +11,12 @@
   </div>
 
   <div class="deadline-actions">
-    <button type="button" class="btn deadline-action-btn deadline-edit-btn" data-bs-toggle="modal" data-bs-target="#deadlineEditingModal_<%= deadline.id %>" title="Modifica">
+    <%= link_to edit_organization_deadline_path(@organization, deadline),
+                class: "btn deadline-action-btn deadline-edit-btn",
+                title: "Modifica",
+                data: { turbo_frame: "deadline_edit_frame" } do %>
       <i class="fas fa-edit"></i>
-    </button>
+    <% end %>
 
     <%= button_to organization_deadline_path(@organization, deadline), method: :delete, class: "btn deadline-action-btn deadline-delete-btn", title: "Elimina" do %>
       <i class="fas fa-trash"></i>

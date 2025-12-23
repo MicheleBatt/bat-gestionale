@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   resources :organizations, except: [:show, :new, :edit] do
     resources :memberships, except: [:show, :new, :edit]
-    resources :deadlines, except: [:show, :new, :edit]
+    resources :deadlines, except: [:show, :new]
     resources :expense_items, except: [:show, :new, :edit]
     member do
       get :stats, to: 'organizations#stats'

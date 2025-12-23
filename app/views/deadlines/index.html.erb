@@ -118,16 +118,35 @@
 
 
 
-<!-- Modali per la modifica delle scadenze esistenti -->
-<% @deadlines_by_year.values.flatten.each do |deadline| %>
-  <div id="deadline_modal_<%= deadline.id %>">
-    <%= render "modal",
-               modal_id: "deadlineEditingModal_#{deadline.id}",
-               title: "Modifica scadenza",
-               deadline: deadline
-    %>
+<!-- Modal singolo per la modifica delle scadenze (contenuto caricato via Turbo Frame) -->
+<div class="modal fade" id="deadlineEditingModal" tabindex="-1" aria-labelledby="deadlineEditingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title fs-5" id="deadlineEditingModalLabel">Modifica scadenza</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+        <turbo-frame id="deadline_edit_frame">
+          <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Caricamento...</span>
+            </div>
+          </div>
+        </turbo-frame>
+      </div>
+    </div>
   </div>
-<% end %>
+</div>
+
+<script>
+  document.addEventListener('turbo:frame-load', function(event) {
+    if (event.target.id === 'deadline_edit_frame') {
+      var modal = new bootstrap.Modal(document.getElementById('deadlineEditingModal'));
+      modal.show();
+    }
+  });
+</script>
 
 <!-- Modale per la creazione di una nuova scadenza -->
 <%= render "modal",

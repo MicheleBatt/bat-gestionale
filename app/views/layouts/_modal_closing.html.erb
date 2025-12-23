@@ -1,5 +1,16 @@
 <script>
-  document.querySelector(".modal-backdrop")?.classList?.remove('modal-backdrop');
+  // Chiudi tutti i modal aperti usando l'API Bootstrap
+  document.querySelectorAll('.modal.show').forEach(function(modalEl) {
+    var modal = bootstrap.Modal.getInstance(modalEl);
+    if (modal) {
+      modal.hide();
+    }
+  });
+  // Fallback: rimuovi manualmente backdrop e classi
+  document.querySelectorAll('.modal-backdrop').forEach(function(backdrop) {
+    backdrop.remove();
+  });
   document.body.classList.remove('modal-open');
-  document.body.style = "";
+  document.body.style.removeProperty('overflow');
+  document.body.style.removeProperty('padding-right');
 </script>

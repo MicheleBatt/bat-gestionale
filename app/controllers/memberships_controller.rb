@@ -31,7 +31,10 @@ class MembershipsController < ApplicationController
     respond_to do |format|
       if @membership.update(membership_params)
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("membership_#{@membership.id}", partial: "memberships/membership", locals: { membership: @membership, organization: @organization })
+          render turbo_stream: [
+            turbo_stream.replace("membership_#{@membership.id}", partial: "memberships/membership", locals: { membership: @membership, organization: @organization }),
+            turbo_stream.append("modal-closer", partial: "layouts/modal_closing")
+          ]
         end
         format.html { redirect_to organizations_path, notice: "Ruolo aggiornato correttamente" }
         format.json { render :show, status: :ok, location: @membership }

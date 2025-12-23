@@ -1,0 +1,11 @@
+<div id="movement_modal_<%= movement.id %>">
+  <%= render "modal",
+             modal_id: "movementEditingModal_#{movement.id}",
+             title: "Modifica #{movement.movement_type == 'in' ? 'Entrata' : 'Uscita'}",
+             movement: movement,
+             expense_items: expense_items,
+             movement_types: movement_types,
+             deletion_button_txt: 'Rimuovi dal conto',
+             deletion_path: organization_count_movement_path(movement.count.organization, movement.count, movement)
+  %>
+</div>
