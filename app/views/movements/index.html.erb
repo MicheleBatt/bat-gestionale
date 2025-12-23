@@ -255,7 +255,22 @@
 </div>
 
 
-<!-- Modale per la creazione di un nuovvo movimento di cassa in uscita -->
+<!-- Modali per la modifica dei movimenti esistenti -->
+<% @all_movements.each do |movement| %>
+  <div id="movement_modal_<%= movement.id %>">
+    <%= render "modal",
+               modal_id: "movementEditingModal_#{movement.id}",
+               title: "Modifica #{movement.movement_type == 'in' ? 'Entrata' : 'Uscita'}",
+               movement: movement,
+               expense_items: @expense_items,
+               movement_types: @movement_types,
+               deletion_button_txt: 'Rimuovi dal conto',
+               deletion_path: organization_count_movement_path(@organization, @count, movement)
+    %>
+  </div>
+<% end %>
+
+<!-- Modale per la creazione di un nuovo movimento di cassa in uscita -->
 <%= render "modal",
            modal_id: "outMovementCreationModal",
            title: "Aggiungi Uscita",
@@ -266,8 +281,7 @@
            deletion_path: nil
 %>
 
-
-<!-- Modale per la creazione di un nuovvo movimento di cassa in entrata -->
+<!-- Modale per la creazione di un nuovo movimento di cassa in entrata -->
 <%= render "modal",
            modal_id: "inMovementCreationModal",
            title: "Aggiungi Entrata",

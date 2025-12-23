@@ -24,8 +24,10 @@
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Modale per la cancellazione / modifica di un utente -->
+<!-- Modale per la cancellazione / modifica di un utente -->
+<div id="user_modal_<%= user.id %>">
   <%= render "modal",
              modal_id: "userEditingModal_#{user.id}",
              title: "Modifica utente",

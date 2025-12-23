@@ -18,14 +18,4 @@
       <i class="fas fa-fw fa-trash"></i>
     <% end %>
   </div>
-
-
-
-  <!-- Modale per la cancellazione / modifica di una membership -->
-  <%= render "memberships/modal",
-             modal_id: "membershipEditingModal_#{membership.id}",
-             title: "Modifica ruolo",
-             membership: membership,
-             organization: organization
-  %>
 </div>

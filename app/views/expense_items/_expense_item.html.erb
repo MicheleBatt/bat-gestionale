@@ -18,8 +18,10 @@
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Modale per la cancellazione / modifica di una voce di spesa -->
+<!-- Modale per la cancellazione / modifica di una voce di spesa -->
+<div id="expense_item_modal_<%= expense_item.id %>">
   <%= render "modal",
              modal_id: "expense_itemEditingModal_#{expense_item.id}",
              title: "Modifica voce di spesa",

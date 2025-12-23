@@ -118,7 +118,18 @@
 
 
 
-<!-- Modale per la creazione di un nuovo movimento di cassa -->
+<!-- Modali per la modifica delle scadenze esistenti -->
+<% @deadlines_by_year.values.flatten.each do |deadline| %>
+  <div id="deadline_modal_<%= deadline.id %>">
+    <%= render "modal",
+               modal_id: "deadlineEditingModal_#{deadline.id}",
+               title: "Modifica scadenza",
+               deadline: deadline
+    %>
+  </div>
+<% end %>
+
+<!-- Modale per la creazione di una nuova scadenza -->
 <%= render "modal",
            modal_id: "deadlineCreationModal",
            title: "Aggiungi una nuova scadenza",

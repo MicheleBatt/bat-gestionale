@@ -20,13 +20,3 @@
 
 
 
-<!-- Modale per la creazione di un nuova nuova organization translation -->
-<%= render "memberships/modal",
-           modal_id: "membershipCreationModal#{organization.id}",
-           title: "Aggiungi un membro a #{organization.name}",
-           membership: Membership.new,
-           organization: organization
-%>
-
-
-

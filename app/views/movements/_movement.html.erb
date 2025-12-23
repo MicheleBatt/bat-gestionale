@@ -23,18 +23,5 @@
       </div>
     </div>
   </div>
-
-  <!-- Modale per la cancellazione / modifica di un movimento di cassa -->
-  <div id="movement_modal_<%= movement.id %>">
-    <%= render "modal",
-               modal_id: "movementEditingModal_#{movement.id}",
-               title: "Modifica Uscita",
-               movement: movement,
-               expense_items: expense_items,
-               movement_types: movement_types,
-               deletion_button_txt: 'Rimuovi dal conto',
-               deletion_path: organization_count_movement_path(@organization, @count, movement)
-    %>
-  </div>
 </div>
 

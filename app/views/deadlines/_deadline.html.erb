@@ -4,7 +4,7 @@
       <span class="deadline-day"><%= parse_date(deadline.expired_at, "%d") %></span>
       <span class="deadline-month"><%= italian_month(deadline.month) %></span>
     </div>
-    
+
     <div class="deadline-description">
       <h6 class="mb-0"><%= deadline.description %></h6>
     </div>
@@ -19,11 +19,4 @@
       <i class="fas fa-trash"></i>
     <% end %>
   </div>
-
-  <!-- Modale per la cancellazione / modifica di una scadenza -->
-  <%= render "modal",
-             modal_id: "deadlineEditingModal_#{deadline.id}",
-             title: "Modifica scadenza",
-             deadline: deadline
-  %>
 </div>

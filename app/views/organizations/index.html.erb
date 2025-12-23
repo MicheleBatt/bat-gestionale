@@ -95,6 +95,35 @@
 
 
 
+<!-- Modali per la modifica delle organizzazioni esistenti -->
+<% @organizations.each do |organization| %>
+  <div id="organization_modal_<%= organization.id %>">
+    <%= render "modal",
+               modal_id: "organizationEditingModal_#{organization.id}",
+               title: "Modifica organizzazione",
+               organization: organization
+    %>
+  </div>
+
+  <!-- Modale per la creazione di un nuovo membro -->
+  <%= render "memberships/modal",
+             modal_id: "membershipCreationModal#{organization.id}",
+             title: "Aggiungi un membro a #{organization.name}",
+             membership: Membership.new,
+             organization: organization
+  %>
+
+  <!-- Modali per la modifica dei membri esistenti -->
+  <% organization.memberships.each do |membership| %>
+    <%= render "memberships/modal",
+               modal_id: "membershipEditingModal_#{membership.id}",
+               title: "Modifica ruolo",
+               membership: membership,
+               organization: organization
+    %>
+  <% end %>
+<% end %>
+
 <!-- Modale per la creazione di una nuova organizzazione -->
 <%= render "modal",
            modal_id: "organizationCreationModal",

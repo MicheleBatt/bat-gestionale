@@ -21,7 +21,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="count-card-body">
     <div class="iban-section mb-2">
       <% if count.iban.present? %>
@@ -31,7 +31,7 @@
           <i class="fas fa-copy iban-copy-btn flex-shrink-0"
              role="button"
              id="<%= count.id %>"
-             onclick="((event) => { 
+             onclick="((event) => {
                event.stopPropagation();
                navigator.clipboard.writeText(document.querySelector(`#count_${event.target.id}_iban`).innerHTML?.trim());
                event.target.classList.add('fa-check');
@@ -46,7 +46,7 @@
         </div>
       <% end %>
     </div>
-    
+
     <div class="balance-section mt-auto">
       <div class="balance-card">
         <small class="text-muted d-block mb-0">Giacenza Attuale</small>
@@ -56,8 +56,10 @@
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Modale per la cancellazione / modifica di un conto corrente -->
+<!-- Modale per la cancellazione / modifica di un conto corrente -->
+<div id="count_modal_<%= count.id %>">
   <%= render "modal",
              modal_id: "countEditingModal_#{count.id}",
              title: "Modifica conto",

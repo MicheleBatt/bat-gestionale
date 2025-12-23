@@ -18,7 +18,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="organization-card-body">
     <div class="members-section">
       <%= render 'memberships/index',
@@ -27,13 +27,4 @@
       %>
     </div>
   </div>
-
-
-
-  <!-- Modale per la cancellazione / modifica di una organizzazione -->
-  <%= render "modal",
-             modal_id: "organizationEditingModal_#{organization.id}",
-             title: "Modifica organizzazione",
-             organization: organization
-  %>
 </div>
