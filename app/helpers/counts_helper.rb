@@ -7,13 +7,14 @@ module CountsHelper
   }.freeze
 
   base_count_types = {
-    "bank_account": "conto corrente",
-    "savings_account": "conto risparmi",
-    "investments_account": "fondo di investimento su azioni o obbligazioni",
-    "accumulation_plan": "piano d'accumulo",
-    "postal_savings_bond": "buoni fruttiferi postali",
-    "savings_booklet": "libretto dei risparmi",
-    "pension_fund": "fondo pensione"
+    "bank_account" => "conto corrente",
+    "savings_account" => "conto risparmi",
+    "investments_account" => "fondo di investimento su azioni o obbligazioni",
+    "accumulation_plan" => "piano d'accumulo",
+    "postal_savings_bond" => "buoni fruttiferi postali",
+    "savings_booklet" => "libretto dei risparmi",
+    "pension_fund" => "fondo pensione",
+    "government_bond_investment_plan" => "piano di investimento su titoli di stato"
    }
   metals = ALL_METALS.keys.map{ | key | ["#{key.downcase}_investment_account", "fondo di investimento su #{ALL_METALS[key][:italian_name]}"] }.uniq.to_h
   ALL_COUNT_TYPES = { **base_count_types, **metals }.freeze
@@ -26,7 +27,11 @@ module CountsHelper
     MONITORING_SCOPES.map{ | scope | [scope == 'monthly' ? 'Mensile' : (scope == 'annual' ? 'Annuale' : 'Assoluto'), scope]}
   end
 
+  def parsed_count_type(count_type)
+    ALL_COUNT_TYPES[count_type].to_s.capitalize
+  end
+
   def count_types_for_select
-    ALL_COUNT_TYPES.keys.map{ | count_type | [ ALL_COUNT_TYPES[count_type].to_s.capitalize, count_type ]}
+    ALL_COUNT_TYPES.keys.map{ | count_type | [ parsed_count_type(count_type), count_type ]}
   end
 end
