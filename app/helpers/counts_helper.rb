@@ -9,12 +9,13 @@ module CountsHelper
   base_count_types = {
     "bank_account" => "conto corrente",
     "savings_account" => "conto risparmi",
-    "investments_account" => "fondo di investimento su azioni o obbligazioni",
+    "investments_account" => "piano di investimento su fondi azionari o obbligazionari",
     "accumulation_plan" => "piano d'accumulo",
     "postal_savings_bond" => "buoni fruttiferi postali",
     "savings_booklet" => "libretto dei risparmi",
     "pension_fund" => "fondo pensione",
-    "government_bond_investment_plan" => "piano di investimento su titoli di stato"
+    "government_bond_investment_plan" => "piano di investimento su titoli di stato",
+    "derivative_investment_plan" => "piano di investimento su derivati"
    }
   metals = ALL_METALS.keys.map{ | key | ["#{key.downcase}_investment_account", "fondo di investimento su #{ALL_METALS[key][:italian_name]}"] }.uniq.to_h
   ALL_COUNT_TYPES = { **base_count_types, **metals }.freeze
