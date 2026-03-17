@@ -1,31 +1,23 @@
-<div class="d-flex justify-content-between w-100 my-2" id="membership_<%= membership.id %>">
-  <div class="d-flex align-items-center mx-2 mx-sm-3">
-    <div>
-      <%= membership.username %>
-    </div>
-
-    <div class="text-secondary mx-2">
-      <small><%= italian_role(membership.role) %></small>
-    </div>
+<div class="v2-membership-item" id="membership_<%= membership.id %>">
+  <div class="v2-membership-info">
+    <span class="v2-membership-name"><%= membership.username %></span>
+    <span class="v2-membership-role"><%= italian_role(membership.role) %></span>
   </div>
-
-  <div class="d-flex justify-content-end align-items-center px-2 px-sm-3">
-    <button type="button" class="btn btn-link text-secondary text-decoration-none mx-3 p-0" data-bs-toggle="modal" data-bs-target="#membershipEditingModal_<%= membership.id %>">
-      <i class="fas fa-fw fa-edit"></i>
+  <div class="v2-membership-actions">
+    <button type="button"
+            class="v2-btn-icon"
+            title="Modifica ruolo"
+            data-bs-toggle="modal"
+            data-bs-target="#membershipEditingModal_<%= membership.id %>">
+      <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
     </button>
 
-    <%= button_to organization_membership_path(membership, organization_id: organization.id), method: :delete, class: "btn btn-link text-danger text-decoration-none p-0" do %>
-      <i class="fas fa-fw fa-trash"></i>
-    <% end %>
+    <button type="button"
+            class="v2-btn-icon danger"
+            title="Rimuovi"
+            data-bs-toggle="modal"
+            data-bs-target="#membershipDeleteModal_<%= membership.id %>">
+      <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+    </button>
   </div>
-
-
-
-  <!-- Modale per la cancellazione / modifica di una membership -->
-  <%= render "memberships/modal",
-             modal_id: "membershipEditingModal_#{membership.id}",
-             title: "Modifica ruolo",
-             membership: membership,
-             organization: organization
-  %>
 </div>

@@ -1,70 +1,164 @@
-<%= render 'layouts/navbar' %>
+<div class="v2">
+  <%= render 'layouts/aurora_background' %>
+  <%= render 'layouts/navbar_v2' %>
 
-<div class="container-fluid pt-2">
-  <div class="accordion rounded shadow border border-secondary bg-light-gray mb-4" id="filtersAccordion">
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button bg-light-gray" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          <b>Filtri</b>
-        </button>
-      </h2>
-      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
-        <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
-          <%= search_form_for @search do |f| %>
-            <div class="d-flex flex-wrap justify-content-around align-items-end">
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-                <%= f.label :name_cont, 'Nome', class: 'form-label' %>
-                <%= f.text_field :name_cont, placeholder: 'Filtra per nome', class: 'form-control' %>
-              </div>
+  <main class="v2-main">
+    <%# Hero %>
+    <header class="v2-hero">
+      <div>
+        <h1 class="v2-hero-title">Organizzazioni</h1>
+      </div>
+      <button type="button" class="v2-btn-primary" data-bs-toggle="modal" data-bs-target="#organizationCreationModal">
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Nuova organizzazione
+      </button>
+    </header>
 
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-                <%= f.label :user, 'Utente', class: 'form-label' %>
-                <%= f.text_field :user, placeholder: 'Filtra per utente', class: 'form-control' %>
-              </div>
-
-              <div class="pb-3 d-flex">
-                <button type="submit" class="btn btn-success mx-2">
-                  <i class="fas fa-search"></i> Cerca
-                </button>
-
-                <%= link_to organizations_path, class: "btn btn-primary mx-2" do %>
-                  <i class="fas fa-filter" aria-hidden="true"></i> Reset
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-
-          <div class="d-flex justify-content-center flex-wrap">
-            <button type="button" class="btn btn-success mb-3 mx-2" data-bs-toggle="modal" data-bs-target="#organizationCreationModal">
-              Nuova organizzazione
+    <%# Filters (accordion) %>
+    <section class="v2-filters">
+      <div class="accordion" id="v2FiltersAccordion">
+        <div class="accordion-item v2-accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button v2-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#v2FiltersBody" aria-expanded="true" aria-controls="v2FiltersBody">
+              <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+              Filtri
             </button>
+          </h2>
+          <div id="v2FiltersBody" class="accordion-collapse collapse show" data-bs-parent="#v2FiltersAccordion">
+            <div class="accordion-body v2-accordion-body">
+              <%= search_form_for @search, html: { class: 'v2-filters-form' } do |f| %>
+                <div class="v2-filter-group">
+                  <%= f.label :name_cont, 'Nome' %>
+                  <%= f.text_field :name_cont, placeholder: 'Cerca per nome...', class: 'v2-input' %>
+                </div>
+                <div class="v2-filter-group">
+                  <%= f.label :user, 'Utente' %>
+                  <%= f.text_field :user, placeholder: 'Cerca per utente...', class: 'v2-input' %>
+                </div>
+                <div class="v2-filter-actions">
+                  <button type="submit" class="v2-btn-search">
+                    <svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+                    Cerca
+                  </button>
+                  <%= link_to organizations_path, class: "v2-btn-reset", data: { turbo: false } do %>
+                    <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                    Reset
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <%# Organizations grid %>
+    <% if @organizations.any? %>
+      <div class="v2-section-head">
+        <h2 class="v2-section-title">Elenco organizzazioni</h2>
+        <span class="v2-section-badge"><%= @organizations_count %> organizzazion<%= @organizations_count == 1 ? 'e' : 'i' %></span>
+      </div>
+
+      <div id="organizations" class="v2-org-grid">
+        <% @organizations.each do |organization| %>
+          <%= render organization %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="v2-empty">
+        <div class="v2-empty-icon">
+          <svg class="ico ico-lg" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75M21 21v-2a4 4 0 00-3-3.85"/></svg>
+        </div>
+        <h3>Nessuna organizzazione trovata</h3>
+        <p>Modifica i filtri di ricerca oppure crea la tua prima organizzazione.</p>
+        <button type="button" class="v2-btn-ghost" data-bs-toggle="modal" data-bs-target="#organizationCreationModal">
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Aggiungi organizzazione
+        </button>
+      </div>
+    <% end %>
+  </main>
+</div>
+
+<%# Modals (fuori da .v2 per evitare problemi di stacking context) %>
+<div class="v2">
+  <%= render "modal",
+             modal_id: "organizationCreationModal",
+             title: "Aggiungi una organizzazione",
+             organization: Organization.new
+  %>
+
+  <% @organizations.each do |organization| %>
+    <%= render "modal",
+               modal_id: "organizationEditingModal_#{organization.id}",
+               title: "Modifica organizzazione",
+               organization: organization
+    %>
+
+    <div class="modal fade" id="organizationDeleteModal_<%= organization.id %>" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title fs-5">Conferma cancellazione</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p style="color: var(--txt2); font-size: 0.88rem; margin: 0.5rem 0;">
+              Sei sicuro di voler eliminare l'organizzazione <strong style="color: var(--txt);"><%= organization.name %></strong>?
+            </p>
+            <p style="color: var(--txt3); font-size: 0.78rem; margin: 0 0 1.5rem;">
+              Questa azione non può essere annullata. Tutti i dati associati verranno eliminati.
+            </p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+              <%= button_to organization, method: :delete, class: "btn btn-success", style: "background: #dc2626; border-color: #dc2626;" do %>
+                Conferma
+              <% end %>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
+    <%# Membership modals %>
+    <% organization.memberships.each do |membership| %>
+      <%= render "memberships/modal",
+                 modal_id: "membershipEditingModal_#{membership.id}",
+                 title: "Modifica ruolo",
+                 membership: membership,
+                 organization: organization
+      %>
 
-  <div class="d-block mb-5 mx-md-5">
-    <div class="border-bottom border-dark mt-5">
-      <span><b><%= @organizations_count %></b> organizzazion<%= @organizations_count == 1 ? 'e' : 'i' %></span>
-    </div>
-
-    <div id="organizations" class="accordion accordion-flush d-flex flex-wrap justify-content-center">
-      <% @organizations.each do |organization| %>
-        <div class="mx-3">
-          <%= render organization %>
+      <div class="modal fade" id="membershipDeleteModal_<%= membership.id %>" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title fs-5">Conferma rimozione</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p style="color: var(--txt2); font-size: 0.88rem; margin: 0.5rem 0;">
+                Sei sicuro di voler rimuovere <strong style="color: var(--txt);"><%= membership.username %></strong> dall'organizzazione?
+              </p>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <%= button_to organization_membership_path(membership, organization_id: organization.id), method: :delete, class: "btn btn-success", style: "background: #dc2626; border-color: #dc2626;" do %>
+                  Conferma
+                <% end %>
+              </div>
+            </div>
+          </div>
         </div>
-      <% end %>
-    </div>
-  </div>
+      </div>
+    <% end %>
+
+    <%= render "memberships/modal",
+               modal_id: "membershipCreationModal#{organization.id}",
+               title: "Aggiungi un membro a #{organization.name}",
+               membership: Membership.new,
+               organization: organization
+    %>
+  <% end %>
 </div>
 
-
-
-<!-- Modale per la creazione di una nuova organizzazione -->
-<%= render "modal",
-           modal_id: "organizationCreationModal",
-           title: "Aggiungi una organizzazione",
-           organization: Organization.new
-%>
+<%= render 'layouts/auto_close_modals' %>

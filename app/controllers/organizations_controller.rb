@@ -23,7 +23,7 @@ class OrganizationsController < ApplicationController
         format.json { render :index, status: :created, location: @organization }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @organization })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @organization }), status: :unprocessable_entity
         end
         format.html { redirect_to organizations_path, status: :unprocessable_entity }
         format.json { render json: @organization.errors, status: :unprocessable_entity }
@@ -45,7 +45,7 @@ class OrganizationsController < ApplicationController
         format.json { render :index, status: :ok, location: @organization }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @organization })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @organization }), status: :unprocessable_entity
         end
         format.html { redirect_to organizations_path, status: :unprocessable_entity }
         format.json { render json: @organization.errors, status: :unprocessable_entity }
