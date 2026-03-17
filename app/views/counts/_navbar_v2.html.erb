@@ -6,7 +6,7 @@
     <%# Desktop nav %>
     <ul class="v2-nav-links">
       <li>
-        <%= link_to organization_counts_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_counts_path(@organization))}" do %>
+        <%= link_to organization_counts_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_counts_path(@organization))}", data: { turbo: false } do %>
           <svg class="ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="16.5" cy="14" r="1.5" fill="currentColor" stroke="none"/></svg>
           Conti corrente
         <% end %>
@@ -44,8 +44,7 @@
       <% end %>
     </ul>
 
-    <%# Mobile hamburger %>
-    <input type="checkbox" id="v2MobileCheck" class="v2-mobile-menu-check">
+    <%# Mobile hamburger (label only, checkbox is outside v2-nav-inner) %>
     <label for="v2MobileCheck" class="v2-mobile-toggle">
       <svg class="ico" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
     </label>
@@ -85,9 +84,10 @@
     <% end %>
   </div>
 
-  <%# Mobile slide-down menu %>
+  <%# Mobile menu checkbox + slide-down menu (siblings for CSS ~ selector) %>
+  <input type="checkbox" id="v2MobileCheck" class="v2-mobile-menu-check">
   <div class="v2-mobile-menu">
-    <%= link_to organization_counts_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_counts_path(@organization))}" do %>
+    <%= link_to organization_counts_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_counts_path(@organization))}", data: { turbo: false } do %>
       <svg class="ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="16.5" cy="14" r="1.5" fill="currentColor" stroke="none"/></svg>
       Conti corrente
     <% end %>
