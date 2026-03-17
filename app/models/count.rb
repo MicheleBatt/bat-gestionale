@@ -187,9 +187,11 @@ class Count < ApplicationRecord
   end
 
   def realign_ordering_numbers
-    counts = self.organization.counts.where.not(id: self.id)
-    if counts.find_by(ordering_number: self.ordering_number).present?
-      counts.where("ordering_number >= ?", self.ordering_number).update_all("ordering_number = ordering_number + 1")
+    unless self.ordering_number.nil?
+      counts = self.organization.counts.where.not(id: self.id)
+      if counts.find_by(ordering_number: self.ordering_number).present?
+        counts.where("ordering_number >= ?", self.ordering_number).update_all("ordering_number = ordering_number + 1")
+      end
     end
   end
 end
