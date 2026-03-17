@@ -1,91 +1,152 @@
-<%= render 'layouts/navbar' %>
+<div class="v2">
+  <%= render 'layouts/aurora_background' %>
+  <%= render 'layouts/navbar_v2' %>
 
-<div class="container-fluid pt-2">
-  <div class="accordion rounded shadow border border-secondary bg-light-gray mb-4" id="filtersAccordion">
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button bg-light-gray" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          <b>Filtri</b>
+  <main class="v2-main">
+    <%# Hero %>
+    <header class="v2-hero">
+      <div>
+        <h1 class="v2-hero-title">Scadenziario</h1>
+        <span class="v2-hero-sub"><%= @organization.name %></span>
+      </div>
+      <div class="v2-hero-actions">
+        <%= link_to organization_deadlines_path(@organization, q: params[:q]&.to_unsafe_h, format: :xlsx), class: "v2-btn-export" do %>
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+          Esporta
+        <% end %>
+        <button type="button" class="v2-btn-primary" data-bs-toggle="modal" data-bs-target="#deadlineCreationModal">
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Nuova scadenza
         </button>
-      </h2>
-      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
-        <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
-          <%= search_form_for [@organization, @search] do |f| %>
-            <div class="d-flex flex-wrap justify-content-center align-items-end">
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-                <%= f.label :description_cont, 'Descrizione', class: 'form-label' %>
-                <%= f.text_field :description_cont, placeholder: 'Filtra per descrizione', class: 'form-control' %>
-              </div>
+      </div>
+    </header>
 
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-                <%= f.label :year_eq, 'Mese', class: 'form-label' %>
-                <%= f.select :year_eq,
-                             options_for_select(((Deadline.minimum('year') || Time.now.year)..(Deadline.maximum('year') || Time.now.year)).map{ | year | [year, year] }, @search.year_eq),
-                             { include_blank: "Qualsiasi anno" },
-                             class: 'form-control'
-                %>
-              </div>
-
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-                <%= f.label :month_eq, 'Mese', class: 'form-label' %>
-                <%= f.select :month_eq,
-                             options_for_select(italian_months_for_select, @search.month_eq),
-                             { include_blank: "Qualsiasi mese" },
-                             class: 'form-control'
-                %>
-              </div>
-
-              <div class="pb-3 d-flex">
-                <button type="submit" class="btn btn-success mx-2">
-                  <i class="fas fa-search"></i> Cerca
-                </button>
-
-                <%= link_to organization_deadlines_path(@organization), class: "btn btn-primary mx-2" do %>
-                  <i class="fas fa-filter" aria-hidden="true"></i> Reset
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-
-          <div class="d-flex justify-content-center flex-wrap">
-            <%= link_to organization_deadlines_path(@organization, q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-warning mb-3 mx-2 text-white" do %>
-              <i class="fas fa-download" aria-hidden="true"></i> Esporta scadenziario
-            <% end %>
-
-            <button type="button" class="btn btn-success mb-3 mx-2" data-bs-toggle="modal" data-bs-target="#deadlineCreationModal">
-              Nuova scadenza
+    <%# Filters (accordion) %>
+    <section class="v2-filters">
+      <div class="accordion" id="v2FiltersAccordion">
+        <div class="accordion-item v2-accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button v2-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#v2FiltersBody" aria-expanded="true" aria-controls="v2FiltersBody">
+              <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+              Filtri
             </button>
+          </h2>
+          <div id="v2FiltersBody" class="accordion-collapse collapse show" data-bs-parent="#v2FiltersAccordion">
+            <div class="accordion-body v2-accordion-body">
+              <%= search_form_for [@organization, @search], html: { class: 'v2-filters-form' } do |f| %>
+                <div class="v2-filter-group">
+                  <%= f.label :description_cont, 'Descrizione' %>
+                  <%= f.text_field :description_cont, placeholder: 'Cerca per descrizione...', class: 'v2-input' %>
+                </div>
+                <div class="v2-filter-group">
+                  <%= f.label :year_eq, 'Anno' %>
+                  <%= f.select :year_eq,
+                               options_for_select(((Deadline.minimum('year') || Time.now.year)..(Deadline.maximum('year') || Time.now.year)).map{ |year| [year, year] }, @search.year_eq),
+                               { include_blank: "Qualsiasi anno" },
+                               class: 'v2-select'
+                  %>
+                </div>
+                <div class="v2-filter-group">
+                  <%= f.label :month_eq, 'Mese' %>
+                  <%= f.select :month_eq,
+                               options_for_select(italian_months_for_select, @search.month_eq),
+                               { include_blank: "Qualsiasi mese" },
+                               class: 'v2-select'
+                  %>
+                </div>
+                <div class="v2-filter-actions">
+                  <button type="submit" class="v2-btn-search">
+                    <svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+                    Cerca
+                  </button>
+                  <%= link_to organization_deadlines_path(@organization), class: "v2-btn-reset", data: { turbo: false } do %>
+                    <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                    Reset
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <%# Deadlines grouped by year %>
+    <% if @deadlines_by_year.any? %>
+      <div class="v2-section-head">
+        <h2 class="v2-section-title">Elenco scadenze</h2>
+        <span class="v2-section-badge"><%= @deadlines_count %> scadenz<%= @deadlines_count == 1 ? 'a' : 'e' %></span>
+      </div>
+
+      <div id="deadlines">
+        <% @deadlines_by_year.keys.each do |year| %>
+          <div class="v2-dl-year-group">
+            <h3 class="v2-dl-year-title"><%= year %></h3>
+            <% @deadlines_by_year[year].each do |deadline| %>
+              <%= render deadline %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="v2-empty">
+        <div class="v2-empty-icon">
+          <svg class="ico ico-lg" viewBox="0 0 24 24"><path d="M5 3h14M5 21h14"/><path d="M7 3v5l5 4-5 4v5M17 3v5l-5 4 5 4v5"/></svg>
+        </div>
+        <h3>Nessuna scadenza trovata</h3>
+        <p>Modifica i filtri di ricerca oppure aggiungi la tua prima scadenza.</p>
+        <button type="button" class="v2-btn-ghost" data-bs-toggle="modal" data-bs-target="#deadlineCreationModal">
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Aggiungi scadenza
+        </button>
+      </div>
+    <% end %>
+  </main>
+</div>
+
+<%# Modals (fuori da .v2 per evitare problemi di stacking context) %>
+<div class="v2">
+  <%= render "modal",
+             modal_id: "deadlineCreationModal",
+             title: "Aggiungi una nuova scadenza",
+             deadline: Deadline.new
+  %>
+
+  <% @deadlines_by_year.values.flatten.each do |deadline| %>
+    <%= render "modal",
+               modal_id: "deadlineEditingModal_#{deadline.id}",
+               title: "Modifica scadenza",
+               deadline: deadline
+    %>
+
+    <div class="modal fade" id="deadlineDeleteModal_<%= deadline.id %>" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title fs-5">Conferma cancellazione</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p style="color: var(--txt2); font-size: 0.88rem; margin: 0.5rem 0;">
+              Sei sicuro di voler eliminare la scadenza <strong style="color: var(--txt);"><%= deadline.description %></strong>?
+            </p>
+            <p style="color: var(--txt3); font-size: 0.78rem; margin: 0 0 1.5rem;">
+              Questa azione non può essere annullata.
+            </p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+              <%= button_to organization_deadline_path(@organization, deadline),
+                            method: :delete,
+                            class: "btn btn-success",
+                            style: "background: #dc2626; border-color: #dc2626;" do %>
+                Conferma
+              <% end %>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-
-
-  <div class="d-flex justify-content-center mb-5">
-    <div id="deadlines" class="d-block mx-xl-5">
-      <div class="mt-4 border-bottom border-dark ">
-        <span><b><%= @deadlines_count %></b> scadenz<%= @deadlines_count == 1 ? 'a' : 'e' %></span>
-      </div>
-
-      <% @deadlines_by_year.keys.each do | year | %>
-        <div class="rounded shadow border border-secondary bg-white my-3 p-3">
-          <h4 class="text-secondary pl-2"><%= year %></h4>
-          <% @deadlines_by_year[year].each do | deadline | %>
-            <%= render deadline %>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-  </div>
+  <% end %>
 </div>
 
-
-
-
-<!-- Modale per la creazione di un nuovo movimento di cassa -->
-<%= render "modal",
-           modal_id: "deadlineCreationModal",
-           title: "Aggiungi una nuova scadenza",
-           deadline: Deadline.new
-%>
+<%= render 'layouts/auto_close_modals' %>
