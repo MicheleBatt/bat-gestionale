@@ -150,6 +150,36 @@
                title: "Modifica conto",
                count: count
     %>
+
+    <% if count.movements.blank? %>
+      <div class="modal fade" id="countDeleteModal_<%= count.id %>" tabindex="-1" aria-labelledby="countDeleteModal_<%= count.id %>Label" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title fs-5" id="countDeleteModal_<%= count.id %>Label">Conferma cancellazione</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p style="color: var(--txt2); font-size: 0.88rem; margin: 0.5rem 0;">
+                Sei sicuro di voler eliminare il conto <strong style="color: var(--txt);"><%= count.name %></strong>?
+              </p>
+              <p style="color: var(--txt3); font-size: 0.78rem; margin: 0 0 1.5rem;">
+                Questa azione non può essere annullata.
+              </p>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <%= button_to organization_count_path(@organization, count),
+                              method: :delete,
+                              class: "btn btn-success",
+                              style: "background: #dc2626; border-color: #dc2626;" do %>
+                  Conferma
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
   <% end %>
 </div>
 
