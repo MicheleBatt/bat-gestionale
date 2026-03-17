@@ -25,7 +25,7 @@ class Count < ApplicationRecord
   before_save { self.initial_amount = self.initial_amount.to_f.round(2) if self.initial_amount }
   before_save { self.current_amount = self.current_amount.to_f.round(2) if self.current_amount }
   after_save { set_current_amount }
-  after_update { set_current_amount }
+  after_save { realign_ordering_numbers }
 
 
   # Instance Methods
@@ -184,5 +184,12 @@ class Count < ApplicationRecord
 
   def set_current_amount
     self.update_columns(current_amount: self.get_current_amount)
+  end
+
+  def realign_ordering_numbers
+    counts = self.organization.counts.where.not(id: self.id)
+    if counts.find_by(ordering_number: self.ordering_number).present?
+      counts.where("ordering_number >= ?", self.ordering_number).update_all("ordering_number = ordering_number + 1")
+    end
   end
 end
