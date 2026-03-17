@@ -7,13 +7,8 @@ class UsersController < ApplicationController
   # GET /users or /users.json
   def index
     @search = User.all.ransack(params[:q])
-    @users = @search.result
+    @users = @search.result.order(first_name: :asc, last_name: :asc, email: :asc)
     @users_count = @users.length
-    @users =
-      @users
-      .order(first_name: :asc, last_name: :asc, email: :asc)
-      .page(params[:page] || DEFAULT_PAGE)
-      .per(params[:per_page] || DEFAULT_PER_PAGE_PARAM)
   end
 
   # POST /users/add or /users/add.json

@@ -7,14 +7,8 @@ class OrganizationsController < ApplicationController
   # GET /organizations or /organizations.json
   def index
     @search = Organization.all.ransack(params[:q])
-    @organizations = @search.result
+    @organizations = @search.result.order(name: :asc).includes(memberships: :user)
     @organizations_count = @organizations.length
-    @organizations =
-      @organizations
-      .order(name: :asc)
-      .includes(memberships: :user)
-      .page(params[:page] || DEFAULT_PAGE)
-      .per(params[:per_page] || DEFAULT_PER_PAGE_PARAM)
   end
 
   # POST /organizations or /organizations.json
