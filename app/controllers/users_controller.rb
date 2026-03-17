@@ -23,7 +23,7 @@ class UsersController < ApplicationController
         format.json { render :index, status: :created, location: @user }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @user })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @user }), status: :unprocessable_entity
         end
         format.html { redirect_to users_path, status: :unprocessable_entity }
         format.json { render json: @user.errors, status: :unprocessable_entity }
@@ -54,7 +54,7 @@ class UsersController < ApplicationController
         format.json { render :index, status: :ok, location: @user }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @user })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @user }), status: :unprocessable_entity
         end
         format.html { redirect_to users_path, status: :unprocessable_entity }
         format.json { render json: @user.errors, status: :unprocessable_entity }

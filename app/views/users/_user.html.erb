@@ -1,26 +1,32 @@
-<div class="d-flex my-4 mx-2 p-2 justify-content-between align-items-center rounded shadow border border-secondary bg-white" id="user_<%= user.id %>">
-  <div class="d-block mx-2">
-    <p class="my-0"><%= user.full_name %></p>
-    <p class="my-0"><%= user.email %></p>
-    <p class="my-0 text-secondary"><small><%= user.role&.upcase %></small></p>
+<div class="v2-user-card" id="user_<%= user.id %>">
+  <div class="v2-user-info">
+    <div class="v2-user-avatar">
+      <%= user.first_name&.first %><%= user.last_name&.first %>
+    </div>
+    <div class="v2-user-details">
+      <p class="v2-user-name"><%= user.full_name %></p>
+      <p class="v2-user-email"><%= user.email %></p>
+      <% if user.role.present? %>
+        <span class="v2-user-role"><%= user.role %></span>
+      <% end %>
+    </div>
   </div>
 
-  <div class="d-flex align-items-center">
-    <button type="button" class="btn btn-link text-secondary text-decoration-none mx-1 p-0" data-bs-toggle="modal" data-bs-target="#userEditingModal_<%= user.id %>">
-      <i class="fas fa-fw fa-edit"></i>
+  <div class="v2-user-actions">
+    <button type="button"
+            class="v2-btn-icon"
+            title="Modifica"
+            data-bs-toggle="modal"
+            data-bs-target="#userEditingModal_<%= user.id %>">
+      <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
     </button>
 
-    <%= button_to user, method: :delete, class: "btn btn-link text-danger text-decoration-none mx-3 p-0" do %>
-      <i class="fas fa-fw fa-trash"></i>
-    <% end %>
+    <button type="button"
+            class="v2-btn-icon danger"
+            title="Elimina"
+            data-bs-toggle="modal"
+            data-bs-target="#userDeleteModal_<%= user.id %>">
+      <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+    </button>
   </div>
-
-  <!-- Modale per la cancellazione / modifica di un utente -->
-  <%= render "modal",
-             modal_id: "userEditingModal_#{user.id}",
-             title: "Modifica utente",
-             user: user,
-             path: user_path(user),
-             method: :patch
-  %>
 </div>

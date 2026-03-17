@@ -1,84 +1,141 @@
-<%= render 'layouts/navbar' %>
+<div class="v2">
+  <%= render 'layouts/aurora_background' %>
+  <%= render 'layouts/navbar_v2' %>
 
-<div class="container-fluid pt-2">
-  <div class="accordion rounded shadow border border-secondary bg-light-gray mb-4" id="filtersAccordion">
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button bg-light-gray" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          <b>Filtri</b>
-        </button>
-      </h2>
-      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
-        <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
-          <%= search_form_for @search do |f| %>
-            <div class="d-flex flex-wrap justify-content-around align-items-end">
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-                <%= f.label :first_name_cont, 'Nome', class: 'form-label' %>
-                <%= f.text_field :first_name_cont, placeholder: 'Filtra per nome', class: 'form-control' %>
-              </div>
+  <main class="v2-main">
+    <%# Hero %>
+    <header class="v2-hero">
+      <div>
+        <h1 class="v2-hero-title">Utenti</h1>
+      </div>
+      <button type="button" class="v2-btn-primary" data-bs-toggle="modal" data-bs-target="#userCreationModal">
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Nuovo utente
+      </button>
+    </header>
 
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-                <%= f.label :last_name_cont, 'Cognome', class: 'form-label' %>
-                <%= f.text_field :last_name_cont, placeholder: 'Filtra per cognome', class: 'form-control' %>
-              </div>
-
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-                <%= f.label :email_cont, 'Email', class: 'form-label' %>
-                <%= f.text_field :email_cont, placeholder: 'Filtra per email', class: 'form-control' %>
-              </div>
-
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-                <%= f.label :role_eq, 'Ruolo', class: 'form-label' %>
-                <%= f.select :role_eq,
-                             options_for_select(all_user_roles_for_select, @search.role_eq),
-                             { include_blank: "Qualsiasi ruolo" },
-                             class: 'form-control'
-                %>
-              </div>
-
-              <div class="pb-3 d-flex">
-                <button type="submit" class="btn btn-success mx-2">
-                  <i class="fas fa-search"></i> Cerca
-                </button>
-
-                <%= link_to users_path, class: "btn btn-primary mx-2" do %>
-                  <i class="fas fa-filter" aria-hidden="true"></i> Reset
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-
-          <div class="d-flex justify-content-center flex-wrap">
-            <button type="button" class="btn btn-success mb-3 mx-2" data-bs-toggle="modal" data-bs-target="#userCreationModal">
-              Nuovo utente
+    <%# Filters (accordion) %>
+    <section class="v2-filters">
+      <div class="accordion" id="v2FiltersAccordion">
+        <div class="accordion-item v2-accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button v2-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#v2FiltersBody" aria-expanded="true" aria-controls="v2FiltersBody">
+              <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+              Filtri
             </button>
+          </h2>
+          <div id="v2FiltersBody" class="accordion-collapse collapse show" data-bs-parent="#v2FiltersAccordion">
+            <div class="accordion-body v2-accordion-body">
+              <%= search_form_for @search, html: { class: 'v2-filters-form' } do |f| %>
+                <div class="v2-filter-group">
+                  <%= f.label :first_name_cont, 'Nome' %>
+                  <%= f.text_field :first_name_cont, placeholder: 'Cerca per nome...', class: 'v2-input' %>
+                </div>
+                <div class="v2-filter-group">
+                  <%= f.label :last_name_cont, 'Cognome' %>
+                  <%= f.text_field :last_name_cont, placeholder: 'Cerca per cognome...', class: 'v2-input' %>
+                </div>
+                <div class="v2-filter-group">
+                  <%= f.label :email_cont, 'Email' %>
+                  <%= f.text_field :email_cont, placeholder: 'Cerca per email...', class: 'v2-input' %>
+                </div>
+                <div class="v2-filter-group">
+                  <%= f.label :role_eq, 'Ruolo' %>
+                  <%= f.select :role_eq,
+                               options_for_select(all_user_roles_for_select, @search.role_eq),
+                               { include_blank: "Qualsiasi ruolo" },
+                               class: 'v2-select'
+                  %>
+                </div>
+                <div class="v2-filter-actions">
+                  <button type="submit" class="v2-btn-search">
+                    <svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+                    Cerca
+                  </button>
+                  <%= link_to users_path, class: "v2-btn-reset", data: { turbo: false } do %>
+                    <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                    Reset
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <%# Users grid %>
+    <% if @users.any? %>
+      <div class="v2-section-head">
+        <h2 class="v2-section-title">Elenco utenti</h2>
+        <span class="v2-section-badge"><%= @users_count %> utent<%= @users_count == 1 ? 'e' : 'i' %></span>
+      </div>
+
+      <div id="users" class="v2-user-grid">
+        <% @users.each do |user| %>
+          <%= render user %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="v2-empty">
+        <div class="v2-empty-icon">
+          <svg class="ico ico-lg" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2c0-3.3 2.7-6 6-6s6 2.7 6 6v2"/></svg>
+        </div>
+        <h3>Nessun utente trovato</h3>
+        <p>Modifica i filtri di ricerca oppure aggiungi un nuovo utente.</p>
+        <button type="button" class="v2-btn-ghost" data-bs-toggle="modal" data-bs-target="#userCreationModal">
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Aggiungi utente
+        </button>
+      </div>
+    <% end %>
+  </main>
+</div>
+
+<%# Modals (fuori da .v2 per evitare problemi di stacking context) %>
+<div class="v2">
+  <%= render "modal",
+             modal_id: "userCreationModal",
+             title: "Aggiungi un utente a sistema",
+             user: User.new,
+             path: add_users_path,
+             method: :post
+  %>
+
+  <% @users.each do |user| %>
+    <%= render "modal",
+               modal_id: "userEditingModal_#{user.id}",
+               title: "Modifica utente",
+               user: user,
+               path: user_path(user),
+               method: :patch
+    %>
+
+    <div class="modal fade" id="userDeleteModal_<%= user.id %>" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title fs-5">Conferma cancellazione</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p style="color: var(--txt2); font-size: 0.88rem; margin: 0.5rem 0;">
+              Sei sicuro di voler eliminare l'utente <strong style="color: var(--txt);"><%= user.full_name %></strong>?
+            </p>
+            <p style="color: var(--txt3); font-size: 0.78rem; margin: 0 0 1.5rem;">
+              Questa azione non può essere annullata.
+            </p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+              <%= button_to user, method: :delete, class: "btn btn-success", style: "background: #dc2626; border-color: #dc2626;" do %>
+                Conferma
+              <% end %>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-
-
-  <div class="d-block mb-5 mx-md-5">
-    <div class="border-bottom border-dark mt-5">
-      <span><b><%= @users_count %></b> utent<%= @users_count == 1 ? 'e' : 'i' %></span>
-    </div>
-
-    <div id="users" class="d-flex flex-wrap justify-content-center">
-      <% @users.each do |user| %>
-        <%= render user %>
-      <% end %>
-    </div>
-  </div>
+  <% end %>
 </div>
 
-
-
-<!-- Modale per la creazione di un nuovo utente -->
-<%= render "modal",
-           modal_id: "userCreationModal",
-           title: "Aggiungi un utente a sistema",
-           user: User.new,
-           path: add_users_path,
-           method: :post
-%>
+<%= render 'layouts/auto_close_modals' %>
