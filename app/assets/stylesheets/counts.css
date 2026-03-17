@@ -976,6 +976,25 @@
   opacity: 1;
 }
 
+.v2 .alert-dismissible .btn-close {
+  padding: 0.35rem 0.4rem;
+  font-size: 0.55rem;
+  top: 0.3rem;
+  right: 0.3rem;
+  filter: invert(1) brightness(2);
+  opacity: 0.5;
+}
+
+.v2 .alert-dismissible .btn-close:hover {
+  opacity: 1;
+}
+
+.v2 .alert-danger {
+  background: rgba(248,113,113,0.15);
+  border-color: rgba(248,113,113,0.3);
+  color: var(--red);
+}
+
 .v2 .modal-body {
   padding: 1rem 1.25rem;
 }

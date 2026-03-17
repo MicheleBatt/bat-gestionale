@@ -51,6 +51,20 @@
   background: rgba(251,191,36,0.12);
 }
 
+/* Expired highlight */
+.v2-dl-item.expired {
+  background: rgba(248,113,113,0.08);
+  border: 1px solid rgba(248,113,113,0.2);
+}
+
+.v2-dl-item.expired:hover {
+  background: rgba(248,113,113,0.12);
+}
+
+.v2-dl-item.expired .v2-dl-date {
+  color: var(--red);
+}
+
 /* Date badge */
 .v2-dl-date {
   flex-shrink: 0;
@@ -84,17 +98,26 @@
 }
 
 /* Upcoming badge */
-.v2-dl-upcoming-badge {
+.v2-dl-upcoming-badge,
+.v2-dl-expired-badge {
   font-size: 0.55rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   padding: 0.15rem 0.45rem;
   border-radius: 999px;
-  background: rgba(251,191,36,0.15);
-  color: var(--amber);
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+.v2-dl-upcoming-badge {
+  background: rgba(251,191,36,0.15);
+  color: var(--amber);
+}
+
+.v2-dl-expired-badge {
+  background: rgba(248,113,113,0.15);
+  color: var(--red);
 }
 
 /* Export button */

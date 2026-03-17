@@ -23,7 +23,7 @@ class ExpenseItemsController < ApplicationController
         format.json { render :index, status: :created, location: @expense_item }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @expense_item })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @expense_item }), status: :unprocessable_entity
         end
         format.html { redirect_to organization_expense_items_path(@organization), status: :unprocessable_entity }
         format.json { render json: @expense_item.errors, status: :unprocessable_entity }
@@ -45,7 +45,7 @@ class ExpenseItemsController < ApplicationController
         format.json { render :index, status: :ok, location: @expense_item }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @expense_item })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @expense_item }), status: :unprocessable_entity
         end
         format.html { redirect_to organization_expense_items_path(@organization), status: :unprocessable_entity }
         format.json { render json: @expense_item.errors, status: :unprocessable_entity }

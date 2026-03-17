@@ -27,4 +27,8 @@ class Deadline < ApplicationRecord
     now = Time.now
     self.year == now.year && self.month == now.month
   end
+
+  def expired?
+    self.expired_at < Date.today
+  end
 end

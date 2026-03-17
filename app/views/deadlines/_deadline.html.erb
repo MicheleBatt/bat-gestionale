@@ -1,11 +1,13 @@
-<div class="v2-dl-item <%= 'upcoming' if deadline.upcoming? %>" id="deadline_<%= deadline.id %>">
+<div class="v2-dl-item <%= deadline.expired? ? 'expired' : (deadline.upcoming? ? 'upcoming' :'') %>" id="deadline_<%= deadline.id %>">
   <div class="v2-dl-date">
     <%= parse_date(deadline.expired_at, "%d") %> <%= italian_month(deadline.month) %>
   </div>
 
   <div class="v2-dl-desc"><%= deadline.description %></div>
 
-  <% if deadline.upcoming? %>
+  <% if deadline.expired? %>
+    <span class="v2-dl-expired-badge">Scaduta</span>
+  <% elsif deadline.upcoming? %>
     <span class="v2-dl-upcoming-badge">In scadenza</span>
   <% end %>
 

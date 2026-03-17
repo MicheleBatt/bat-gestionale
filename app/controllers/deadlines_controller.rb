@@ -31,7 +31,7 @@ class DeadlinesController < ApplicationController
         format.json { render :show, status: :created, location: @deadline }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @deadline })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @deadline }), status: :unprocessable_entity
         end
         format.html { redirect_to organization_deadlines_path(@organization), status: :unprocessable_entity }
         format.json { render json: @deadline.errors, status: :unprocessable_entity }
@@ -53,7 +53,7 @@ class DeadlinesController < ApplicationController
         format.json { render :show, status: :ok, location: @deadline }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @deadline })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @deadline }), status: :unprocessable_entity
         end
         format.html { redirect_to organization_deadlines_path(@organization), status: :unprocessable_entity }
         format.json { render json: @deadline.errors, status: :unprocessable_entity }

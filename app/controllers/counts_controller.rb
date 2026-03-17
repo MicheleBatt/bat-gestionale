@@ -39,7 +39,7 @@ class CountsController < ApplicationController
         format.json { render :show, status: :created, location: @count }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @count })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @count }), status: :unprocessable_entity
         end
         format.html { redirect_to organization_counts_path(@organization), status: :unprocessable_entity }
         format.json { render json: @count.errors, status: :unprocessable_entity }
@@ -61,7 +61,7 @@ class CountsController < ApplicationController
         format.json { render :show, status: :ok, location: @count }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @count })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @count }), status: :unprocessable_entity
         end
         format.html { redirect_to organization_counts_path(@organization), status: :unprocessable_entity }
         format.json { render json: @count.errors, status: :unprocessable_entity }
