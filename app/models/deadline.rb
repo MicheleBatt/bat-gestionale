@@ -2,7 +2,7 @@ class Deadline < ApplicationRecord
   # Validations
   belongs_to :organization
   validates :description, :expired_at, :year, :month, presence: true
-  validates :description, :uniqueness => { scope: :year }
+  validates :description, :uniqueness => { scope: [:month, :year] }
 
   # Callbacks
   before_validation { self.year = self.expired_at.year.to_i if self.expired_at }

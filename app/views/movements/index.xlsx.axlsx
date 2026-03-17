@@ -87,7 +87,7 @@ wb.add_worksheet(name: "Movimenti del mese") do |sheet|
   if last_empty_row_type == 'in'
     cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:F#{current_row}"
     cells_to_merge << "A#{current_row}:C#{current_row}"
-  else
+  elsif cells_to_merge.present?
     cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:C#{current_row}"
     cells_to_merge << "D#{current_row}:F#{current_row}"
   end
