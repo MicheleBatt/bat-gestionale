@@ -1,126 +1,165 @@
-<%= render 'layouts/navbar' %>
-
-<div class="counts-dashboard page-counts-index">
-  <%# === HERO BANNER === %>
-  <div class="dashboard-hero">
-    <div class="hero-content">
-      <div class="hero-top">
-        <div class="hero-title-section">
-          <h1>I tuoi conti</h1>
-          <span class="hero-subtitle"><%= @organization.name %></span>
-        </div>
-        <button type="button" class="btn-add-count" data-bs-toggle="modal" data-bs-target="#countCreationModal">
-          <i class="fas fa-plus"></i> Nuovo conto
-        </button>
-      </div>
-    </div>
+<div class="v2">
+  <%# Aurora background %>
+  <div class="v2-aurora">
+    <div class="v2-aurora-blob v2-aurora-1"></div>
+    <div class="v2-aurora-blob v2-aurora-2"></div>
+    <div class="v2-aurora-blob v2-aurora-3"></div>
   </div>
+  <div class="v2-grid-overlay"></div>
 
-  <%# === SUMMARY METRICS (floating over hero) === %>
-  <div class="summary-row">
-    <div class="summary-card">
-      <div class="summary-icon icon-accounts">
-        <i class="fas fa-wallet"></i>
-      </div>
-      <div class="summary-info">
-        <div class="summary-label">Conti attivi</div>
-        <div class="summary-value"><%= @counts_count %></div>
-      </div>
-    </div>
+  <%# Navbar %>
+  <%= render 'navbar_v2' %>
 
-    <div class="summary-card">
-      <div class="summary-icon icon-balance <%= @counts_global_amount < 0 ? 'negative' : '' %>">
-        <i class="fas fa-scale-balanced"></i>
+  <%# Main content %>
+  <main class="v2-main">
+    <%# Hero %>
+    <header class="v2-hero">
+      <div>
+        <h1 class="v2-hero-title">I tuoi conti</h1>
+        <span class="v2-hero-sub"><%= @organization.name %></span>
       </div>
-      <div class="summary-info">
-        <div class="summary-label">Giacenza complessiva</div>
-        <div class="summary-value <%= @counts_global_amount < 0 ? 'text-negative' : '' %>">
-          <%= to_visible_amount(@counts_global_amount, false) %>&euro;
+      <button type="button" class="v2-btn-primary" data-bs-toggle="modal" data-bs-target="#countCreationModal">
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Nuovo conto
+      </button>
+    </header>
+
+    <%# Metrics %>
+    <section class="v2-metrics">
+      <div class="v2-metric">
+        <div class="v2-metric-icon purple">
+          <svg class="ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="16.5" cy="14" r="1.5" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <div>
+          <div class="v2-metric-label">Conti attivi</div>
+          <div class="v2-metric-value"><%= @counts_count %></div>
         </div>
       </div>
-    </div>
 
-    <% if @organization.movements.present? %>
-      <div class="summary-card">
-        <%= link_to stats_organization_path(id: @organization.id), class: "summary-link" do %>
-          <div class="summary-icon icon-charts">
-            <i class="fas fa-chart-pie"></i>
+      <div class="v2-metric">
+        <div class="v2-metric-icon green <%= @counts_global_amount < 0 ? 'neg' : '' %>">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="9" cy="15" r="6"/><path d="M14.8 8.2a6 6 0 010 13.6" stroke-dasharray="0"/></svg>
+        </div>
+        <div>
+          <div class="v2-metric-label">Giacenza complessiva</div>
+          <div class="v2-metric-value <%= @counts_global_amount < 0 ? 'neg' : '' %>">
+            <%= to_visible_amount(@counts_global_amount, false) %><span class="v2-metric-currency">&euro;</span>
           </div>
-          <div class="summary-info">
-            <div class="summary-label">Analisi</div>
-            <div class="summary-value">
-              Visualizza grafici <i class="fas fa-arrow-right link-arrow"></i>
+        </div>
+      </div>
+
+      <% if @organization.movements.present? %>
+        <div class="v2-metric">
+          <%= link_to stats_organization_path(id: @organization.id), class: "v2-metric-link" do %>
+            <div class="v2-metric-icon amber">
+              <svg class="ico" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
             </div>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
-  </div>
-
-  <%# === MAIN CONTENT === %>
-  <div class="dashboard-content">
-    <%# === FILTERS === %>
-    <div class="filters-bar">
-      <div class="filters-header">
-        <i class="fas fa-sliders-h"></i>
-        <h3 class="filters-title">Filtri</h3>
-      </div>
-      <%= search_form_for [@organization, @search], html: { class: 'filters-form' } do |f| %>
-        <div class="filter-group">
-          <%= f.label :name_cont, 'Nome' %>
-          <%= f.text_field :name_cont, placeholder: 'Cerca per nome...', class: 'form-control' %>
-        </div>
-
-        <div class="filter-group">
-          <%= f.label :count_type_eq, 'Tipo di conto' %>
-          <%= f.select :count_type_eq,
-                       options_for_select(count_types_for_select, @search.count_type_eq),
-                       { include_blank: "Tutti i tipi" },
-                       class: 'form-control form-select'
-          %>
-        </div>
-
-        <div class="filter-actions">
-          <button type="submit" class="btn-filter btn-filter-search">
-            <i class="fas fa-search"></i> Cerca
-          </button>
-          <%= link_to organization_counts_path(@organization), class: "btn-filter btn-filter-reset" do %>
-            <i class="fas fa-rotate-right"></i> Reset
+            <div>
+              <div class="v2-metric-label">Analisi</div>
+              <div class="v2-metric-value">
+                Visualizza grafici
+                <svg class="ico-sm ico link-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </div>
+            </div>
           <% end %>
         </div>
       <% end %>
-    </div>
+    </section>
 
-    <%# === ACCOUNTS GRID === %>
+    <%# Filters (accordion) %>
+    <section class="v2-filters">
+      <div class="accordion" id="v2FiltersAccordion">
+        <div class="accordion-item v2-accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button v2-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#v2FiltersBody" aria-expanded="true" aria-controls="v2FiltersBody">
+              <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+              Filtri
+            </button>
+          </h2>
+          <div id="v2FiltersBody" class="accordion-collapse collapse show" data-bs-parent="#v2FiltersAccordion">
+            <div class="accordion-body v2-accordion-body">
+              <%= search_form_for [@organization, @search], html: { class: 'v2-filters-form' } do |f| %>
+                <div class="v2-filter-group">
+                  <%= f.label :name_cont, 'Nome' %>
+                  <%= f.text_field :name_cont, placeholder: 'Cerca per nome...', class: 'v2-input' %>
+                </div>
+                <div class="v2-filter-group">
+                  <%= f.label :count_type_eq, 'Tipo di conto' %>
+                  <%= f.select :count_type_eq,
+                               options_for_select(count_types_for_select, @search.count_type_eq),
+                               { include_blank: "Tutti i tipi" },
+                               class: 'v2-select'
+                  %>
+                </div>
+                <div class="v2-filter-actions">
+                  <button type="submit" class="v2-btn-search">
+                    <svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+                    Cerca
+                  </button>
+                  <%= link_to organization_counts_path(@organization), class: "v2-btn-reset", data: { turbo: false } do %>
+                    <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                    Reset
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <%# Grid %>
     <% if @counts.any? %>
-      <div class="section-header">
-        <h2>Panoramica conti</h2>
-        <span class="section-count"><%= @counts_count %> cont<%= @counts_count == 1 ? 'o' : 'i' %></span>
+      <div class="v2-section-head">
+        <h2 class="v2-section-title">Panoramica conti</h2>
+        <span class="v2-section-badge"><%= @counts_count %> cont<%= @counts_count == 1 ? 'o' : 'i' %></span>
       </div>
 
-      <div id="counts" class="counts-grid">
+      <div id="counts" class="v2-grid">
         <% @counts.each do |count| %>
           <%= render count %>
         <% end %>
       </div>
     <% else %>
-      <div class="counts-empty">
-        <div class="empty-icon">
-          <i class="fas fa-vault"></i>
+      <div class="v2-empty">
+        <div class="v2-empty-icon">
+          <svg class="ico ico-lg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><path d="M12 8v8M8 12h8"/></svg>
         </div>
         <h3>Nessun conto trovato</h3>
         <p>Modifica i filtri di ricerca oppure aggiungi il tuo primo conto per iniziare.</p>
-        <button type="button" class="btn-empty-add" data-bs-toggle="modal" data-bs-target="#countCreationModal">
-          <i class="fas fa-plus"></i> Aggiungi conto
+        <button type="button" class="v2-btn-ghost" data-bs-toggle="modal" data-bs-target="#countCreationModal">
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Aggiungi conto
         </button>
       </div>
     <% end %>
-  </div>
+  </main>
 </div>
 
-<%# === MODAL CREAZIONE === %>
-<%= render "modal",
-           modal_id: "countCreationModal",
-           title: "Aggiungi un nuovo conto",
-           count: Count.new
-%>
+<%# Modals (fuori da .v2 per evitare problemi di stacking context) %>
+<div class="v2">
+  <%= render "modal",
+             modal_id: "countCreationModal",
+             title: "Aggiungi un nuovo conto",
+             count: Count.new
+  %>
+
+  <% @counts.each do |count| %>
+    <%= render "modal",
+               modal_id: "countEditingModal_#{count.id}",
+               title: "Modifica conto",
+               count: count
+    %>
+  <% end %>
+</div>
+
+<script>
+  document.addEventListener('turbo:submit-end', function(event) {
+    if (event.detail.success) {
+      document.querySelectorAll('.modal.show').forEach(function(modal) {
+        var instance = bootstrap.Modal.getInstance(modal);
+        if (instance) { instance.hide(); }
+      });
+    }
+  });
+</script>

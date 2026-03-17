@@ -1,0 +1,122 @@
+<% new_upcoming_deadlines = upcoming_deadlines_count(@organization) %>
+<% organizations = current_user.organizations %>
+
+<nav class="v2-nav">
+  <div class="v2-nav-inner">
+    <%# Desktop nav %>
+    <ul class="v2-nav-links">
+      <li>
+        <%= link_to organization_counts_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_counts_path(@organization))}" do %>
+          <svg class="ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="16.5" cy="14" r="1.5" fill="currentColor" stroke="none"/></svg>
+          Conti corrente
+        <% end %>
+      </li>
+      <li>
+        <%= link_to organization_expense_items_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_expense_items_path(@organization))}" do %>
+          <svg class="ico" viewBox="0 0 24 24"><path d="M4 4h7l9 9-7 7-9-9V4z"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+          Voci di spesa
+        <% end %>
+      </li>
+      <li>
+        <%= link_to organization_deadlines_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_deadlines_path(@organization))}" do %>
+          <svg class="ico" viewBox="0 0 24 24"><path d="M5 3h14M5 21h14"/><path d="M7 3v5l5 4-5 4v5M17 3v5l-5 4 5 4v5"/></svg>
+          Scadenziario
+          <% if new_upcoming_deadlines > 0 %>
+            <span class="v2-nav-badge"><%= new_upcoming_deadlines %></span>
+          <% end %>
+        <% end %>
+      </li>
+      <% if can? :index, Organization %>
+        <li>
+          <%= link_to organizations_path, class: "v2-nav-link #{'active' if current_page?(organizations_path)}" do %>
+            <svg class="ico" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75M21 21v-2a4 4 0 00-3-3.85"/></svg>
+            Organizzazioni
+          <% end %>
+        </li>
+      <% end %>
+      <% if can? :index, User %>
+        <li>
+          <%= link_to users_path, class: "v2-nav-link #{'active' if current_page?(users_path)}" do %>
+            <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2c0-3.3 2.7-6 6-6s6 2.7 6 6v2"/></svg>
+            Utenti
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+
+    <%# Mobile hamburger %>
+    <input type="checkbox" id="v2MobileCheck" class="v2-mobile-menu-check">
+    <label for="v2MobileCheck" class="v2-mobile-toggle">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </label>
+
+    <%# Org switcher %>
+    <% if organizations.size > 1 %>
+      <details class="v2-org-switcher">
+        <summary>
+          <%= @organization.name %>
+          <svg class="ico-sm ico" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="v2-dropdown-panel">
+          <% organizations.where.not(id: @organization.id).each do |organization| %>
+            <% link =
+               current_page?(organization_counts_path(@organization)) ? organization_counts_path(organization) :
+                 (current_page?(organization_expense_items_path(@organization)) ? organization_expense_items_path(organization) :
+                   (current_page?(organization_deadlines_path(@organization)) ? organization_deadlines_path(organization) :
+                     (current_page?(organizations_path) ? organizations_path :
+                       (current_page?(users_path) ? users_path :
+                          (current_page?(edit_user_path(current_user)) ? edit_user_path(current_user) : root_path)))))
+            %>
+            <%= link_to link, class: "v2-dropdown-item" do %>
+              <%= organization.name %>
+            <% end %>
+          <% end %>
+          <%= link_to edit_user_path(current_user), class: "v2-dropdown-item" do %>
+            <svg class="ico-sm ico" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            Impostazioni Account
+          <% end %>
+        </div>
+      </details>
+    <% else %>
+      <%= link_to edit_user_path(current_user), class: "v2-nav-link #{'active' if current_page?(edit_user_path(current_user))}" do %>
+        <svg class="ico" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+        Impostazioni
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# Mobile slide-down menu %>
+  <div class="v2-mobile-menu">
+    <%= link_to organization_counts_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_counts_path(@organization))}" do %>
+      <svg class="ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="16.5" cy="14" r="1.5" fill="currentColor" stroke="none"/></svg>
+      Conti corrente
+    <% end %>
+    <%= link_to organization_expense_items_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_expense_items_path(@organization))}" do %>
+      <svg class="ico" viewBox="0 0 24 24"><path d="M4 4h7l9 9-7 7-9-9V4z"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+      Voci di spesa
+    <% end %>
+    <%= link_to organization_deadlines_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_deadlines_path(@organization))}" do %>
+      <svg class="ico" viewBox="0 0 24 24"><path d="M5 3h14M5 21h14"/><path d="M7 3v5l5 4-5 4v5M17 3v5l-5 4 5 4v5"/></svg>
+      Scadenziario
+      <% if new_upcoming_deadlines > 0 %>
+        <span class="v2-nav-badge"><%= new_upcoming_deadlines %></span>
+      <% end %>
+    <% end %>
+    <% if can? :index, Organization %>
+      <%= link_to organizations_path, class: "v2-nav-link #{'active' if current_page?(organizations_path)}" do %>
+        <svg class="ico" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75M21 21v-2a4 4 0 00-3-3.85"/></svg>
+        Organizzazioni
+      <% end %>
+    <% end %>
+    <% if can? :index, User %>
+      <%= link_to users_path, class: "v2-nav-link #{'active' if current_page?(users_path)}" do %>
+        <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2c0-3.3 2.7-6 6-6s6 2.7 6 6v2"/></svg>
+        Utenti
+      <% end %>
+    <% end %>
+    <%= link_to edit_user_path(current_user), class: "v2-nav-link" do %>
+      <svg class="ico" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+      Impostazioni Account
+    <% end %>
+  </div>
+</nav>
