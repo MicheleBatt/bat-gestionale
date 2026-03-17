@@ -1,14 +1,8 @@
 <div class="v2">
-  <%# Aurora background %>
-  <div class="v2-aurora">
-    <div class="v2-aurora-blob v2-aurora-1"></div>
-    <div class="v2-aurora-blob v2-aurora-2"></div>
-    <div class="v2-aurora-blob v2-aurora-3"></div>
-  </div>
-  <div class="v2-grid-overlay"></div>
+  <%= render 'layouts/aurora_background' %>
 
   <%# Navbar %>
-  <%= render 'counts/navbar_v2' %>
+  <%= render 'layouts/navbar_v2' %>
 
   <%# Main content %>
   <main class="v2-main">
@@ -137,13 +131,4 @@
   <% end %>
 </div>
 
-<script>
-  document.addEventListener('turbo:submit-end', function(event) {
-    if (event.detail.success) {
-      document.querySelectorAll('.modal.show').forEach(function(modal) {
-        var instance = bootstrap.Modal.getInstance(modal);
-        if (instance) { instance.hide(); }
-      });
-    }
-  });
-</script>
+<%= render 'layouts/auto_close_modals' %>

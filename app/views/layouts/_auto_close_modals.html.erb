@@ -1,0 +1,10 @@
+<script>
+  document.addEventListener('turbo:submit-end', function(event) {
+    if (event.detail.success) {
+      document.querySelectorAll('.modal.show').forEach(function(modal) {
+        var instance = bootstrap.Modal.getInstance(modal);
+        if (instance) { instance.hide(); }
+      });
+    }
+  });
+</script>
