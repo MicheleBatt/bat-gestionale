@@ -28,7 +28,7 @@
 <div class="v2-card"
      id="count_<%= count.id %>"
      onclick="window.location.href='<%= count.movements_default_path %>'">
-  <div class="v2-card-top">
+  <div class="v2-card-top mb-3">
     <div class="v2-card-icon <%= icon_class %>">
       <svg class="ico" viewBox="0 0 24 24"><%= icon_svg.html_safe %></svg>
     </div>
@@ -51,6 +51,10 @@
               onclick="event.stopPropagation(); navigator.clipboard.writeText(document.querySelector('#count_<%= count.id %>_iban').innerText.trim())">
         <svg class="ico-sm ico" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
       </button>
+    </div>
+  <% else %>
+    <div class="v2-card-iban v2-card-iban-empty">
+      <span>Codice IBAN non inserito</span>
     </div>
   <% end %>
 
