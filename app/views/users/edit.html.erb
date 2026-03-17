@@ -1,12 +1,18 @@
-<%= render 'layouts/navbar' %>
+<div class="v2">
+  <%= render 'layouts/aurora_background' %>
+  <%= render 'layouts/navbar_v2' %>
 
-<div class="d-block mb-5 mx-2 mx-md-5">
-  <div class="border-bottom border-dark mt-5">
-    <span>Utenti > <%= @user.full_name %></span>
-  </div>
+  <main class="v2-main">
+    <%# Hero %>
+    <header class="v2-hero">
+      <div>
+        <h1 class="v2-hero-title">Impostazioni Account</h1>
+        <span class="v2-hero-sub"><%= @user.full_name %></span>
+      </div>
+    </header>
 
-  <div class="d-block d-sm-flex justify-content-center">
-    <div class="rounded border border-dark px-2 px-sm-4 mt-4 mx-1 mx-md-2 shadow bg-white">
+    <%# Form card %>
+    <div class="v2-edit-card">
       <div id="_error_messages"></div>
 
       <%= render "form",
@@ -16,5 +22,5 @@
                  method: :patch
       %>
     </div>
-  </div>
+  </main>
 </div>
