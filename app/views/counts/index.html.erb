@@ -1,83 +1,124 @@
 <%= render 'layouts/navbar' %>
 
-<div class="container-fluid pt-2">
-  <div class="accordion rounded shadow border border-secondary bg-light-gray mb-4" id="filtersAccordion">
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button bg-light-gray" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          <b>Filtri</b>
-        </button>
-      </h2>
-      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
-        <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
-          <%= search_form_for [@organization, @search] do |f| %>
-            <div class="d-flex flex-wrap justify-content-center align-items-end">
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-                <%= f.label :name_cont, 'Nome', class: 'form-label' %>
-                <%= f.text_field :name_cont, placeholder: 'Filtra per nome', class: 'form-control' %>
-              </div>
-
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-                <%= f.label :count_type_eq, 'Tipo di conto', class: "form-label" %>
-                <%= f.select :count_type_eq,
-                             options_for_select(count_types_for_select, @search.count_type_eq),
-                             { include_blank: "Qualunque tipo" },
-                             class: 'form-control'
-                %>
-              </div>
-
-              <div class="pb-3 d-flex">
-                <button type="submit" class="btn btn-success mx-2">
-                  <i class="fas fa-search"></i> Cerca
-                </button>
-
-                <%= link_to organization_counts_path(@organization), class: "btn btn-primary mx-2" do %>
-                  <i class="fas fa-filter" aria-hidden="true"></i> Reset
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-
-          <% if @organization.movements.present? %>
-            <div class="d-flex justify-content-center flex-wrap">
-              <%= link_to stats_organization_path(id: @organization.id), class: "btn btn-info mb-3 mx-2 text-white" do %>
-                <i class="fas fa-line-chart" aria-hidden="true"></i> Grafici
-              <% end %>
-            </div>
-          <% end %>
-
-          <div class="d-flex justify-content-center flex-wrap">
-            <button type="button" class="btn btn-success mb-3 mx-2" data-bs-toggle="modal" data-bs-target="#countCreationModal">
-              Nuovo conto corrente
-            </button>
-          </div>
+<div class="counts-dashboard page-counts-index">
+  <%# === HERO BANNER === %>
+  <div class="dashboard-hero">
+    <div class="hero-content">
+      <div class="hero-top">
+        <div class="hero-title-section">
+          <h1>I tuoi conti</h1>
+          <span class="hero-subtitle"><%= @organization.name %></span>
         </div>
+        <button type="button" class="btn-add-count" data-bs-toggle="modal" data-bs-target="#countCreationModal">
+          <i class="fas fa-plus"></i> Nuovo conto
+        </button>
       </div>
     </div>
   </div>
 
+  <%# === SUMMARY METRICS (floating over hero) === %>
+  <div class="summary-row">
+    <div class="summary-card">
+      <div class="summary-icon icon-accounts">
+        <i class="fas fa-wallet"></i>
+      </div>
+      <div class="summary-info">
+        <div class="summary-label">Conti attivi</div>
+        <div class="summary-value"><%= @counts_count %></div>
+      </div>
+    </div>
 
-  <div class="d-flex justify-content-center mb-5">
-    <div id="counts" class="d-block mx-md-4">
-      <div class="d-block d-sm-flex justify-content-between border-bottom border-dark mt-4">
-        <div class="me-md-5 pe-md-5">
-          <span><b><%= @counts_count %></b> cont<%= @counts_count == 1 ? 'o' : 'i' %></span>
-        </div>
-
-        <div class="ms-md-5 ps-md-5">
-          <span>Giacenza complessiva: <b class="text-<%= @counts_global_amount < 0 ? 'danger' : '' %>"><%= to_visible_amount(@counts_global_amount, false) %>€</b></span>
+    <div class="summary-card">
+      <div class="summary-icon icon-balance <%= @counts_global_amount < 0 ? 'negative' : '' %>">
+        <i class="fas fa-scale-balanced"></i>
+      </div>
+      <div class="summary-info">
+        <div class="summary-label">Giacenza complessiva</div>
+        <div class="summary-value <%= @counts_global_amount < 0 ? 'text-negative' : '' %>">
+          <%= to_visible_amount(@counts_global_amount, false) %>&euro;
         </div>
       </div>
+    </div>
 
-      <% @counts.each do | count | %>
-        <%= render count %>
+    <% if @organization.movements.present? %>
+      <div class="summary-card">
+        <%= link_to stats_organization_path(id: @organization.id), class: "summary-link" do %>
+          <div class="summary-icon icon-charts">
+            <i class="fas fa-chart-pie"></i>
+          </div>
+          <div class="summary-info">
+            <div class="summary-label">Analisi</div>
+            <div class="summary-value">
+              Visualizza grafici <i class="fas fa-arrow-right link-arrow"></i>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# === MAIN CONTENT === %>
+  <div class="dashboard-content">
+    <%# === FILTERS === %>
+    <div class="filters-bar">
+      <div class="filters-header">
+        <i class="fas fa-sliders-h"></i>
+        <h3 class="filters-title">Filtri</h3>
+      </div>
+      <%= search_form_for [@organization, @search], html: { class: 'filters-form' } do |f| %>
+        <div class="filter-group">
+          <%= f.label :name_cont, 'Nome' %>
+          <%= f.text_field :name_cont, placeholder: 'Cerca per nome...', class: 'form-control' %>
+        </div>
+
+        <div class="filter-group">
+          <%= f.label :count_type_eq, 'Tipo di conto' %>
+          <%= f.select :count_type_eq,
+                       options_for_select(count_types_for_select, @search.count_type_eq),
+                       { include_blank: "Tutti i tipi" },
+                       class: 'form-control form-select'
+          %>
+        </div>
+
+        <div class="filter-actions">
+          <button type="submit" class="btn-filter btn-filter-search">
+            <i class="fas fa-search"></i> Cerca
+          </button>
+          <%= link_to organization_counts_path(@organization), class: "btn-filter btn-filter-reset" do %>
+            <i class="fas fa-rotate-right"></i> Reset
+          <% end %>
+        </div>
       <% end %>
     </div>
+
+    <%# === ACCOUNTS GRID === %>
+    <% if @counts.any? %>
+      <div class="section-header">
+        <h2>Panoramica conti</h2>
+        <span class="section-count"><%= @counts_count %> cont<%= @counts_count == 1 ? 'o' : 'i' %></span>
+      </div>
+
+      <div id="counts" class="counts-grid">
+        <% @counts.each do |count| %>
+          <%= render count %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="counts-empty">
+        <div class="empty-icon">
+          <i class="fas fa-vault"></i>
+        </div>
+        <h3>Nessun conto trovato</h3>
+        <p>Modifica i filtri di ricerca oppure aggiungi il tuo primo conto per iniziare.</p>
+        <button type="button" class="btn-empty-add" data-bs-toggle="modal" data-bs-target="#countCreationModal">
+          <i class="fas fa-plus"></i> Aggiungi conto
+        </button>
+      </div>
+    <% end %>
   </div>
 </div>
 
-
-<!-- Modale per la creazione di un nuovo movimento di cassa -->
+<%# === MODAL CREAZIONE === %>
 <%= render "modal",
            modal_id: "countCreationModal",
            title: "Aggiungi un nuovo conto",

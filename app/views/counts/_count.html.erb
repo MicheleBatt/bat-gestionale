@@ -1,40 +1,87 @@
-<div class="rounded shadow border border-secondary bg-white my-4 px-3 px-md-5 py-2" id="count_<%= count.id %>">
-  <h5 class="mb-0">
-    <%= link_to count.name, count.movements_default_path, class: "text-dark text-decoration-none" %>
-  </h5>
+<%
+  type_class = case count.count_type
+               when 'savings_account', 'savings_booklet'   then 'type-savings'
+               when 'investments_account'                   then 'type-investments'
+               when 'accumulation_plan'                     then 'type-accumulation'
+               when 'postal_savings_bond'                   then 'type-postal'
+               when 'pension_fund'                          then 'type-pension'
+               when 'government_bond_investment_plan'       then 'type-government'
+               when 'xau_investment_account', 'xag_investment_account' then 'type-metal'
+               else ''
+               end
 
-  <h6 class=""><%= count.description %></h6>
-  <h6 class="mt-4 mb-0 text-secondary">
-    <% if count.iban.present? %>
-      <span id="count_<%= count.id %>_iban"><%= count.iban %></span>
-      <i class="fas fa-copy"
-         role="button"
-         id="<%= count.id %>"
-         onclick="((event) => { navigator.clipboard.writeText(document.querySelector(`#count_${event.target.id}_iban`).innerHTML?.trim()) })(event)"
-      ></i>
-    <% end %>
-  </h6>
+  type_icon = case count.count_type
+              when 'bank_account'                    then 'fa-building-columns'
+              when 'savings_account'                 then 'fa-piggy-bank'
+              when 'savings_booklet'                 then 'fa-book'
+              when 'investments_account'             then 'fa-chart-line'
+              when 'accumulation_plan'               then 'fa-layer-group'
+              when 'postal_savings_bond'             then 'fa-stamp'
+              when 'pension_fund'                    then 'fa-umbrella-beach'
+              when 'government_bond_investment_plan' then 'fa-landmark'
+              when 'xau_investment_account'          then 'fa-coins'
+              when 'xag_investment_account'          then 'fa-gem'
+              else 'fa-wallet'
+              end
+%>
 
-  <div class="d-flex justify-content-between align-items-end mb-0">
-    <div class="d-flex justify-content-start">
-      <button type="button" class="btn btn-link text-secondary text-decoration-none p-0" data-bs-toggle="modal" data-bs-target="#countEditingModal_<%= count.id %>">
-        <i class="fas fa-fw fa-edit"></i>
-      </button>
-
-      <% if count.movements.blank? %>
-        <%= button_to organization_count_path(@organization, count), method: :delete, class: "btn btn-link text-danger text-decoration-none ml-3 p-0" do %>
-          <i class="fas fa-fw fa-trash"></i>
-        <% end %>
-      <% end %>
+<div class="count-card <%= type_class %>" id="count_<%= count.id %>">
+  <div class="card-body-inner">
+    <div class="card-top">
+      <div class="card-type-icon">
+        <i class="fas <%= type_icon %>"></i>
+      </div>
+      <div class="card-title-group">
+        <%= link_to count.name, count.movements_default_path, class: "count-name" %>
+        <span class="count-type-badge"><%= parsed_count_type(count.count_type) %></span>
+      </div>
     </div>
 
-    <h6 class="my-0 text-secondary text-end">
-      Giacenza attuale:<br>
-      <span class="text-<%= count.current_amount < 0 ? 'danger' : 'secondary' %>"><%= to_visible_amount(count.current_amount, false) %>€</span>
-    </h6>
+    <% if count.description.present? %>
+      <div class="count-description"><%= count.description %></div>
+    <% end %>
+
+    <% if count.iban.present? %>
+      <div class="count-iban">
+        <span id="count_<%= count.id %>_iban"><%= count.iban %></span>
+        <button type="button"
+                class="btn-copy"
+                title="Copia IBAN"
+                onclick="navigator.clipboard.writeText(document.querySelector('#count_<%= count.id %>_iban').innerText.trim())">
+          <i class="fas fa-copy"></i>
+        </button>
+      </div>
+    <% end %>
+
+    <div class="card-bottom">
+      <div class="balance-section">
+        <div class="balance-label">Giacenza attuale</div>
+        <div class="balance-amount <%= count.current_amount < 0 ? 'negative' : '' %>">
+          <%= to_visible_amount(count.current_amount, false) %><span class="balance-currency">&euro;</span>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button type="button"
+                class="btn-action"
+                title="Modifica"
+                data-bs-toggle="modal"
+                data-bs-target="#countEditingModal_<%= count.id %>">
+          <i class="fas fa-pen-to-square"></i>
+        </button>
+
+        <% if count.movements.blank? %>
+          <%= button_to organization_count_path(@organization, count),
+                        method: :delete,
+                        class: "btn-action btn-action-danger",
+                        title: "Elimina" do %>
+            <i class="fas fa-trash-can"></i>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
   </div>
 
-  <!-- Modale per la cancellazione / modifica di un conto corrente -->
   <%= render "modal",
              modal_id: "countEditingModal_#{count.id}",
              title: "Modifica conto",
