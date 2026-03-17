@@ -1075,9 +1075,19 @@
 /* =========================================================
    RESPONSIVE
    ========================================================= */
+.v2-mobile-only { display: none; }
+
+.v2-mobile-org-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--txt);
+}
+
 @media (max-width: 900px) {
   .v2-nav-links { display: none; }
   .v2-mobile-toggle { display: flex; }
+  .v2-desktop-only { display: none; }
+  .v2-mobile-only { display: block; }
 }
 
 @media (max-width: 768px) {
