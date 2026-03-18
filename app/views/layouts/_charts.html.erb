@@ -5,7 +5,7 @@
 <% chart_font = { family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" } %>
 <% chart_lib = {
   plugins: {
-    title: { color: '#1e293b', font: { **chart_font, size: 15, weight: 600 } },
+    title: { color: '#1e293b', font: { **chart_font, size: 15, weight: 600 }, padding: { bottom: 20 } },
     legend: { labels: { color: '#475569', font: { **chart_font, size: 11 } } }
   },
   scales: {
@@ -16,8 +16,8 @@
 <% bar_lib = chart_lib.deep_merge({ datasets: { bar: { borderRadius: 4, borderSkipped: 'bottom' } } }) %>
 <% pie_lib = {
   plugins: {
-    title: { display: true, color: '#1e293b', font: { **chart_font, size: 13, weight: 600 }, padding: { bottom: 16 } },
-    legend: { position: 'right', labels: { color: '#475569', font: { **chart_font, size: 11 } } }
+    title: { display: true, color: '#1e293b', font: { **chart_font, size: 15, weight: 600 }, padding: { bottom: 20 } },
+    legend: { position: 'right', maxWidth: 300, labels: { color: '#475569', font: { **chart_font, size: 11 }, padding: 8, usePointStyle: true, pointStyle: 'circle' } }
   }
 } %>
 
@@ -47,7 +47,7 @@
                    loading: "Caricamento...",
                    empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
                    suffix: "€",
-                   library: bar_lib
+                   library: bar_lib.deep_merge({ plugins: { legend: { display: false } } })
   %>
 </div>
 
@@ -65,6 +65,7 @@
                         }
                       }),
                       title: chart_title,
+                      height: "450px",
                       download: { filename: chart_title, background: "#ffffff" },
                       loading: "Caricamento...",
                       empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
@@ -81,6 +82,7 @@
                         plugins: { title: { text: chart_title } }
                       }),
                       title: chart_title,
+                      height: "450px",
                       download: { filename: chart_title, background: "#ffffff" },
                       loading: "Caricamento...",
                       empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
@@ -123,3 +125,19 @@
     </div>
   <% end %>
 </div>
+
+<script>
+  function adjustPieLegends() {
+    var isMobile = window.innerWidth <= 1200;
+    document.querySelectorAll('.v2-chart-row canvas').forEach(function(canvas) {
+      var chart = canvas.__chartjs_instance__ || (typeof Chart !== 'undefined' && Chart.getChart ? Chart.getChart(canvas) : null);
+      if (chart && chart.config.type === 'pie') {
+        chart.options.plugins.legend.position = isMobile ? 'bottom' : 'right';
+        chart.options.plugins.legend.maxWidth = isMobile ? undefined : 300;
+        chart.update();
+      }
+    });
+  }
+  window.addEventListener('load', function() { setTimeout(adjustPieLegends, 1000); });
+  window.addEventListener('resize', adjustPieLegends);
+</script>

@@ -45,6 +45,7 @@
 
 .v2-chart-row .v2-chart-card {
   margin-bottom: 0.75rem;
+  min-height: 400px;
 }
 
 /* Expense items chart grid */
