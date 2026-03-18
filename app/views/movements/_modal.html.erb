@@ -11,8 +11,22 @@
         <%= render "form", movement: movement, expense_items: expense_items, movement_types: movement_types, modal_id: modal_id %>
 
         <% if deletion_path.present? %>
-          <div class="mt-5 mb-4 mx-2 mx-sm-4 d-flex justify-content-center justify-content-sm-end">
-            <%= button_to deletion_button_txt, deletion_path, method: :delete, class: "btn btn-danger" %>
+          <ul class="mt-5 mb-3 d-flex flex-wrap justify-content-end nav nav-pills" id="asynchronousJobs_<%= movement.id %>" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="btn btn-danger mx-2 mx-sm-4 mt-2" id="deletion-tab_<%= movement.id %>" data-bs-toggle="tab" data-bs-target="#deletion-tab-pane_<%= movement.id %>" type="button" role="tab" aria-controls="deletion-tab-pane" aria-selected="false">
+                Rimuovi dal conto
+              </button>
+            </li>
+          </ul>
+
+          <div class="tab-content mx-2 mx-sm-4" id="asynchronousJobsContent_<%= movement.id %>">
+            <div class="tab-pane fade" id="deletion-tab-pane_<%= movement.id %>" role="tabpanel" aria-labelledby="deletion-tab" tabindex="0">
+              <p class="d-flex justify-content-end text-secondary mb-0 mt-2">Sei sicuro di voler rimuovere questo movimento di cassa?</p>
+              <p class="d-flex justify-content-end text-secondary mb-4">L'operazione non potrà essere annullata</p>
+              <div class="d-flex justify-content-end">
+                <%= button_to "Conferma rimozione", deletion_path, method: :delete, class: "btn btn-warning" %>
+              </div>
+            </div>
           </div>
         <% end %>
       </div>
