@@ -1,0 +1,396 @@
+/* =========================================================
+   Movements – specific styles (extends .v2 base)
+   ========================================================= */
+
+/* Main movements container */
+.v2-mov-container {
+  background: var(--surface);
+  border: 1px solid rgba(109,40,217,0.3);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.06);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+/* Title bar with nav arrows */
+.v2-mov-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid rgba(109,40,217,0.15);
+}
+
+.v2-mov-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--txt);
+  margin: 0;
+  text-align: center;
+}
+
+.v2-mov-nav-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 0.4rem;
+  color: var(--txt2);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.v2-mov-nav-arrow:hover {
+  color: var(--accent);
+  background: rgba(109,40,217,0.05);
+}
+
+/* Action buttons row */
+.v2-mov-actions-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid rgba(109,40,217,0.15);
+  gap: 0.5rem;
+}
+
+.v2-mov-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--txt2);
+}
+
+.v2-mov-btns {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.v2-btn-out {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.9rem;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  background: #dc2626;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.v2-btn-out:hover {
+  background: #b91c1c;
+  box-shadow: 0 2px 8px rgba(220,38,38,0.25);
+}
+
+.v2-btn-in {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.9rem;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  background: #059669;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.v2-btn-in:hover {
+  background: #047857;
+  box-shadow: 0 2px 8px rgba(5,150,105,0.25);
+}
+
+/* Table header */
+.v2-mov-table-head {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .v2-mov-table-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .v2-mov-table-head-section {
+    display: grid;
+    grid-template-columns: 80px 1fr 90px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--txt);
+  }
+
+  .v2-mov-table-head-section.out-head {
+    border-right: 1px solid rgba(109,40,217,0.1);
+  }
+
+  .v2-mov-table-head-label {
+    padding: 0.5rem 0.6rem;
+    text-align: center;
+  }
+
+  .v2-mov-col-label {
+    padding: 0.35rem 0.5rem;
+    text-align: center;
+    border-top: 1px solid rgba(109,40,217,0.1);
+  }
+}
+
+/* Movement row (dual column on desktop) */
+.v2-mov-row {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 992px) {
+  .v2-mov-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Individual movement cell */
+.v2-mov-cell {
+  display: grid;
+  grid-template-columns: 70px 1fr 80px;
+  align-items: center;
+  padding: 0;
+  font-size: 0.78rem;
+  border-top: 1px solid #f1f5f9;
+  transition: background 0.15s;
+  position: relative;
+}
+
+.v2-mov-cell:hover {
+  background: rgba(109,40,217,0.03);
+}
+
+/* Expense item color indicator */
+.v2-mov-cell::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--mov-color, transparent);
+  border-radius: 0 2px 2px 0;
+}
+
+.v2-mov-date {
+  padding: 0.4rem 0.5rem;
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--txt2);
+  font-variant-numeric: tabular-nums;
+}
+
+.v2-mov-causal {
+  padding: 0.4rem 0.5rem;
+  color: var(--txt);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.v2-mov-causal:hover {
+  color: var(--accent);
+}
+
+.v2-mov-amount {
+  padding: 0.4rem 0.5rem;
+  text-align: right;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.v2-mov-amount.out { color: #dc2626; }
+.v2-mov-amount.in { color: #059669; }
+
+/* Empty column placeholder (desktop only) */
+.v2-mov-empty {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .v2-mov-empty {
+    display: block;
+  }
+
+  .v2-mov-cell.out-cell {
+    border-right: 1px solid rgba(109,40,217,0.08);
+  }
+}
+
+/* Totals section */
+.v2-mov-totals {
+  border-top: 2px solid rgba(109,40,217,0.2);
+  padding: 0;
+}
+
+.v2-mov-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+}
+
+.v2-mov-total-row + .v2-mov-total-row {
+  border-top: 1px solid #f1f5f9;
+}
+
+.v2-mov-total-label {
+  font-weight: 700;
+  color: var(--txt2);
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+}
+
+.v2-mov-total-value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+}
+
+.v2-mov-total-value.out { color: #dc2626; }
+.v2-mov-total-value.in { color: #059669; }
+.v2-mov-total-value.negative { color: #dc2626; }
+.v2-mov-total-value.positive { color: #059669; }
+
+/* Desktop dual-column totals */
+.v2-mov-totals-dual {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .v2-mov-totals-dual {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 2px solid rgba(109,40,217,0.2);
+  }
+
+  .v2-mov-totals-dual .v2-mov-total-col {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+  }
+
+  .v2-mov-totals-dual .v2-mov-total-col:first-child {
+    border-right: 1px solid rgba(109,40,217,0.08);
+  }
+
+  .v2-mov-totals-single {
+    display: none;
+  }
+}
+
+/* Expense items breakdown */
+.v2-mov-expense-section {
+  border-top: 1px solid rgba(109,40,217,0.15);
+  padding: 0.75rem 1rem;
+}
+
+.v2-mov-expense-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--txt3);
+  margin-bottom: 0.5rem;
+}
+
+.v2-mov-expense-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.35rem;
+  font-size: 0.75rem;
+  transition: background 0.15s;
+}
+
+.v2-mov-expense-item:hover {
+  background: rgba(0,0,0,0.02);
+}
+
+.v2-mov-expense-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.v2-mov-expense-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.v2-mov-expense-name {
+  font-weight: 500;
+  color: var(--txt);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.v2-mov-expense-amount {
+  font-weight: 700;
+  color: #dc2626;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+/* Load more link */
+.v2-mov-load-more {
+  display: flex;
+  justify-content: center;
+  padding: 0.75rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.v2-mov-load-more a {
+  font-family: var(--font);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent-l) !important;
+  transition: color 0.2s;
+}
+
+.v2-mov-load-more a:hover {
+  color: #a78bfa !important;
+}
+
+/* Chart section */
+.v2-mov-chart {
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 420px) {
+  .v2-mov-cell {
+    grid-template-columns: 60px 1fr 70px;
+    font-size: 0.72rem;
+  }
+
+  .v2-mov-date {
+    font-size: 0.65rem;
+  }
+}

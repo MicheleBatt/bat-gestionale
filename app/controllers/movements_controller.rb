@@ -73,7 +73,7 @@ class MovementsController < ApplicationController
         format.json { render :show, status: :created, location: @movement }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @movement })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @movement }), status: :unprocessable_entity
         end
         format.html { redirect_to @count.movements_default_path, status: :unprocessable_entity }
         format.json { render json: @movement.errors, status: :unprocessable_entity }
@@ -95,7 +95,7 @@ class MovementsController < ApplicationController
         format.json { render :show, status: :ok, location: @movement }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @movement })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @movement }), status: :unprocessable_entity
         end
         format.html { redirect_to @count.movements_default_path(@movement.year, @movement.month), status: :unprocessable_entity }
         format.json { render json: @movement.errors, status: :unprocessable_entity }
