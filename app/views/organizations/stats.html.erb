@@ -1,66 +1,79 @@
-<%= render 'layouts/navbar' %>
+<div class="v2">
+  <%= render 'layouts/aurora_background' %>
+  <%= render 'layouts/navbar_v2' %>
 
-<div class="container-fluid pt-2">
-  <div class="accordion rounded shadow border border-secondary bg-light-gray mb-4" id="filtersAccordion">
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button bg-light-gray" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          <b>Filtri</b>
-        </button>
-      </h2>
-      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
-        <div class="accordion-body bg-light-gray d-flex flex-wrap justify-content-around align-items-end border-top border-secondary pb-0">
-          <%= search_form_for @search, url: stats_organization_path(id: @organization.id) do |f| %>
-            <div class="d-flex flex-wrap justify-content-center align-items-end px-x px-lg-4">
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-                <%= f.label :year_eq, 'Anno', class: "form-label" %>
-                <%= f.select :year_eq,
-                             options_for_select(@years_range.map{ | year | [year, year] }, @search.year_eq),
-                             { include_blank: "Tutti gli anni" },
-                             class: 'form-control'
-                %>
-              </div>
+  <main class="v2-main">
+    <%# Hero %>
+    <header class="v2-hero">
+      <div>
+        <h1 class="v2-hero-title">Statistiche</h1>
+        <span class="v2-hero-sub"><%= @organization.name %></span>
+      </div>
+      <%= link_to organization_counts_path(@organization), class: "v2-btn-export", data: { turbo: false } do %>
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Torna ai conti
+      <% end %>
+    </header>
 
-              <div class="form-group d-block pl-3 pb-3 mb-0 mx-2">
-                <%= f.label :count_id_eq, 'Conto', class: "form-label" %>
-                <%= f.select :count_id_eq,
-                             options_for_select(@organization.counts.map{ | count | [count.name, count.id] }, @search.count_id_eq),
-                             { include_blank: "Tutti i conti" },
-                             class: 'form-control'
-                %>
-              </div>
-
-              <div class="pb-3 d-flex">
-                <button type="submit" class="btn btn-success mx-2">
-                  <i class="fas fa-search"></i> Cerca
-                </button>
-
-                <%= link_to stats_organization_path(id: @organization.id), class: "btn btn-primary mx-2" do %>
-                  <i class="fas fa-filter" aria-hidden="true"></i> Reset
-                <% end %>
-              </div>
+    <%# Filters (accordion) %>
+    <section class="v2-filters">
+      <div class="accordion" id="v2FiltersAccordion">
+        <div class="accordion-item v2-accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button v2-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#v2FiltersBody" aria-expanded="true" aria-controls="v2FiltersBody">
+              <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+              Filtri
+            </button>
+          </h2>
+          <div id="v2FiltersBody" class="accordion-collapse collapse show" data-bs-parent="#v2FiltersAccordion">
+            <div class="accordion-body v2-accordion-body">
+              <%= search_form_for @search, url: stats_organization_path(id: @organization.id), html: { class: 'v2-filters-form' } do |f| %>
+                <div class="v2-filter-group">
+                  <%= f.label :year_eq, 'Anno' %>
+                  <%= f.select :year_eq,
+                               options_for_select(@years_range.map{ |year| [year, year] }, @search.year_eq),
+                               { include_blank: "Tutti gli anni" },
+                               class: 'v2-select'
+                  %>
+                </div>
+                <div class="v2-filter-group">
+                  <%= f.label :count_id_eq, 'Conto' %>
+                  <%= f.select :count_id_eq,
+                               options_for_select(@organization.counts.map{ |count| [count.name, count.id] }, @search.count_id_eq),
+                               { include_blank: "Tutti i conti" },
+                               class: 'v2-select'
+                  %>
+                </div>
+                <div class="v2-filter-actions">
+                  <button type="submit" class="v2-btn-search">
+                    <svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+                    Cerca
+                  </button>
+                  <%= link_to stats_organization_path(id: @organization.id), class: "v2-btn-reset", data: { turbo: false } do %>
+                    <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                    Reset
+                  <% end %>
+                </div>
+              <% end %>
             </div>
-          <% end %>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
 
-
-
-  <!-- SEZIONE DEDICATI AI GRAFICI -->
-  <%= render 'layouts/charts',
-             entity: @organization,
-             count: @count,
-             year: @year,
-             final_amounts_by_date: @final_amounts_by_date,
-             in_out_global_amounts: @in_out_global_amounts,
-             movements_global_amount_by_expense_items: @movements_global_amount_by_expense_items,
-             movements_max_amount: @movements_max_amount,
-             min_year: @organization.min_year,
-             max_year: @organization.max_year,
-             movements_global_amount_by_counts: @movements_global_amount_by_counts,
-             savings_global_amount_by_counts: @savings_global_amount_by_counts
-  %>
+    <%# Charts %>
+    <%= render 'layouts/charts',
+               entity: @organization,
+               count: @count,
+               year: @year,
+               final_amounts_by_date: @final_amounts_by_date,
+               in_out_global_amounts: @in_out_global_amounts,
+               movements_global_amount_by_expense_items: @movements_global_amount_by_expense_items,
+               movements_max_amount: @movements_max_amount,
+               min_year: @organization.min_year,
+               max_year: @organization.max_year,
+               movements_global_amount_by_counts: @movements_global_amount_by_counts,
+               savings_global_amount_by_counts: @savings_global_amount_by_counts
+    %>
+  </main>
 </div>
-
