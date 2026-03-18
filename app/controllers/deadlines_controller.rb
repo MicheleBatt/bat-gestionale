@@ -61,6 +61,25 @@ class DeadlinesController < ApplicationController
     end
   end
 
+  # POST /deadlines/bulk_create
+  def bulk_create
+    file = params[:file]
+
+    if file.blank?
+      redirect_to organization_deadlines_path(@organization), alert: "Nessun file selezionato"
+      return
+    end
+
+    begin
+      temp_path = file.tempfile.path
+      ImportDeadlinesFromXlsxFileCommand.call(@organization, [temp_path])
+      redirect_to organization_deadlines_path(@organization), notice: "Scadenze importate correttamente dal file #{file.original_filename}"
+    rescue => e
+      Rails.logger.error "Import error: #{e.class} - #{e.message}\n#{e.backtrace.first(10).join("\n")}"
+      redirect_to organization_deadlines_path(@organization), alert: "Errore durante l'importazione: #{e.class} - #{e.message}"
+    end
+  end
+
   # DELETE /deadlines/1 or /deadlines/1.json
   def destroy
     @deadline.destroy!

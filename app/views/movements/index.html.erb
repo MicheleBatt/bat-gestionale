@@ -10,6 +10,10 @@
         <span class="v2-hero-sub"><%= @organization.name %></span>
       </div>
       <div class="v2-hero-actions">
+        <button type="button" class="v2-btn-export" data-bs-toggle="modal" data-bs-target="#importMovementsModal">
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+          Importa
+        </button>
         <% if @all_movements.present? %>
           <%= link_to organization_count_movements_path(organization_id: @organization, count_id: @count.id, q: params[:q]&.to_unsafe_h, format: :xlsx), class: "v2-btn-export" do %>
             <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
@@ -285,7 +289,54 @@
 <div class="v2">
   <%= render "modal", modal_id: "outMovementCreationModal", title: "Aggiungi Uscita", movement: @new_out_movement, expense_items: @expense_items, movement_types: @movement_types, deletion_path: nil %>
   <%= render "modal", modal_id: "inMovementCreationModal", title: "Aggiungi Entrata", movement: @new_in_movement, expense_items: @expense_items, movement_types: @movement_types, deletion_path: nil %>
+
+  <%# Modal importazione %>
+  <div class="modal fade" id="importMovementsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title fs-5">Importa movimenti da file Excel</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p style="color: var(--txt2); font-size: 0.85rem; margin-bottom: 1rem;">
+            Seleziona un file Excel (.xlsx) contenente i movimenti di cassa da importare nel conto <strong style="color: var(--txt);"><%= @count.name %></strong>.
+          </p>
+          <p style="color: var(--txt3); font-size: 0.75rem; margin-bottom: 1.25rem;">
+            Il file deve avere lo stesso formato di quello esportato dall'applicazione: uscite nelle colonne A-C, entrate nelle colonne D-F, a partire dalla riga 6.
+          </p>
+
+          <%= form_tag bulk_create_organization_count_movements_path(organization_id: @organization.id, count_id: @count.id), method: :post, multipart: true, id: "importMovementsForm" do %>
+            <div style="margin-bottom: 1.25rem;">
+              <label style="display: block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--txt2); margin-bottom: 0.35rem;">File Excel</label>
+              <%= file_field_tag :file, accept: ".xlsx", class: "form-control", required: true %>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+              <button type="submit" class="btn btn-success" id="importSubmitBtn">Importa</button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<%# Overlay di elaborazione %>
+<div id="importOverlay" style="display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); align-items: center; justify-content: center;">
+  <div style="background: #fff; border-radius: 0.85rem; padding: 2.5rem 2rem; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-width: 400px; width: calc(100% - 2rem);">
+    <div style="width: 40px; height: 40px; border: 3px solid #e2e8f0; border-top-color: var(--accent); border-radius: 50%; animation: importSpin 0.8s linear infinite; margin: 0 auto 1.25rem;"></div>
+    <h3 style="font-family: var(--font); font-size: 1rem; font-weight: 700; color: var(--txt); margin: 0 0 0.4rem;">Importazione in corso</h3>
+    <p style="font-family: var(--font); font-size: 0.82rem; color: var(--txt2); margin: 0;">Elaborazione del file in corso, attendere prego...</p>
+  </div>
+</div>
+
+<style>
+  @keyframes importSpin {
+    to { transform: rotate(360deg); }
+  }
+</style>
 
 <%= render 'layouts/auto_close_modals' %>
 
@@ -300,6 +351,22 @@
         document.body.appendChild(root);
       }
       root.appendChild(modal);
+    }
+  });
+
+  // Import form: mostra overlay al submit
+  document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('importMovementsForm');
+    if (form) {
+      form.addEventListener('submit', function() {
+        // Chiudi la modale
+        var modal = bootstrap.Modal.getInstance(document.getElementById('importMovementsModal'));
+        if (modal) modal.hide();
+
+        // Mostra overlay
+        var overlay = document.getElementById('importOverlay');
+        overlay.style.display = 'flex';
+      });
     }
   });
 </script>

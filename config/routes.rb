@@ -4,7 +4,11 @@ Rails.application.routes.draw do
 
   resources :organizations, except: [:show, :new, :edit] do
     resources :memberships, except: [:show, :new, :edit]
-    resources :deadlines, except: [:show, :new, :edit]
+    resources :deadlines, except: [:show, :new, :edit] do
+      collection do
+        post 'bulk_create'
+      end
+    end
     resources :expense_items, except: [:show, :new, :edit]
     member do
       get :stats, to: 'organizations#stats'
@@ -13,7 +17,11 @@ Rails.application.routes.draw do
       member do
         get :stats, to: 'counts#stats'
       end
-      resources :movements, except: [:show, :new, :edit]
+      resources :movements, except: [:show, :new, :edit] do
+        collection do
+          post 'bulk_create'
+        end
+      end
     end
   end
 

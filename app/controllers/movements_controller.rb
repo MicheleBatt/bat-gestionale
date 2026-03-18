@@ -103,6 +103,25 @@ class MovementsController < ApplicationController
     end
   end
 
+  # POST /movements/bulk_create
+  def bulk_create
+    file = params[:file]
+
+    if file.blank?
+      redirect_to @count.movements_default_path, alert: "Nessun file selezionato"
+      return
+    end
+
+    begin
+      temp_path = file.tempfile.path
+      ImportCountMovementsFromXlsxFileCommand.call(@count, [temp_path])
+      redirect_to @count.movements_default_path, notice: "Movimenti importati correttamente dal file #{file.original_filename}"
+    rescue => e
+      Rails.logger.error "Import error: #{e.class} - #{e.message}\n#{e.backtrace.first(10).join("\n")}"
+      redirect_to @count.movements_default_path, alert: "Errore durante l'importazione: #{e.class} - #{e.message}"
+    end
+  end
+
   # DELETE /movements/1 or /movements/1.json
   def destroy
     year = @movement.year
