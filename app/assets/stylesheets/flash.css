@@ -1,0 +1,118 @@
+/* =========================================================
+   Flash Messages
+   ========================================================= */
+
+.v2-flash-container {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-width: 420px;
+  width: calc(100% - 3rem);
+}
+
+.v2-flash {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(109,40,217,0.3);
+  background: #ffffff;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  animation: flashSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.v2-flash-content {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.v2-flash-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.v2-flash-text {
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #1e293b;
+}
+
+.v2-flash-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  opacity: 0.4;
+  transition: all 0.2s;
+  padding: 0;
+  color: #1e293b;
+}
+
+.v2-flash-close:hover {
+  opacity: 1;
+  background: rgba(0,0,0,0.05);
+}
+
+/* Success / Notice */
+.v2-flash-notice,
+.v2-flash-success {
+  border-color: rgba(5,150,105,0.3);
+}
+
+.v2-flash-notice .v2-flash-icon,
+.v2-flash-success .v2-flash-icon {
+  stroke: #059669;
+}
+
+/* Alert / Error */
+.v2-flash-alert,
+.v2-flash-error {
+  border-color: rgba(220,38,38,0.3);
+}
+
+.v2-flash-alert .v2-flash-icon,
+.v2-flash-error .v2-flash-icon {
+  stroke: #dc2626;
+}
+
+/* Animation */
+@keyframes flashSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@media (max-width: 480px) {
+  .v2-flash-container {
+    bottom: 1rem;
+    left: 1rem;
+    width: calc(100% - 2rem);
+  }
+}

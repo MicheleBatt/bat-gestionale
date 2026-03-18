@@ -1,13 +1,21 @@
 <% if flash.present? %>
-  <div class="position-fixed" style="bottom: 30px">
+  <div class="v2-flash-container">
     <% flash.each do |message_type, message| %>
-      <div class='alert alert-primary alert-dismissible fade show shadow rounded p-4 m-4' role="alert">
-        <span class="mt-1"><%= message %></span>
-        <button type="button" class="btn-close btn btn-sm px-2 py-1 mt-1" data-bs-dismiss="alert" aria-label="Close"></button>
+      <div class="v2-flash v2-flash-<%= message_type %>" role="alert">
+        <div class="v2-flash-content">
+          <svg class="v2-flash-icon" viewBox="0 0 24 24">
+            <% if message_type == 'alert' || message_type == 'error' %>
+              <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+            <% else %>
+              <circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/>
+            <% end %>
+          </svg>
+          <span class="v2-flash-text"><%= message %></span>
+        </div>
+        <button type="button" class="v2-flash-close" data-bs-dismiss="alert" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
       </div>
     <% end %>
   </div>
 <% end %>
-
-
-

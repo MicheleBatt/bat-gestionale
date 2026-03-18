@@ -7,12 +7,17 @@
   background: var(--surface);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(124,92,252,0.35);
+  border: 1px solid rgba(109,40,217,0.3);
   border-radius: var(--radius);
   padding: 1rem 1.15rem;
   margin-bottom: 1rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
   animation: fadeUp 0.4s ease-out both;
+  transition: border-color 0.2s;
+}
+
+.v2-dl-year-group:hover {
+  border-color: rgba(109,40,217,0.6);
 }
 
 .v2-dl-year-title {

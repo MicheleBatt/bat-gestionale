@@ -399,10 +399,7 @@
 }
 
 .v2-metric:hover {
-  background: var(--surface-h);
   border-color: rgba(109,40,217,0.6);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
 }
 
 .v2-metric-icon {
@@ -478,6 +475,11 @@
   margin-bottom: 1.75rem;
   box-shadow: 0 4px 16px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.06);
   overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.v2-filters:hover {
+  border-color: rgba(109,40,217,0.6);
 }
 
 /* Accordion overrides */
