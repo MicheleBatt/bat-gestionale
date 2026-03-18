@@ -162,7 +162,10 @@
   position: relative;
 }
 
-.v2-nav-link:hover { color: var(--txt); background: var(--surface); }
+.v2-nav-link:hover {
+  color: var(--accent);
+  background: rgba(109,40,217,0.05);
+}
 
 .v2-nav-link.active {
   color: var(--accent);
@@ -203,12 +206,16 @@
   transition: all 0.2s;
 }
 
-.v2-org-switcher > summary:hover { background: var(--surface); }
+.v2-org-switcher > summary:hover {
+  color: var(--accent);
+  background: rgba(109,40,217,0.05);
+}
 .v2-org-switcher > summary::-webkit-details-marker { display: none; }
 
 .v2-org-switcher[open] > summary {
-  background: var(--surface);
-  border-color: var(--glass-border);
+  color: var(--accent);
+  background: rgba(109,40,217,0.05);
+  border-color: rgba(109,40,217,0.15);
 }
 
 .v2-dropdown-panel {
@@ -219,9 +226,9 @@
   background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(109,40,217,0.3);
   border-radius: var(--radius);
-  box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.12);
   padding: 0.4rem;
   z-index: 200;
   animation: dropIn 0.15s ease-out;
@@ -239,8 +246,8 @@
 }
 
 .v2-dropdown-item:hover {
-  color: var(--txt);
-  background: var(--surface);
+  color: var(--accent);
+  background: rgba(109,40,217,0.05);
 }
 
 @keyframes dropIn {
@@ -267,24 +274,37 @@
 .v2-mobile-menu-check { display: none; }
 
 .v2-mobile-menu {
-  display: none;
   position: fixed;
   top: 57px; left: 0; right: 0;
-  background: rgba(255, 255, 255, 0.97);
+  background: #ffffff;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-bottom: 1px solid var(--glass-border);
+  border-radius: 0 0 var(--radius) var(--radius);
   padding: 0.75rem 1rem;
   z-index: 99;
-  animation: slideDown 0.25s ease-out;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.6s ease,
+              transform 0.6s ease;
+  pointer-events: none;
 }
 
-.v2-mobile-menu-check:checked ~ .v2-mobile-menu { display: block; }
+.v2-mobile-menu-check:checked ~ .v2-mobile-menu {
+  max-height: 500px;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
 
 .v2-mobile-menu .v2-nav-link {
   width: 100%;
   padding: 0.65rem 0.85rem;
 }
+
 
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-10px); }
