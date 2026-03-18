@@ -119,7 +119,7 @@ class MovementsController < ApplicationController
       format.turbo_stream do
         render turbo_stream: turbo_stream.replace("movement_#{@movement.id}", partial: "layouts/modal_closing")
       end
-      format.html { redirect_to @count.movements_default_path(year, month), status: :see_other, notice: "Movimento di cassa rimoso" }
+      format.html { redirect_to @count.movements_default_path(year, month), status: :see_other, notice: "Movimento di cassa rimosso" }
       format.json { head :no_content }
     end
   end

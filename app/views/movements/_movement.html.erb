@@ -22,6 +22,28 @@
         </div>
       </div>
     </div>
+
+    <div class="col-6 col-sm-8 d-flex justify-content-center align-items-center border border-dark">
+      <button type="button" class="btn btn-link text-dark text-decoration-none mx-1 p-0" data-bs-toggle="modal" data-bs-target="#movementEditingModal_<%= movement.id %>">
+        <%= movement.causal %>
+      </button>
+    </div>
+    <div class="col-3 col-sm-2 d-flex justify-content-center align-items-center border border-dark">
+      <% visible_amount = to_visible_amount(movement.amount) %>
+      <span class="d-flex d-lg-none m-0"><%= movement.movement_type == 'in' ? '+' : '-' %></span> <%= visible_amount %>€
+    </div>
+  </div>
+
+  <!-- Modale per la cancellazione / modifica di un movimento di cassa -->
+  <div id="movement_modal_<%= movement.id %>">
+    <%= render "modal",
+               modal_id: "movementEditingModal_#{movement.id}",
+               title: "Modifica Uscita",
+               movement: movement,
+               expense_items: expense_items,
+               movement_types: movement_types,
+               deletion_path: organization_count_movement_path(@organization, @count, movement)
+    %>
   </div>
 </div>
 
