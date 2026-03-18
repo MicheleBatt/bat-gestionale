@@ -412,7 +412,7 @@
 }
 
 .v2-metric-icon.purple { background: rgba(124,92,252,0.15); color: var(--accent-l); }
-.v2-metric-icon.green  { background: rgba(52,211,153,0.15); color: var(--green); }
+.v2-metric-icon.green  { background: rgba(5,150,105,0.12); color: #047857; }
 .v2-metric-icon.green.neg { background: rgba(248,113,113,0.15); color: var(--red); }
 .v2-metric-icon.amber  { background: rgba(251,191,36,0.15); color: var(--amber); }
 
@@ -757,14 +757,7 @@
 }
 
 /* Type colors */
-.v2-card-icon.t-bank   { background: rgba(124,92,252,0.15); color: var(--accent-l); }
-.v2-card-icon.t-save   { background: rgba(52,211,153,0.15); color: var(--green); }
-.v2-card-icon.t-invest  { background: rgba(139,92,246,0.18); color: #c4b5fd; }
-.v2-card-icon.t-accum  { background: rgba(251,191,36,0.15); color: var(--amber); }
-.v2-card-icon.t-postal { background: rgba(45,212,191,0.15); color: var(--teal); }
-.v2-card-icon.t-pension{ background: rgba(56,189,248,0.15); color: var(--sky); }
-.v2-card-icon.t-gov    { background: rgba(99,102,241,0.15); color: #a5b4fc; }
-.v2-card-icon.t-metal  { background: rgba(251,191,36,0.18); color: #fcd34d; }
+.v2-card-icon.t-bank   { background: rgba(109,40,217,0.1); color: var(--accent); }
 
 .v2-card-title-group { flex: 1; min-width: 0; }
 
