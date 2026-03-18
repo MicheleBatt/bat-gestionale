@@ -1,7 +1,7 @@
 <% if flash.present? %>
   <div class="v2-flash-container">
     <% flash.each do |message_type, message| %>
-      <div class="v2-flash v2-flash-<%= message_type %>" role="alert">
+      <div class="v2-flash v2-flash-<%= message_type %> alert alert-dismissible fade show" role="alert">
         <div class="v2-flash-content">
           <svg class="v2-flash-icon" viewBox="0 0 24 24">
             <% if message_type == 'alert' || message_type == 'error' %>
