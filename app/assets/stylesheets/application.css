@@ -19,14 +19,6 @@ body {
     min-height: 100vh;
 }
 
-.bg-light-gray {
-    background-color: #f2f2f2;
-}
-
-.border-bottom-gray {
-    border-bottom: 1px #C7C7C7 solid;
-}
-
 .form-label {
     font-size: 12px;
     font-style: normal;
@@ -45,10 +37,3 @@ body {
     background-color: #f2f2f2;
 }
 
-.entity-accordion-button:not(.collapsed) {
-    background-color: white !important;
-}
-
-.entity-accordion-button::after {
-    display: none;
-}
