@@ -254,6 +254,7 @@
     <%# Chart %>
     <% if @movements_amounts_by_expense_items.present? %>
       <% chart_title = @table_titles[:expense_items_amounts_chart] %>
+      <% chart_font = { family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" } %>
       <div class="v2-chart-card v2-mov-chart">
         <%= column_chart @movements_amounts_by_expense_items.to_a.map { |expense_item, amount| [expense_item.description, (amount * -1).to_f.round(2)] }.to_h,
                          title: "#{chart_title} - #{to_visible_amount(@total_out_movements_amount)}€",
@@ -262,7 +263,18 @@
                          download: { filename: chart_title, background: "#ffffff" },
                          loading: "Caricamento...",
                          empty: "Spiacenti, non ci sono dati disponibili",
-                         suffix: "€"
+                         suffix: "€",
+                         library: {
+                           plugins: {
+                             title: { color: '#1e293b', font: { **chart_font, size: 15, weight: 600 } },
+                             legend: { labels: { color: '#475569', font: { **chart_font, size: 11 } } }
+                           },
+                           scales: {
+                             x: { ticks: { color: '#64748b', font: { **chart_font, size: 10 } }, grid: { color: '#f1f5f9' } },
+                             y: { ticks: { color: '#64748b', font: { **chart_font, size: 10 } }, grid: { color: '#f1f5f9' } }
+                           },
+                           datasets: { bar: { borderRadius: 4, borderSkipped: 'bottom' } }
+                         }
         %>
       </div>
     <% end %>

@@ -1,6 +1,25 @@
 <% min_year = entity.min_year %>
 <% max_year = entity.max_year %>
 
+<%# Opzioni condivise per coerenza con il layout v2 %>
+<% chart_font = { family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" } %>
+<% chart_lib = {
+  plugins: {
+    title: { color: '#1e293b', font: { **chart_font, size: 15, weight: 600 } },
+    legend: { labels: { color: '#475569', font: { **chart_font, size: 11 } } }
+  },
+  scales: {
+    x: { ticks: { color: '#64748b', font: { **chart_font, size: 10 } }, grid: { color: '#f1f5f9' } },
+    y: { ticks: { color: '#64748b', font: { **chart_font, size: 10 } }, grid: { color: '#f1f5f9' } }
+  }
+} %>
+<% bar_lib = chart_lib.deep_merge({ datasets: { bar: { borderRadius: 4, borderSkipped: 'bottom' } } }) %>
+<% pie_lib = {
+  plugins: {
+    title: { display: true, color: '#1e293b', font: { **chart_font, size: 13, weight: 600 }, padding: { bottom: 16 } },
+    legend: { position: 'right', labels: { color: '#475569', font: { **chart_font, size: 11 } } }
+  }
+} %>
 
 <%# Giacenza complessiva %>
 <div class="v2-chart-card">
@@ -12,7 +31,8 @@
                  download: { filename: chart_title, background: "#ffffff" },
                  loading: "Caricamento...",
                  empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                 suffix: "€"
+                 suffix: "€",
+                 library: chart_lib
   %>
 </div>
 
@@ -26,7 +46,8 @@
                    colors: ["#DC3545", "#198754"],
                    loading: "Caricamento...",
                    empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                   suffix: "€"
+                   suffix: "€",
+                   library: bar_lib
   %>
 </div>
 
@@ -37,12 +58,12 @@
       <div class="v2-chart-card">
         <% chart_title = "Giacenza sui vari conti #{year.present? ? 'a fine ' + year : 'attuale'}" %>
         <%= pie_chart movements_global_amount_by_counts,
-                      library: {
+                      library: pie_lib.deep_merge({
                         plugins: {
-                          legend: { position: 'right', labels: { color: '#1e293b', font: { size: movements_global_amount_by_counts.keys.size > 10 ? 9 : 12 } } },
-                          title: { display: true, text: chart_title, padding: { bottom: 20 }, color: '#1e293b' }
+                          title: { text: chart_title },
+                          legend: { labels: { font: { size: movements_global_amount_by_counts.keys.size > 10 ? 9 : 11 } } }
                         }
-                      },
+                      }),
                       title: chart_title,
                       download: { filename: chart_title, background: "#ffffff" },
                       loading: "Caricamento...",
@@ -56,12 +77,9 @@
       <div class="v2-chart-card">
         <% chart_title = "Portafoglio risparmi #{year.present? ? 'a fine ' + year : 'attuale'}" %>
         <%= pie_chart savings_global_amount_by_counts,
-                      library: {
-                        plugins: {
-                          legend: { position: 'right', labels: { color: '#1e293b' } },
-                          title: { display: true, text: chart_title, padding: { bottom: 20 }, color: '#1e293b' }
-                        }
-                      },
+                      library: pie_lib.deep_merge({
+                        plugins: { title: { text: chart_title } }
+                      }),
                       title: chart_title,
                       download: { filename: chart_title, background: "#ffffff" },
                       loading: "Caricamento...",
@@ -88,7 +106,8 @@
                        download: { filename: chart_title_compact, background: "#ffffff" },
                        loading: "Caricamento...",
                        empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                       suffix: "€"
+                       suffix: "€",
+                       library: bar_lib
       %>
 
       <% if count.present? %>
