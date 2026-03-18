@@ -7,17 +7,21 @@
   background: var(--surface);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(124,92,252,0.55);
+  border: 1px solid rgba(109,40,217,0.3);
   border-radius: var(--radius);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.04);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
   overflow: hidden;
   animation: fadeUp 0.35s ease-out both;
   display: flex;
   flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .v2-org-card:hover {
-  border-color: rgba(124,92,252,0.9);
+  border-color: rgba(109,40,217,0.6);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  margin-top: -5px;
+  margin-bottom: 5px;
 }
 
 /* Card header */
@@ -59,7 +63,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.04);
+  background: #f3f4f6;
   border: 1px solid var(--glass-border);
   border-radius: 0.4rem;
   color: var(--txt3);
@@ -89,9 +93,9 @@
 
 /* Memberships area */
 .v2-org-body {
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid #f1f5f9;
   padding: 0.75rem 1.15rem;
-  background: rgba(0,0,0,0.1);
+  background: #f3f4f6;
   height: 100%;
 }
 
@@ -106,11 +110,11 @@
 }
 
 .v2-membership-item:hover {
-  background: rgba(255,255,255,0.04);
+  background: #f3f4f6;
 }
 
 .v2-membership-item + .v2-membership-item {
-  border-top: 1px solid rgba(255,255,255,0.04);
+  border-top: 1px solid #f3f4f6;
 }
 
 .v2-membership-info {
@@ -134,7 +138,7 @@
   color: var(--txt3);
   padding: 0.12rem 0.4rem;
   border-radius: 999px;
-  background: rgba(255,255,255,0.06);
+  background: #f1f5f9;
   border: 1px solid var(--glass-border);
 }
 
@@ -166,7 +170,7 @@
   font-weight: 600;
   color: var(--accent-l);
   background: rgba(124,92,252,0.1);
-  border: 1.5px solid rgba(124,92,252,0.25);
+  border: 1.5px solid rgba(109,40,217,0.15);
   border-radius: 0.5rem;
   cursor: pointer;
   transition: all 0.2s;
@@ -174,7 +178,7 @@
 
 .v2-btn-add-member:hover {
   background: rgba(124,92,252,0.18);
-  border-color: rgba(124,92,252,0.4);
+  border-color: rgba(109,40,217,0.2);
 }
 
 /* Grid */

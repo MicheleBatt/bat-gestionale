@@ -1,14 +1,14 @@
 /* =========================================================
-   Charts – dark theme styles (extends .v2 base)
+   Charts – light theme styles (extends .v2 base)
    ========================================================= */
 
 .v2-chart-card {
   background: #ffffff;
-  border: none;
+  border: 1px solid rgba(109,40,217,0.3);
   border-radius: var(--radius);
   padding: 1.25rem 1rem;
   margin-bottom: 1rem;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.3), 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.06);
   animation: fadeUp 0.4s ease-out both;
   color: #1e293b;
 }
@@ -52,7 +52,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 0;
   width: 100vw;
   max-width: 100vw;
   position: relative;
@@ -85,17 +85,17 @@
 .v2-chart-link-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   font-family: var(--font);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  color: #4f46e5 !important;
+  color: var(--accent-l) !important;
   text-decoration: none;
   transition: all 0.2s;
 }
 
 .v2-chart-link-btn:hover {
-  color: #3730a3 !important;
+  color: #a78bfa !important;
 }
 
 .v2-chart-link-btn .ico {
@@ -108,7 +108,6 @@
 
 /* Compact filters for stats page */
 .v2-filters.v2-filters-compact {
-  max-width: 700px;
   margin-left: auto;
   margin-right: auto;
 }
