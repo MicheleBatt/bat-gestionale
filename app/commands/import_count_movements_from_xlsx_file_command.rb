@@ -1,5 +1,7 @@
 module ImportCountMovementsFromXlsxFileCommand
-  def self.call(count, files, expense_items_by_colors)
+  def self.call(count, files)
+    expense_items_by_colors = ExpenseItem.where(organization_id: count.organization_id).map{ | expense_item | [ expense_item.color[1..-1], expense_item.id ] }.to_h
+
     files.each do |f|
       puts "START PARSE #{f} file"
 
