@@ -11,3 +11,12 @@
     <span class="d-inline d-lg-none"><%= movement.movement_type == 'in' ? '+' : '-' %></span><%= to_visible_amount(movement.amount) %>&euro;
   </div>
 </div>
+
+<%= render "modal",
+           modal_id: "movementEditingModal_#{movement.id}",
+           title: movement.movement_type == 'out' ? "Modifica Uscita" : "Modifica Entrata",
+           movement: movement,
+           expense_items: expense_items,
+           movement_types: movement_types,
+           deletion_path: organization_count_movement_path(@organization, @count, movement)
+%>

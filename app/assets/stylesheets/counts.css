@@ -331,7 +331,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .v2-hero-title {
@@ -379,9 +379,9 @@
    ========================================================= */
 .v2-metrics {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 0.85rem;
-  margin-bottom: 1.75rem;
+  margin-bottom: 0.75rem;
 }
 
 .v2-metric {
@@ -472,7 +472,7 @@
   border: 1px solid rgba(109,40,217,0.3);
   border-radius: var(--radius);
   padding: 0;
-  margin-bottom: 1.75rem;
+  margin-bottom: 0.75rem;
   box-shadow: 0 4px 16px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.06);
   overflow: hidden;
   transition: border-color 0.2s;
@@ -672,7 +672,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.65rem;
 }
 
 .v2-section-title {

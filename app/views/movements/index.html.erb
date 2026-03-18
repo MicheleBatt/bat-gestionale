@@ -32,6 +32,16 @@
       </div>
 
       <div class="v2-metric">
+        <div class="v2-metric-icon" style="background: rgba(109,40,217,0.1); color: var(--accent);">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="9" cy="15" r="6"/><path d="M14.8 8.2a6 6 0 010 13.6"/></svg>
+        </div>
+        <div>
+          <div class="v2-metric-label">Giacenza attuale</div>
+          <div class="v2-metric-value" style="color: <%= @count.current_amount < 0 ? '#dc2626' : 'var(--txt)' %>;"><%= to_visible_amount(@count.current_amount, false) %><span class="v2-metric-currency">&euro;</span></div>
+        </div>
+      </div>
+
+      <div class="v2-metric">
         <div class="v2-metric-icon" style="background: rgba(220,38,38,0.1); color: #dc2626;">
           <svg class="ico" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
         </div>
@@ -57,7 +67,7 @@
         </div>
         <div>
           <div class="v2-metric-label">Saldo</div>
-          <div class="v2-metric-value <%= @total_movements_amount <= 0 ? '' : '' %>" style="color: <%= @total_movements_amount <= 0 ? '#dc2626' : '#059669' %>;"><%= to_visible_amount(@total_movements_amount, false) %>&euro;</div>
+          <div class="v2-metric-value" style="color: <%= @total_movements_amount <= 0 ? '#dc2626' : '#059669' %>;"><%= @total_movements_amount > 0 ? '+' : '' %><%= to_visible_amount(@total_movements_amount, false) %>&euro;</div>
         </div>
       </div>
       <% if @all_movements.present? %>
@@ -165,15 +175,15 @@
       <div class="v2-mov-table-head">
         <div class="v2-mov-table-head-section out-head">
           <div class="v2-mov-table-head-label" style="grid-column: 1 / -1;">Uscite</div>
-          <div class="v2-mov-col-label">Data</div>
+          <div class="v2-mov-col-label" style="text-align: left;">Data</div>
           <div class="v2-mov-col-label">Causale</div>
-          <div class="v2-mov-col-label">Importo</div>
+          <div class="v2-mov-col-label" style="text-align: right;">Importo</div>
         </div>
         <div class="v2-mov-table-head-section">
           <div class="v2-mov-table-head-label" style="grid-column: 1 / -1;">Entrate</div>
-          <div class="v2-mov-col-label">Data</div>
+          <div class="v2-mov-col-label" style="text-align: left;">Data</div>
           <div class="v2-mov-col-label">Causale</div>
-          <div class="v2-mov-col-label">Importo</div>
+          <div class="v2-mov-col-label" style="text-align: right;">Importo</div>
         </div>
       </div>
 
@@ -214,7 +224,7 @@
         <% end %>
         <div class="v2-mov-total-row">
           <span class="v2-mov-total-label"><%= @table_titles[:total_amount_title] %></span>
-          <span class="v2-mov-total-value <%= @total_movements_amount <= 0 ? 'negative' : 'positive' %>"><%= to_visible_amount(@total_movements_amount, false) %>&euro;</span>
+          <span class="v2-mov-total-value <%= @total_movements_amount <= 0 ? 'negative' : 'positive' %>"><%= @total_movements_amount > 0 ? '+' : '' %><%= to_visible_amount(@total_movements_amount, false) %>&euro;</span>
         </div>
         <% if @time_range_report.present? %>
           <div class="v2-mov-total-row">
@@ -266,3 +276,18 @@
 </div>
 
 <%= render 'layouts/auto_close_modals' %>
+
+<script>
+  document.addEventListener('show.bs.modal', function(event) {
+    var modal = event.target;
+    if (!modal.parentElement.classList.contains('v2-modals-root')) {
+      var root = document.querySelector('.v2-modals-root');
+      if (!root) {
+        root = document.createElement('div');
+        root.className = 'v2 v2-modals-root';
+        document.body.appendChild(root);
+      }
+      root.appendChild(modal);
+    }
+  });
+</script>

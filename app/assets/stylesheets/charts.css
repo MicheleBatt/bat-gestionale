@@ -7,7 +7,7 @@
   border: 1px solid rgba(109,40,217,0.3);
   border-radius: var(--radius);
   padding: 1.25rem 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   box-shadow: 0 4px 16px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.06);
   animation: fadeUp 0.4s ease-out both;
   color: #1e293b;
@@ -44,7 +44,7 @@
 }
 
 .v2-chart-row .v2-chart-card {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 /* Expense items chart grid */

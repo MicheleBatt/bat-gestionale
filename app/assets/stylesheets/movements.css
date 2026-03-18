@@ -8,8 +8,7 @@
   border: 1px solid rgba(109,40,217,0.3);
   border-radius: var(--radius);
   box-shadow: 0 4px 16px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.06);
-  overflow: hidden;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 
 /* Title bar with nav arrows */
@@ -144,6 +143,7 @@
     padding: 0.35rem 0.5rem;
     text-align: center;
     border-top: 1px solid rgba(109,40,217,0.1);
+    border-bottom: 1px solid rgba(109,40,217,0.1);
   }
 }
 
@@ -166,7 +166,9 @@
   align-items: center;
   padding: 0;
   font-size: 0.78rem;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  margin-top: -1px;
   transition: background 0.15s;
   position: relative;
 }
@@ -175,21 +177,14 @@
   background: rgba(109,40,217,0.03);
 }
 
-/* Expense item color indicator */
-.v2-mov-cell::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--mov-color, transparent);
-  border-radius: 0 2px 2px 0;
+/* Expense item color background */
+.v2-mov-cell.out-cell {
+  background: color-mix(in srgb, var(--mov-color, transparent) 35%, transparent);
 }
 
 .v2-mov-date {
   padding: 0.4rem 0.5rem;
-  text-align: center;
+  text-align: left;
   font-size: 0.72rem;
   color: var(--txt2);
   font-variant-numeric: tabular-nums;
@@ -233,6 +228,10 @@
   .v2-mov-cell.out-cell {
     border-right: 1px solid rgba(109,40,217,0.08);
   }
+
+  .v2-mov-cell:not(.out-cell) {
+    border-left: 1px solid #e2e8f0;
+  }
 }
 
 /* Totals section */
@@ -245,7 +244,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.5rem;
   font-size: 0.8rem;
 }
 
@@ -288,7 +287,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.5rem;
   }
 
   .v2-mov-totals-dual .v2-mov-total-col:first-child {
@@ -302,8 +301,8 @@
 
 /* Expense items breakdown */
 .v2-mov-expense-section {
-  border-top: 1px solid rgba(109,40,217,0.15);
-  padding: 0.75rem 1rem;
+  border-top: 2px solid rgba(109,40,217,0.2);
+  padding: 0.75rem 0.5rem;
 }
 
 .v2-mov-expense-title {
@@ -323,6 +322,7 @@
   border-radius: 0.35rem;
   font-size: 0.75rem;
   transition: background 0.15s;
+  border-top: 1px solid #f1f5f9;
 }
 
 .v2-mov-expense-item:hover {
@@ -381,7 +381,7 @@
 
 /* Chart section */
 .v2-mov-chart {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 
 @media (max-width: 420px) {
