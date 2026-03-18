@@ -31,17 +31,15 @@
       <button class="v2-org-toggle"
               type="button"
               title="Espandi/Comprimi"
-              data-bs-toggle="collapse"
-              data-bs-target="#orgCollapse_<%= organization.id %>"
-              aria-expanded="true">
+              onclick="var el = document.getElementById('orgCollapse_<%= organization.id %>'); el.classList.toggle('v2-collapsed'); this.classList.toggle('collapsed');">
         <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
       </button>
     </div>
   </div>
 
-  <div id="orgCollapse_<%= organization.id %>" class="collapse show">
+  <div id="orgCollapse_<%= organization.id %>" class="v2-org-collapse">
     <div class="v2-org-body">
-      <div id="memberships_<%= organization.id %>">
+      <div id="memberships_<%= organization.id %>" class="membership-cont">
         <% if organization.memberships.present? %>
           <% organization.memberships.each do |membership| %>
             <div class="v2-membership-item" id="membership_<%= membership.id %>">

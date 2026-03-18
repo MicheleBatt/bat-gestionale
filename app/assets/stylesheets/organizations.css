@@ -14,7 +14,7 @@
   animation: fadeUp 0.35s ease-out both;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color 0.3s, box-shadow 0.3s, margin 0.3s;
 }
 
 .v2-org-card:hover {
@@ -85,18 +85,35 @@
   transform: rotate(-90deg);
 }
 
-/* Collapse wrapper */
-.v2-org-card .collapse,
-.v2-org-card .collapsing {
-  flex: 1;
+/* Custom collapse animation */
+.v2-org-collapse {
+  display: grid;
+  grid-template-rows: 1fr;
+  overflow: hidden;
+  height: 100%;
+  transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.v2-org-collapse > .v2-org-body {
+  min-height: 0;
+}
+
+.v2-org-collapse.v2-collapsed {
+  grid-template-rows: 0fr;
+}
+
+.v2-org-collapse.v2-collapsed .v2-org-body {
+  border-top: none;
 }
 
 /* Memberships area */
 .v2-org-body {
-  border-top: 1px solid #f1f5f9;
-  padding: 0.75rem 1.15rem;
-  background: #f3f4f6;
-  height: 100%;
+  border-top: 1px solid rgba(109,40,217,0.2);
+  background: transparent;
+}
+
+.membership-cont {
+  margin: 0.75rem 1.15rem;
 }
 
 /* Membership item */
@@ -186,7 +203,13 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: 0.85rem;
+  align-items: stretch;
 }
+
+.v2-org-card:has(.v2-collapsed) {
+  align-self: start;
+}
+
 
 @media (max-width: 420px) {
   .v2-org-grid {

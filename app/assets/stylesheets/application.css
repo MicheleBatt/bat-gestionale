@@ -15,8 +15,7 @@
  */
 
 body {
-    font-family: 'Jost';
-    background-color: #F5F5DC;
+    background: var(--bg);
     min-height: 100vh;
 }
 
