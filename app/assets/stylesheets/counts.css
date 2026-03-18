@@ -123,10 +123,8 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--bg-nav);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--glass-border);
   padding: 0 1.5rem;
 }
 
@@ -137,6 +135,7 @@
   align-items: center;
   justify-content: space-between;
   height: 56px;
+  border-bottom: 1px solid rgba(109,40,217,0.3);
 }
 
 /* Desktop nav links */
