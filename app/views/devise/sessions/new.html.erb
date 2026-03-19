@@ -19,6 +19,13 @@
           <%= f.password_field :password, autocomplete: "current-password", class: "v2-input", placeholder: "La tua password" %>
         </div>
 
+        <div class="v2-login-remember">
+          <label class="v2-login-remember-label">
+            <%= f.check_box :remember_me, class: "v2-login-checkbox" %>
+            <span>Ricordami</span>
+          </label>
+        </div>
+
         <div class="v2-login-actions">
           <%= f.submit "Accedi", class: "v2-login-btn" %>
         </div>
