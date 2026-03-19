@@ -17,10 +17,12 @@
           <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
           Esporta IBAN
         <% end %>
-        <button type="button" class="v2-btn-primary" data-bs-toggle="modal" data-bs-target="#countCreationModal">
-          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-          Nuovo conto
-        </button>
+        <% if can? :create, Count %>
+          <button type="button" class="v2-btn-primary" data-bs-toggle="modal" data-bs-target="#countCreationModal">
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Nuovo conto
+          </button>
+        <% end %>
       </div>
     </header>
 

@@ -10,10 +10,12 @@
         <span class="v2-hero-sub"><%= @organization.name %></span>
       </div>
       <div class="v2-hero-actions">
-        <button type="button" class="v2-btn-export" data-bs-toggle="modal" data-bs-target="#importMovementsModal">
-          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
-          Importa
-        </button>
+        <% if can? :bulk_create, Movement %>
+          <button type="button" class="v2-btn-export" data-bs-toggle="modal" data-bs-target="#importMovementsModal">
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+            Importa
+          </button>
+        <% end %>
         <% if @all_movements.present? %>
           <%= link_to organization_count_movements_path(organization_id: @organization, count_id: @count.id, q: params[:q]&.to_unsafe_h, format: :xlsx), class: "v2-btn-export" do %>
             <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
@@ -163,16 +165,18 @@
       <%# Actions bar %>
       <div class="v2-mov-actions-bar">
         <span class="v2-mov-count"><b><%= @movements_count %></b> moviment<%= @movements_count == 1 ? 'o' : 'i' %></span>
-        <div class="v2-mov-btns">
-          <button type="button" class="v2-btn-out" data-bs-toggle="modal" data-bs-target="#outMovementCreationModal">
-            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-            Uscita
-          </button>
-          <button type="button" class="v2-btn-in" data-bs-toggle="modal" data-bs-target="#inMovementCreationModal">
-            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-            Entrata
-          </button>
-        </div>
+        <% if can? :create, Movement %>
+          <div class="v2-mov-btns">
+            <button type="button" class="v2-btn-out" data-bs-toggle="modal" data-bs-target="#outMovementCreationModal">
+              <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              Uscita
+            </button>
+            <button type="button" class="v2-btn-in" data-bs-toggle="modal" data-bs-target="#inMovementCreationModal">
+              <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              Entrata
+            </button>
+          </div>
+        <% end %>
       </div>
 
       <%# Table header (desktop only) %>

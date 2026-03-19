@@ -10,18 +10,22 @@
         <span class="v2-hero-sub"><%= @organization.name %></span>
       </div>
       <div class="v2-hero-actions">
-        <button type="button" class="v2-btn-export" data-bs-toggle="modal" data-bs-target="#importDeadlinesModal">
-          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
-          Importa
-        </button>
+        <% if can? :bulk_create, Deadline %>
+          <button type="button" class="v2-btn-export" data-bs-toggle="modal" data-bs-target="#importDeadlinesModal">
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+            Importa
+          </button>
+        <% end %>
         <%= link_to organization_deadlines_path(@organization, q: params[:q]&.to_unsafe_h, format: :xlsx), class: "v2-btn-export" do %>
           <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
           Esporta
         <% end %>
-        <button type="button" class="v2-btn-primary" data-bs-toggle="modal" data-bs-target="#deadlineCreationModal">
-          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-          Nuova scadenza
-        </button>
+        <% if can? :create, Deadline %>
+          <button type="button" class="v2-btn-primary" data-bs-toggle="modal" data-bs-target="#deadlineCreationModal">
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Nuova scadenza
+          </button>
+        <% end %>
       </div>
     </header>
 

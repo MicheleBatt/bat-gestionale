@@ -2,21 +2,27 @@
      id="movement_<%= movement.id %>"
      style="--mov-color: <%= movement.expense_item&.color || 'transparent' %>">
   <div class="v2-mov-date"><%= parse_date(movement.emitted_at, '%d.%m.%y') %></div>
-  <div class="v2-mov-causal"
-       data-bs-toggle="modal"
-       data-bs-target="#movementEditingModal_<%= movement.id %>">
-    <%= movement.causal %>
-  </div>
+  <% if can? :update, Movement %>
+    <div class="v2-mov-causal"
+         data-bs-toggle="modal"
+         data-bs-target="#movementEditingModal_<%= movement.id %>">
+      <%= movement.causal %>
+    </div>
+  <% else %>
+    <div class="v2-mov-causal" style="cursor: default;"><%= movement.causal %></div>
+  <% end %>
   <div class="v2-mov-amount <%= movement.movement_type %>">
     <span class="d-inline d-lg-none"><%= movement.movement_type == 'in' ? '+' : '-' %></span><%= to_visible_amount(movement.amount) %>&euro;
   </div>
 </div>
 
-<%= render "modal",
-           modal_id: "movementEditingModal_#{movement.id}",
-           title: movement.movement_type == 'out' ? "Modifica Uscita" : "Modifica Entrata",
-           movement: movement,
-           expense_items: expense_items,
-           movement_types: movement_types,
-           deletion_path: organization_count_movement_path(@organization, @count, movement)
-%>
+<% if can? :update, Movement %>
+  <%= render "modal",
+             modal_id: "movementEditingModal_#{movement.id}",
+             title: movement.movement_type == 'out' ? "Modifica Uscita" : "Modifica Entrata",
+             movement: movement,
+             expense_items: expense_items,
+             movement_types: movement_types,
+             deletion_path: organization_count_movement_path(@organization, @count, movement)
+  %>
+<% end %>

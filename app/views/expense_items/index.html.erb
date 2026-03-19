@@ -12,10 +12,12 @@
         <h1 class="v2-hero-title">Voci di spesa</h1>
         <span class="v2-hero-sub"><%= @organization.name %></span>
       </div>
-      <button type="button" class="v2-btn-primary" data-bs-toggle="modal" data-bs-target="#expense_itemCreationModal">
-        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-        Nuova voce di spesa
-      </button>
+      <% if can? :create, ExpenseItem %>
+        <button type="button" class="v2-btn-primary" data-bs-toggle="modal" data-bs-target="#expense_itemCreationModal">
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Nuova voce di spesa
+        </button>
+      <% end %>
     </header>
 
     <%# Filters (accordion) %>

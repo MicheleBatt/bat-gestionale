@@ -2,23 +2,25 @@
   <div class="v2-ei-swatch" style="background-color: <%= expense_item.color %>"></div>
   <div class="v2-ei-desc"><%= expense_item.description %></div>
 
-  <div class="v2-ei-actions">
-    <button type="button"
-            class="v2-btn-icon"
-            title="Modifica"
-            data-bs-toggle="modal"
-            data-bs-target="#expense_itemEditingModal_<%= expense_item.id %>">
-      <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
-    </button>
-
-    <% if expense_item.movements.blank? %>
+  <% if can? :update, ExpenseItem %>
+    <div class="v2-ei-actions">
       <button type="button"
-              class="v2-btn-icon danger"
-              title="Elimina"
+              class="v2-btn-icon"
+              title="Modifica"
               data-bs-toggle="modal"
-              data-bs-target="#expense_itemDeleteModal_<%= expense_item.id %>">
-        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+              data-bs-target="#expense_itemEditingModal_<%= expense_item.id %>">
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
       </button>
-    <% end %>
-  </div>
+
+      <% if expense_item.movements.blank? %>
+        <button type="button"
+                class="v2-btn-icon danger"
+                title="Elimina"
+                data-bs-toggle="modal"
+                data-bs-target="#expense_itemDeleteModal_<%= expense_item.id %>">
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+        </button>
+      <% end %>
+    </div>
+  <% end %>
 </div>

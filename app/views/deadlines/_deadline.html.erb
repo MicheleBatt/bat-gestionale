@@ -11,21 +11,23 @@
     <span class="v2-dl-upcoming-badge">In scadenza</span>
   <% end %>
 
-  <div class="v2-dl-actions">
-    <button type="button"
-            class="v2-btn-icon"
-            title="Modifica"
-            data-bs-toggle="modal"
-            data-bs-target="#deadlineEditingModal_<%= deadline.id %>">
-      <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
-    </button>
+  <% if can? :update, Deadline %>
+    <div class="v2-dl-actions">
+      <button type="button"
+              class="v2-btn-icon"
+              title="Modifica"
+              data-bs-toggle="modal"
+              data-bs-target="#deadlineEditingModal_<%= deadline.id %>">
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+      </button>
 
-    <button type="button"
-            class="v2-btn-icon danger"
-            title="Elimina"
-            data-bs-toggle="modal"
-            data-bs-target="#deadlineDeleteModal_<%= deadline.id %>">
-      <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
-    </button>
-  </div>
+      <button type="button"
+              class="v2-btn-icon danger"
+              title="Elimina"
+              data-bs-toggle="modal"
+              data-bs-target="#deadlineDeleteModal_<%= deadline.id %>">
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+      </button>
+    </div>
+  <% end %>
 </div>
