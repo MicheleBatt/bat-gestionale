@@ -7,14 +7,8 @@ class OrganizationsController < ApplicationController
   # GET /organizations or /organizations.json
   def index
     @search = Organization.all.ransack(params[:q])
-    @organizations = @search.result
+    @organizations = @search.result.order(name: :asc).includes(memberships: :user)
     @organizations_count = @organizations.length
-    @organizations =
-      @organizations
-      .order(name: :asc)
-      .includes(memberships: :user)
-      .page(params[:page] || DEFAULT_PAGE)
-      .per(params[:per_page] || DEFAULT_PER_PAGE_PARAM)
   end
 
   # POST /organizations or /organizations.json
@@ -29,7 +23,7 @@ class OrganizationsController < ApplicationController
         format.json { render :index, status: :created, location: @organization }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @organization })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @organization }), status: :unprocessable_entity
         end
         format.html { redirect_to organizations_path, status: :unprocessable_entity }
         format.json { render json: @organization.errors, status: :unprocessable_entity }
@@ -45,16 +39,13 @@ class OrganizationsController < ApplicationController
     respond_to do |format|
       if @organization.update(organization_params)
         format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.replace("organization_#{@organization.id}", partial: "organizations/organization", locals: { organization: @organization }),
-            turbo_stream.append("modal-closer", partial: "layouts/modal_closing")
-          ]
+          render turbo_stream: turbo_stream.replace("organization_#{@organization.id}", partial: "organizations/organization", locals: { organization: @organization })
         end
         format.html { redirect_to organizations_path, notice: "Organizzazione aggiornata correttamente" }
         format.json { render :index, status: :ok, location: @organization }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @organization })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @organization }), status: :unprocessable_entity
         end
         format.html { redirect_to organizations_path, status: :unprocessable_entity }
         format.json { render json: @organization.errors, status: :unprocessable_entity }

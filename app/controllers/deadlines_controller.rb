@@ -1,6 +1,6 @@
 class DeadlinesController < ApplicationController
   authorize_resource
-  before_action :set_deadline, only: %i[ edit update destroy ]
+  before_action :set_deadline, only: %i[ update destroy ]
 
   # GET /deadlines or /deadlines.json
   def index
@@ -19,11 +19,6 @@ class DeadlinesController < ApplicationController
     end
   end
 
-  # GET /deadlines/1/edit
-  def edit
-    render partial: "deadlines/edit_form", locals: { deadline: @deadline }
-  end
-
   # POST /deadlines or /deadlines.json
   def create
     modal_id = params[:deadline][:modal_id]
@@ -36,7 +31,7 @@ class DeadlinesController < ApplicationController
         format.json { render :show, status: :created, location: @deadline }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @deadline })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @deadline }), status: :unprocessable_entity
         end
         format.html { redirect_to organization_deadlines_path(@organization), status: :unprocessable_entity }
         format.json { render json: @deadline.errors, status: :unprocessable_entity }
@@ -52,20 +47,36 @@ class DeadlinesController < ApplicationController
     respond_to do |format|
       if @deadline.update(deadline_params)
         format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.replace("deadline_#{@deadline.id}", partial: "deadlines/deadline", locals: { deadline: @deadline }),
-            turbo_stream.append("modal-closer", partial: "layouts/modal_closing")
-          ]
+          render turbo_stream: turbo_stream.replace("deadline_#{@deadline.id}", partial: "deadlines/deadline", locals: { deadline: @deadline })
         end
         format.html { redirect_to organization_deadlines_path(@organization), notice: "Scadenza aggiornata correttamente" }
         format.json { render :show, status: :ok, location: @deadline }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @deadline })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @deadline }), status: :unprocessable_entity
         end
         format.html { redirect_to organization_deadlines_path(@organization), status: :unprocessable_entity }
         format.json { render json: @deadline.errors, status: :unprocessable_entity }
       end
+    end
+  end
+
+  # POST /deadlines/bulk_create
+  def bulk_create
+    file = params[:file]
+
+    if file.blank?
+      redirect_to organization_deadlines_path(@organization), alert: "Nessun file selezionato"
+      return
+    end
+
+    begin
+      temp_path = file.tempfile.path
+      ImportDeadlinesFromXlsxFileCommand.call(@organization, [temp_path])
+      redirect_to organization_deadlines_path(@organization), notice: "Scadenze importate correttamente dal file #{file.original_filename}"
+    rescue => e
+      Rails.logger.error "Import error: #{e.class} - #{e.message}\n#{e.backtrace.first(10).join("\n")}"
+      redirect_to organization_deadlines_path(@organization), alert: "Errore durante l'importazione: #{e.class} - #{e.message}"
     end
   end
 

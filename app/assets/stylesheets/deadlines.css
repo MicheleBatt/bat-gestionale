@@ -1,0 +1,169 @@
+/* =========================================================
+   Deadlines – specific styles (extends .v2 base in counts.css)
+   ========================================================= */
+
+/* Year group */
+.v2-dl-year-group {
+  background: var(--surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(109,40,217,0.3);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+  animation: fadeUp 0.4s ease-out both;
+  transition: border-color 0.2s;
+}
+
+.v2-dl-year-group:hover {
+  border-color: rgba(109,40,217,0.6);
+}
+
+.v2-dl-year-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--txt);
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.01em;
+}
+
+/* Deadline item */
+.v2-dl-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.55rem;
+  transition: background 0.2s;
+}
+
+.v2-dl-item:hover {
+  background: #f3f4f6;
+}
+
+.v2-dl-item + .v2-dl-item {
+  border-top: 1px solid #f3f4f6;
+}
+
+/* Upcoming highlight */
+.v2-dl-item.upcoming {
+  background: rgba(251,191,36,0.08);
+  border: 1px solid rgba(251,191,36,0.2);
+}
+
+.v2-dl-item.upcoming:hover {
+  background: rgba(251,191,36,0.12);
+}
+
+/* Expired highlight */
+.v2-dl-item.expired {
+  background: rgba(248,113,113,0.08);
+  border: 1px solid rgba(248,113,113,0.2);
+}
+
+.v2-dl-item.expired:hover {
+  background: rgba(248,113,113,0.12);
+}
+
+.v2-dl-item.expired .v2-dl-date {
+  color: var(--red);
+}
+
+/* Date badge */
+.v2-dl-date {
+  flex-shrink: 0;
+  min-width: 80px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--txt2);
+}
+
+.v2-dl-item.upcoming .v2-dl-date {
+  color: var(--amber);
+}
+
+/* Description */
+.v2-dl-desc {
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--txt);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Actions */
+.v2-dl-actions {
+  display: flex;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+/* Upcoming badge */
+.v2-dl-upcoming-badge,
+.v2-dl-expired-badge {
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.v2-dl-upcoming-badge {
+  background: rgba(251,191,36,0.15);
+  color: var(--amber);
+}
+
+.v2-dl-expired-badge {
+  background: rgba(248,113,113,0.15);
+  color: var(--red);
+}
+
+/* Export button */
+.v2-btn-export {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.4rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: var(--font);
+  color: var(--txt);
+  background: rgba(251,191,36,0.12);
+  border: 1.5px solid rgba(251,191,36,0.3);
+  border-radius: 0.65rem;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-decoration: none;
+}
+
+.v2-btn-export:hover {
+  background: rgba(251,191,36,0.2);
+  border-color: rgba(251,191,36,0.5);
+  color: var(--txt);
+}
+
+/* Hero actions wrapper */
+.v2-hero-actions {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 420px) {
+  .v2-hero-actions {
+    width: 100%;
+  }
+
+  .v2-hero-actions .v2-btn-primary,
+  .v2-hero-actions .v2-btn-export {
+    flex: 1;
+    justify-content: center;
+  }
+}

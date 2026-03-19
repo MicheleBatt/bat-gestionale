@@ -10,11 +10,17 @@ class CountsController < ApplicationController
     @counts = @search.result
     @counts_count = @counts.length
     @counts_global_amount = @counts.sum(:current_amount).to_f.round(2)
-    @counts =
-      @counts
-      .includes(:movements)
-      .page(params[:page] || DEFAULT_PAGE)
-      .per(params[:per_page] || DEFAULT_PER_PAGE_PARAM)
+
+    respond_to do |format|
+      format.html do
+        @counts = @counts.includes(:movements)
+      end
+      format.text do
+        counts_with_iban = @counts.where.not(iban: [nil, '']).order(:ordering_number)
+        content = counts_with_iban.map { |count| "#{count.name.upcase}\n\n#{count.iban}" }.join("\n\n\n\n")
+        send_data content, filename: "Codici IBAN.txt", type: 'text/plain', disposition: 'attachment'
+      end
+    end
   end
 
   # GET /counts/1/edit
@@ -33,7 +39,7 @@ class CountsController < ApplicationController
         format.json { render :show, status: :created, location: @count }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @count })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @count }), status: :unprocessable_entity
         end
         format.html { redirect_to organization_counts_path(@organization), status: :unprocessable_entity }
         format.json { render json: @count.errors, status: :unprocessable_entity }
@@ -49,16 +55,13 @@ class CountsController < ApplicationController
     respond_to do |format|
       if @count.update(count_params)
         format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.replace("count_#{@count.id}", partial: "counts/count", locals: { count: @count }),
-            turbo_stream.append("modal-closer", partial: "layouts/modal_closing")
-          ]
+          render turbo_stream: turbo_stream.replace("count_#{@count.id}", partial: "counts/count", locals: { count: @count })
         end
         format.html { redirect_to organization_counts_path(@organization), notice: "Conto corrente aggiornato correttamente" }
         format.json { render :show, status: :ok, location: @count }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @count })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @count }), status: :unprocessable_entity
         end
         format.html { redirect_to organization_counts_path(@organization), status: :unprocessable_entity }
         format.json { render json: @count.errors, status: :unprocessable_entity }

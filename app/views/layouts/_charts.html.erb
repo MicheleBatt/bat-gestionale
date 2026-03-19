@@ -1,117 +1,143 @@
 <% min_year = entity.min_year %>
 <% max_year = entity.max_year %>
 
-<!-- Grafico che riporta la giacenza complessiva alla fine di ogni mese / anno -->
-<div class="chart-card mb-3">
+<%# Opzioni condivise per coerenza con il layout v2 %>
+<% chart_font = { family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" } %>
+<% chart_lib = {
+  plugins: {
+    title: { color: '#1e293b', font: { **chart_font, size: 15, weight: 600 }, padding: { bottom: 20 } },
+    legend: { labels: { color: '#475569', font: { **chart_font, size: 11 } } }
+  },
+  scales: {
+    x: { ticks: { color: '#64748b', font: { **chart_font, size: 10 } }, grid: { color: '#f1f5f9' } },
+    y: { ticks: { color: '#64748b', font: { **chart_font, size: 10 } }, grid: { color: '#f1f5f9' } }
+  }
+} %>
+<% bar_lib = chart_lib.deep_merge({ datasets: { bar: { borderRadius: 4, borderSkipped: 'bottom' } } }) %>
+<% pie_lib = {
+  plugins: {
+    title: { display: true, color: '#1e293b', font: { **chart_font, size: 15, weight: 600 }, padding: { bottom: 20 } },
+    legend: { position: 'right', maxWidth: 300, labels: { color: '#475569', font: { **chart_font, size: 11 }, padding: 8, usePointStyle: true, pointStyle: 'circle' } }
+  }
+} %>
+
+<%# Giacenza complessiva %>
+<div class="v2-chart-card">
   <% chart_title = "Giacenza #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
   <% min_value = final_amounts_by_date.values.min.to_f.round(2) %>
   <%= line_chart final_amounts_by_date,
                  title: chart_title,
                  min: (min_value - (min_value * 0.1)).to_f.round(2),
-                 download: {filename: chart_title, background: "#ffffff"},
+                 download: { filename: chart_title, background: "#ffffff" },
                  loading: "Caricamento...",
                  empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                 suffix: "€"
+                 suffix: "€",
+                 library: chart_lib
   %>
 </div>
 
-
-
-<div class="row">
-  <div class="col-12 <%= 'col-xl-6' if savings_global_amount_by_counts.present? %>">
-    <!-- Grafico che riporta la giacenza corrente sui vari conti -->
-    <% if movements_global_amount_by_counts.present? %>
-      <div class="chart-card mb-3">
-        <% chart_title = "Giacenza sui vari conti #{year.present? ? 'a fine ' + year : 'attuale'}" %>
-        <%= pie_chart movements_global_amount_by_counts,
-                      library: {
-                        plugins: {
-                          legend: { position: 'right', labels: { font: { size: movements_global_amount_by_counts.keys.size > 10 ? 9 : 12 } }},
-                          title: { display: true, text: chart_title, padding: { bottom: 20 } }
-                        }
-                      },
-                      title: chart_title,
-                      download: {filename: chart_title, background: "#ffffff"},
-                      loading: "Caricamento...",
-                      empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                      suffix: "€"
-        %>
-      </div>
-    <% end %>
-  </div>
-
-
-
-  <div class="col-12 <%= 'col-xl-6' if movements_global_amount_by_counts.present? %>">
-    <!-- Grafico che riporta la composizione corrente del portafoglio risparmi -->
-    <% if savings_global_amount_by_counts.present? %>
-      <div class="chart-card mb-3">
-        <% chart_title = "Portafoglio risparmi #{year.present? ? 'a fine ' + year : 'attuale'}" %>
-        <%= pie_chart savings_global_amount_by_counts,
-                      library: {
-                        plugins: {
-                          legend: { position: 'right' },
-                          title: { display: true, text: chart_title, padding: { bottom: 20 } }
-                        }
-                      },
-                      title: chart_title,
-                      download: {filename: chart_title, background: "#ffffff"},
-                      loading: "Caricamento...",
-                      empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                      suffix: "€"
-        %>
-      </div>
-    <% end %>
-  </div>
-</div>
-
-
-
-<!-- Grafico che riporta l'ammontare complessivo di tutte le entrate e di tutte le uscite alla fine di ogni mese / anno  -->
-<div class="chart-card mb-3">
+<%# Entrate/Uscite %>
+<div class="v2-chart-card">
   <% chart_title = "Entrate/Uscite #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
   <%= column_chart in_out_global_amounts,
                    stacked: false,
                    title: chart_title,
-                   download: {filename: chart_title, background: "#ffffff"},
+                   download: { filename: chart_title, background: "#ffffff" },
                    colors: ["#DC3545", "#198754"],
                    loading: "Caricamento...",
                    empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                   suffix: "€"
+                   suffix: "€",
+                   library: bar_lib.deep_merge({ plugins: { legend: { display: false } } })
   %>
 </div>
 
-
-
-<!-- Grafici che riportano l'ammontare complessivo per ogni voce di spesa alla fine di ogni mese / anno -->
-<div class="row my-3 py-3">
-  <% movements_global_amount_by_expense_items.keys.sort_by{ | key | movements_global_amount_by_expense_items[key]['total'] * -1 }.each do | expense_item | %>
-    <div class="col-12 col-md-6 col-xl-4 p-2">
-      <div class="chart-card-small">
-        <% chart_title_compact = "#{expense_item.description} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
-        <% chart_title = "#{chart_title_compact}: #{to_visible_amount(movements_global_amount_by_expense_items[expense_item]['total'])}€" %>
-        <% chart_color = expense_item.color.upcase != '#FFFFFF' ? expense_item.color : '#F2F2F2'%>
-        <% movements_global_amount_by_expense_items[expense_item].delete('total') %>
-        <%= column_chart movements_global_amount_by_expense_items[expense_item],
-                         title: chart_title,
-                         max: (@movements_max_amount * 1.1).to_f.round(2),
-                         colors: [chart_color, chart_color],
-                         download: {filename: chart_title_compact, background: "#ffffff"},
-                         loading: "Caricamento...",
-                         empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                         suffix: "€"
+<%# Pie charts row %>
+<% if movements_global_amount_by_counts.present? || savings_global_amount_by_counts.present? %>
+  <div class="v2-chart-row">
+    <% if movements_global_amount_by_counts.present? %>
+      <div class="v2-chart-card">
+        <% chart_title = "Giacenza sui vari conti #{year.present? ? 'a fine ' + year : 'attuale'}" %>
+        <%= pie_chart movements_global_amount_by_counts,
+                      library: pie_lib.deep_merge({
+                        plugins: {
+                          title: { text: chart_title },
+                          legend: { labels: { font: { size: movements_global_amount_by_counts.keys.size > 10 ? 9 : 11 } } }
+                        }
+                      }),
+                      title: chart_title,
+                      height: "450px",
+                      download: { filename: chart_title, background: "#ffffff" },
+                      loading: "Caricamento...",
+                      empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                      suffix: "€"
         %>
+      </div>
+    <% end %>
 
-        <div class="d-flex justify-content-center mt-2">
+    <% if savings_global_amount_by_counts.present? %>
+      <div class="v2-chart-card">
+        <% chart_title = "Portafoglio risparmi #{year.present? ? 'a fine ' + year : 'attuale'}" %>
+        <%= pie_chart savings_global_amount_by_counts,
+                      library: pie_lib.deep_merge({
+                        plugins: { title: { text: chart_title } }
+                      }),
+                      title: chart_title,
+                      height: "450px",
+                      download: { filename: chart_title, background: "#ffffff" },
+                      loading: "Caricamento...",
+                      empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                      suffix: "€"
+        %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<%# Voci di spesa %>
+<div class="v2-chart-grid">
+  <% movements_global_amount_by_expense_items.keys.sort_by{ |key| movements_global_amount_by_expense_items[key]['total'] * -1 }.each do |expense_item| %>
+    <div class="v2-chart-card v2-chart-card-sm">
+      <% chart_title_compact = "#{expense_item.description} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
+      <% chart_title = "#{chart_title_compact}: #{to_visible_amount(movements_global_amount_by_expense_items[expense_item]['total'])}€" %>
+      <% chart_color = expense_item.color.upcase != '#FFFFFF' ? expense_item.color : '#F2F2F2' %>
+      <% movements_global_amount_by_expense_items[expense_item].delete('total') %>
+      <%= column_chart movements_global_amount_by_expense_items[expense_item],
+                       title: chart_title,
+                       max: (movements_max_amount * 1.1).to_f.round(2),
+                       colors: [chart_color, chart_color],
+                       download: { filename: chart_title_compact, background: "#ffffff" },
+                       loading: "Caricamento...",
+                       empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                       suffix: "€",
+                       library: bar_lib
+      %>
+
+      <% if count.present? %>
+        <div class="v2-chart-link">
           <% filters = { 'movement_type_eq': 'out', 'expense_item_id_eq': expense_item.id } %>
           <% filters = { **filters, 'emitted_at_gteq': "#{year}-01-01", 'emitted_at_lteq': "#{year}-12-31" } if year.present? %>
           <% filters = { **filters, 'emitted_at_gteq': "#{min_year}-01-01", 'emitted_at_lteq': "#{max_year}-12-31" } unless year.present? %>
-          <% if count.present? %>
-            <%= link_to 'Vedi movimenti', organization_count_movements_path(count.organization, count, q: filters), class: 'btn btn-sm btn-gradient-info' %>
+          <%= link_to organization_count_movements_path(count.organization, count, q: filters), class: "v2-chart-link-btn" do %>
+            vedi movimenti
           <% end %>
         </div>
-      </div>
+      <% end %>
     </div>
   <% end %>
 </div>
 
+<script>
+  function adjustPieLegends() {
+    var isMobile = window.innerWidth <= 1200;
+    document.querySelectorAll('.v2-chart-row canvas').forEach(function(canvas) {
+      var chart = canvas.__chartjs_instance__ || (typeof Chart !== 'undefined' && Chart.getChart ? Chart.getChart(canvas) : null);
+      if (chart && chart.config.type === 'pie') {
+        chart.options.plugins.legend.position = isMobile ? 'bottom' : 'right';
+        chart.options.plugins.legend.maxWidth = isMobile ? undefined : 300;
+        chart.update();
+      }
+    });
+  }
+  window.addEventListener('load', function() { setTimeout(adjustPieLegends, 1000); });
+  window.addEventListener('resize', adjustPieLegends);
+</script>

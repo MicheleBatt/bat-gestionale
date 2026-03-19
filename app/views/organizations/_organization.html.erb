@@ -1,30 +1,82 @@
-<div class="organization-card" id="organization_<%= organization.id %>">
-  <div class="organization-card-header">
-    <div class="d-flex justify-content-between align-items-center">
-      <div class="organization-info-container">
-        <h6 class="mb-0 text-white">
-          <%= link_to organization.name, organization_counts_path(organization), class: "text-white text-decoration-none" %>
-        </h6>
-        <% memberships_counts = organization.memberships.count %>
-        <p class="text-muted mb-0"><%= memberships_counts %> membr<%= memberships_counts == 1 ? 'o' : 'i' %></p>
-      </div>
-      <div class="d-flex gap-1">
-        <button type="button" class="btn organization-action-btn organization-edit-btn" data-bs-toggle="modal" data-bs-target="#organizationEditingModal_<%= organization.id %>" title="Modifica">
-          <i class="fas fa-edit"></i>
-        </button>
-        <%= button_to organization, method: :delete, class: "btn organization-action-btn organization-delete-btn", title: "Elimina" do %>
-          <i class="fas fa-trash"></i>
-        <% end %>
-      </div>
+<% memberships_count = organization.memberships.count %>
+
+<div class="v2-org-card" id="organization_<%= organization.id %>">
+  <div class="v2-org-header">
+    <div class="v2-org-info">
+      <h3 class="v2-org-name"><%= organization.name %></h3>
+      <span class="v2-org-members"><%= memberships_count %> membr<%= memberships_count == 1 ? 'o' : 'i' %></span>
+    </div>
+
+    <div class="v2-org-actions">
+      <%= link_to organization_counts_path(organization), class: "v2-btn-icon", title: "Visualizza conti" do %>
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      <% end %>
+
+      <button type="button"
+              class="v2-btn-icon"
+              title="Modifica"
+              data-bs-toggle="modal"
+              data-bs-target="#organizationEditingModal_<%= organization.id %>">
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+      </button>
+
+      <button type="button"
+              class="v2-btn-icon danger"
+              title="Elimina"
+              data-bs-toggle="modal"
+              data-bs-target="#organizationDeleteModal_<%= organization.id %>">
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+      </button>
+
+      <button class="v2-org-toggle"
+              type="button"
+              title="Espandi/Comprimi"
+              onclick="var el = document.getElementById('orgCollapse_<%= organization.id %>'); el.classList.toggle('v2-collapsed'); this.classList.toggle('collapsed');">
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
     </div>
   </div>
 
-  <div class="organization-card-body">
-    <div class="members-section">
-      <%= render 'memberships/index',
-                 memberships: organization.memberships,
-                 organization: organization
-      %>
+  <div id="orgCollapse_<%= organization.id %>" class="v2-org-collapse">
+    <div class="v2-org-body">
+      <div id="memberships_<%= organization.id %>" class="membership-cont">
+        <% if organization.memberships.present? %>
+          <% organization.memberships.each do |membership| %>
+            <div class="v2-membership-item" id="membership_<%= membership.id %>">
+              <div class="v2-membership-info">
+                <span class="v2-membership-name"><%= membership.username %></span>
+                <span class="v2-membership-role"><%= italian_role(membership.role) %></span>
+              </div>
+              <div class="v2-membership-actions">
+                <button type="button"
+                        class="v2-btn-icon"
+                        title="Modifica ruolo"
+                        data-bs-toggle="modal"
+                        data-bs-target="#membershipEditingModal_<%= membership.id %>">
+                  <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+                </button>
+
+                <button type="button"
+                        class="v2-btn-icon danger"
+                        title="Rimuovi"
+                        data-bs-toggle="modal"
+                        data-bs-target="#membershipDeleteModal_<%= membership.id %>">
+                  <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+                </button>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="v2-membership-empty">Al momento non ci sono membri per questa organizzazione</p>
+        <% end %>
+
+        <div class="v2-membership-add">
+          <button type="button" class="v2-btn-add-member" data-bs-toggle="modal" data-bs-target="#membershipCreationModal<%= organization.id %>">
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Aggiungi membro
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

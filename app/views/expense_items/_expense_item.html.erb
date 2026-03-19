@@ -1,30 +1,26 @@
-<div class="expense-item-card" id="expense_item_<%= expense_item.id %>">
-  <div class="expense-item-card-header">
-    <div class="d-flex justify-content-between align-items-center">
-      <div class="d-flex align-items-center expense-info-container">
-        <div class="expense-color-box" style="background-color: <%= expense_item.color %>">
-        </div>
-        <h6 class="mb-0 ms-2 text-white"><%= expense_item.description %></h6>
-      </div>
-      <div class="d-flex gap-1">
-        <button type="button" class="btn expense-action-btn expense-edit-btn" data-bs-toggle="modal" data-bs-target="#expense_itemEditingModal_<%= expense_item.id %>" title="Modifica">
-          <i class="fas fa-edit"></i>
-        </button>
-        <% if expense_item.movements.blank? %>
-          <%= button_to organization_expense_item_path(@organization, expense_item), method: :delete, class: "btn expense-action-btn expense-delete-btn", title: "Elimina" do %>
-            <i class="fas fa-trash"></i>
-          <% end %>
-        <% end %>
-      </div>
-    </div>
-  </div>
-</div>
+<div class="v2-ei-card" id="expense_item_<%= expense_item.id %>">
+  <div class="v2-ei-swatch" style="background-color: <%= expense_item.color %>"></div>
+  <div class="v2-ei-desc"><%= expense_item.description %></div>
 
-<!-- Modale per la cancellazione / modifica di una voce di spesa -->
-<div id="expense_item_modal_<%= expense_item.id %>">
-  <%= render "modal",
-             modal_id: "expense_itemEditingModal_#{expense_item.id}",
-             title: "Modifica voce di spesa",
-             expense_item: expense_item
-  %>
+  <% if can? :update, ExpenseItem %>
+    <div class="v2-ei-actions">
+      <button type="button"
+              class="v2-btn-icon"
+              title="Modifica"
+              data-bs-toggle="modal"
+              data-bs-target="#expense_itemEditingModal_<%= expense_item.id %>">
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+      </button>
+
+      <% if expense_item.movements.blank? %>
+        <button type="button"
+                class="v2-btn-icon danger"
+                title="Elimina"
+                data-bs-toggle="modal"
+                data-bs-target="#expense_itemDeleteModal_<%= expense_item.id %>">
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+        </button>
+      <% end %>
+    </div>
+  <% end %>
 </div>

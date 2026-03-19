@@ -294,8 +294,7 @@ namespace :initDB do
 
     file_paths = file_paths.filter{ | file | file.include?('xlsx') && !file.to_s.downcase.include?('andamento') }
 
-    expense_items_by_colors = ExpenseItem.all.map{ | expense_item | [ expense_item.color[1..-1], expense_item.id ] }.to_h
-    ImportCountMovementsFromXlsxFileCommand.call(Count.find(1), file_paths, expense_items_by_colors)
+    ImportCountMovementsFromXlsxFileCommand.call(Count.find(100), file_paths)
   end
 
 

@@ -1,38 +1,35 @@
-<div class="user-card" id="user_<%= user.id %>">
-  <div class="user-card-header">
-    <div class="d-flex justify-content-between align-items-center">
-      <div class="user-info-container">
-        <h6 class="mb-0 text-white"><%= user.full_name %></h6>
-        <p class="text-muted mb-0"><%= user.email %></p>
-      </div>
-      <div class="d-flex gap-1">
-        <button type="button" class="btn user-action-btn user-edit-btn" data-bs-toggle="modal" data-bs-target="#userEditingModal_<%= user.id %>" title="Modifica">
-          <i class="fas fa-edit"></i>
-        </button>
-        <%= button_to user, method: :delete, class: "btn user-action-btn user-delete-btn", title: "Elimina" do %>
-          <i class="fas fa-trash"></i>
-        <% end %>
-      </div>
+<div class="v2-user-card" id="user_<%= user.id %>">
+  <div class="v2-user-info">
+    <div class="v2-user-avatar">
+      <%= user.first_name&.first %><%= user.last_name&.first %>
+    </div>
+    <div class="v2-user-details">
+      <p class="v2-user-name"><%= user.full_name %></p>
+      <p class="v2-user-email"><%= user.email %></p>
     </div>
   </div>
 
-  <div class="user-card-body">
-    <div class="user-role-section">
-      <div class="user-role-badge <%= user.role&.downcase %>-role">
-        <i class="fas fa-user-tag me-1"></i>
-        <%= user.role&.upcase || 'USER' %>
-      </div>
+  <div class="v2-user-right">
+    <span class="v2-user-role <%= 'v2-user-role-hidden' unless user.role.present? %>">
+      <%= user.role.present? ? user.role : '&nbsp;'.html_safe %>
+    </span>
+
+    <div class="v2-user-actions">
+      <button type="button"
+              class="v2-btn-icon"
+              title="Modifica"
+              data-bs-toggle="modal"
+              data-bs-target="#userEditingModal_<%= user.id %>">
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+      </button>
+
+      <button type="button"
+              class="v2-btn-icon danger"
+              title="Elimina"
+              data-bs-toggle="modal"
+              data-bs-target="#userDeleteModal_<%= user.id %>">
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+      </button>
     </div>
   </div>
-</div>
-
-<!-- Modale per la cancellazione / modifica di un utente -->
-<div id="user_modal_<%= user.id %>">
-  <%= render "modal",
-             modal_id: "userEditingModal_#{user.id}",
-             title: "Modifica utente",
-             user: user,
-             path: user_path(user),
-             method: :patch
-  %>
 </div>

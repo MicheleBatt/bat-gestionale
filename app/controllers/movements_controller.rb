@@ -46,10 +46,7 @@ class MovementsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         @movements = @movements.page(@page).per(@per_page)
-        render turbo_stream: [
-          turbo_stream.update(frame_name, partial: "movements/index", locals: { movements: @movements, organization: @organization, count: @count, movement_types: @movement_types, expense_items: @expense_items, page: @page.to_i + 1, per_page: @per_page }),
-          turbo_stream.append("movements-modals-container", partial: "movements/movement_modals", locals: { movements: @movements, expense_items: @expense_items, movement_types: @movement_types })
-        ]
+        render turbo_stream: turbo_stream.update(frame_name, partial: "movements/index", locals: { movements: @movements, organization: @organization, count: @count, movement_types: @movement_types, expense_items: @expense_items, page: @page.to_i + 1, per_page: @per_page })
       end
       format.html {
         @movements = @movements.page(@page).per(@per_page)
@@ -76,7 +73,7 @@ class MovementsController < ApplicationController
         format.json { render :show, status: :created, location: @movement }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @movement })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @movement }), status: :unprocessable_entity
         end
         format.html { redirect_to @count.movements_default_path, status: :unprocessable_entity }
         format.json { render json: @movement.errors, status: :unprocessable_entity }
@@ -92,20 +89,36 @@ class MovementsController < ApplicationController
     respond_to do |format|
       if @movement.update(movement_params)
         format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.replace("movement_#{@movement.id}", partial: "movements/movement", locals: { movement: @movement, movement_types: @movement_types, expense_items: @expense_items }),
-            turbo_stream.append("modal-closer", partial: "layouts/modal_closing")
-          ]
+          render turbo_stream: turbo_stream.replace("movement_#{@movement.id}", partial: "movements/movement", locals: { movement: @movement, movement_types: @movement_types, expense_items: @expense_items })
         end
         format.html { redirect_to @count.movements_default_path(@movement.year, @movement.month), notice: "Movimento di cassa aggiornato correttamente" }
         format.json { render :show, status: :ok, location: @movement }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @movement })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @movement }), status: :unprocessable_entity
         end
         format.html { redirect_to @count.movements_default_path(@movement.year, @movement.month), status: :unprocessable_entity }
         format.json { render json: @movement.errors, status: :unprocessable_entity }
       end
+    end
+  end
+
+  # POST /movements/bulk_create
+  def bulk_create
+    file = params[:file]
+
+    if file.blank?
+      redirect_to @count.movements_default_path, alert: "Nessun file selezionato"
+      return
+    end
+
+    begin
+      temp_path = file.tempfile.path
+      ImportCountMovementsFromXlsxFileCommand.call(@count, [temp_path])
+      redirect_to @count.movements_default_path, notice: "Movimenti importati correttamente dal file #{file.original_filename}"
+    rescue => e
+      Rails.logger.error "Import error: #{e.class} - #{e.message}\n#{e.backtrace.first(10).join("\n")}"
+      redirect_to @count.movements_default_path, alert: "Errore durante l'importazione: #{e.class} - #{e.message}"
     end
   end
 
@@ -201,8 +214,8 @@ class MovementsController < ApplicationController
       return true
     end
 
-  def set_movement_types_and_expense_items
-    @movement_types = movement_types_for_select
-    @expense_items = expense_items_for_select(@organization)
-  end
+    def set_movement_types_and_expense_items
+      @movement_types = movement_types_for_select
+      @expense_items = expense_items_for_select(@organization)
+    end
 end

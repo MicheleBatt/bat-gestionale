@@ -7,13 +7,8 @@ class UsersController < ApplicationController
   # GET /users or /users.json
   def index
     @search = User.all.ransack(params[:q])
-    @users = @search.result
+    @users = @search.result.order(first_name: :asc, last_name: :asc, email: :asc)
     @users_count = @users.length
-    @users =
-      @users
-      .order(first_name: :asc, last_name: :asc, email: :asc)
-      .page(params[:page] || DEFAULT_PAGE)
-      .per(params[:per_page] || DEFAULT_PER_PAGE_PARAM)
   end
 
   # POST /users/add or /users/add.json
@@ -28,7 +23,7 @@ class UsersController < ApplicationController
         format.json { render :index, status: :created, location: @user }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @user })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @user }), status: :unprocessable_entity
         end
         format.html { redirect_to users_path, status: :unprocessable_entity }
         format.json { render json: @user.errors, status: :unprocessable_entity }
@@ -50,10 +45,7 @@ class UsersController < ApplicationController
       if outcome
         format.turbo_stream do
           if modal_id.present?
-            render turbo_stream: [
-              turbo_stream.replace("user_#{@user.id}", partial: "users/user", locals: { user: @user }),
-              turbo_stream.append("modal-closer", partial: "layouts/modal_closing")
-            ]
+            render turbo_stream: turbo_stream.replace("user_#{@user.id}", partial: "users/user", locals: { user: @user })
           else
             redirect_to edit_user_path(@user), notice: "Account aggiornato correttamente"
           end
@@ -62,7 +54,7 @@ class UsersController < ApplicationController
         format.json { render :index, status: :ok, location: @user }
       else
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @user })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @user }), status: :unprocessable_entity
         end
         format.html { redirect_to users_path, status: :unprocessable_entity }
         format.json { render json: @user.errors, status: :unprocessable_entity }

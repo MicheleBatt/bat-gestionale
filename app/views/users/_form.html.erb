@@ -1,42 +1,36 @@
 <div class="d-block">
-
   <%= form_with model: user, url: path, method: method do |form| %>
     <%= form.hidden_field :modal_id, value: modal_id %>
 
     <% unless modal_id.present? %>
       <%= render "layouts/error_messages", obj: user %>
 
-      <div class="border-bottom border-dark mt-4">
-        Le tue Generalità
-      </div>
+      <div class="v2-form-section-title">Le tue Generalit&agrave;</div>
     <% end %>
 
-    <div class="d-block <%= modal_id.present? ? '' : 'd-sm-flex flex-wrap justify-content-center' %>">
-      <div class="my-4 mx-2 mx-md-4">
+    <div class="<%= modal_id.present? ? '' : 'v2-form-row' %>">
+      <div class="<%= modal_id.present? ? 'm-4' : 'v2-form-group' %>">
         <%= form.label :first_name, 'Nome', class: "form-label" %>
         <%= form.text_field :first_name, class: "form-control" %>
       </div>
 
-      <div class="my-4 mx-2 mx-md-4">
+      <div class="<%= modal_id.present? ? 'm-4' : 'v2-form-group' %>">
         <%= form.label :last_name, 'Cognome', class: "form-label" %>
         <%= form.text_field :last_name, class: "form-control" %>
       </div>
     </div>
 
-
     <% unless modal_id.present? %>
-      <div class="border-bottom border-dark mt-5">
-        Il tuo Account
-      </div>
+      <div class="v2-form-section-title">Il tuo Account</div>
     <% end %>
 
-    <div class="d-block <%= modal_id.present? ? '' : 'd-sm-flex flex-wrap justify-content-center' %>">
-      <div class="my-4 mx-2 mx-md-4">
+    <div class="<%= modal_id.present? ? '' : 'v2-form-row' %>">
+      <div class="<%= modal_id.present? ? 'm-4' : 'v2-form-group' %>">
         <%= form.label :email, 'Email', class: "form-label" %>
         <%= form.email_field :email, autocomplete: "new-email", class: "form-control" %>
       </div>
 
-      <div class="d-block my-4 mx-2 mx-md-4">
+      <div class="<%= modal_id.present? ? 'm-4' : 'v2-form-group' %>">
         <div>
           <%= form.label :password, 'Password', class: "form-label" %>
           <%= form.password_field :password, autocomplete: "new-password", class: "form-control" %>
@@ -49,7 +43,7 @@
     </div>
 
     <% if can? :add, User %>
-      <div class="mb-4 mt-0 mx-2 mx-md-4">
+      <div class="<%= modal_id.present? ? 'm-4' : 'v2-form-group' %>" style="<%= modal_id.present? ? '' : 'margin-top: 0;' %>">
         <%= form.label :role, 'Ruolo', class: "form-label" %>
         <%= form.select :role,
                         options_for_select(all_user_roles_for_select, user.role),
@@ -60,20 +54,18 @@
     <% end %>
 
     <% if modal_id.present? %>
-      <div class="my-3 d-flex flex-wrap justify-content-between">
-        <button type="button" class="btn btn-outline-secondary mx-2 mx-sm-3 my-2 px-3" data-bs-dismiss="modal">ANNULLA</button>
-
-        <%= form.button :submit, class: 'btn btn-gradient-primary mx-2 mx-sm-3 my-2 px-4' do %>
-          SALVA
+      <div class="mt-4 d-flex flex-wrap justify-content-between">
+        <button type="button" class="btn btn-secondary mx-2 mx-sm-4 my-2" data-bs-dismiss="modal">Annulla</button>
+        <%= form.button :submit, class: 'btn btn-success mx-2 mx-sm-4 my-2' do %>
+          Salva
         <% end %>
       </div>
     <% else %>
-      <div class="mt-5 mb-4 mx-2 mx-md-4 d-flex justify-content-center justify-content-sm-end">
-        <%= form.button :submit, class: "btn btn-gradient-primary" do %>
-          SALVA
+      <div class="v2-form-actions">
+        <%= form.button :submit, class: "btn btn-success" do %>
+          Salva
         <% end %>
       </div>
     <% end %>
   <% end %>
 </div>
-

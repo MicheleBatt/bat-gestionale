@@ -1,283 +1,376 @@
-<%= render 'layouts/navbar' %>
+<div class="v2">
+  <%= render 'layouts/aurora_background' %>
+  <%= render 'layouts/navbar_v2' %>
 
-<div class="counts-header">
-  <div class="container-xl">
-    <h2 class="text-center mb-2" style="font-size: 1.25rem;">Movimenti - <%= @count.name %></h2>
-    <div class="row justify-content-center">
-      <div class="col-md-8 col-lg-6">
-        <div class="counts-stats text-muted">
-          <div class="d-flex justify-content-between align-items-center">
+  <main class="v2-main">
+    <%# Hero %>
+    <header class="v2-hero">
+      <div>
+        <h1 class="v2-hero-title"><%= @count.name %></h1>
+        <span class="v2-hero-sub"><%= @organization.name %></span>
+      </div>
+      <div class="v2-hero-actions">
+        <% if can? :bulk_create, Movement %>
+          <button type="button" class="v2-btn-export" data-bs-toggle="modal" data-bs-target="#importMovementsModal">
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+            Importa
+          </button>
+        <% end %>
+        <% if @all_movements.present? %>
+          <%= link_to organization_count_movements_path(organization_id: @organization, count_id: @count.id, q: params[:q]&.to_unsafe_h, format: :xlsx), class: "v2-btn-export" do %>
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Esporta
+          <% end %>
+        <% end %>
+      </div>
+    </header>
+
+    <%# Metrics %>
+    <section class="v2-metrics">
+      <div class="v2-metric">
+        <div class="v2-metric-icon purple">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <div>
+          <div class="v2-metric-label">Movimenti</div>
+          <div class="v2-metric-value"><%= @movements_count %></div>
+        </div>
+      </div>
+
+      <div class="v2-metric">
+        <div class="v2-metric-icon green">
+          <svg class="ico" viewBox="0 0 640 640" style="fill: currentColor !important; stroke: none !important;"><path d="M320 32C373 32 416 75 416 128C416 181 373 224 320 224C267 224 224 181 224 128C224 75 267 32 320 32zM80 368C80 297.9 127 236.6 197.1 203.1C222.4 244.4 268 272 320 272C375.7 272 424.1 240.3 448 194C463.8 182.7 483.1 176 504 176L523.5 176C533.9 176 541.5 185.8 539 195.9L521.9 264.2C531.8 276.6 540.1 289.9 546.3 304L568 304C581.3 304 592 314.7 592 328L592 440C592 453.3 581.3 464 568 464L528 464C511.5 486 489.5 503.6 464 514.7L464 544C464 561.7 449.7 576 432 576L399 576C384.7 576 372.2 566.5 368.2 552.8L361.1 528L278.8 528L271.7 552.8C267.8 566.5 255.3 576 241 576L208 576C190.3 576 176 561.7 176 544L176 514.7C119.5 490 80 433.6 80 368zM456 384C469.3 384 480 373.3 480 360C480 346.7 469.3 336 456 336C442.7 336 432 346.7 432 360C432 373.3 442.7 384 456 384z"/></svg>
+        </div>
+        <div>
+          <div class="v2-metric-label">Giacenza attuale</div>
+          <div class="v2-metric-value" style="color: <%= @count.current_amount < 0 ? '#dc2626' : 'var(--txt)' %>;"><%= to_visible_amount(@count.current_amount, false) %><span class="v2-metric-currency">&euro;</span></div>
+        </div>
+      </div>
+
+      <div class="v2-metric">
+        <div class="v2-metric-icon" style="background: rgba(220,38,38,0.1); color: #dc2626;">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+        </div>
+        <div>
+          <div class="v2-metric-label">Totale uscite</div>
+          <div class="v2-metric-value" style="color: #dc2626;"><%= to_visible_amount(@total_out_movements_amount) %>&euro;</div>
+        </div>
+      </div>
+
+      <div class="v2-metric">
+        <div class="v2-metric-icon" style="background: rgba(5,150,105,0.1); color: #059669;">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        </div>
+        <div>
+          <div class="v2-metric-label">Totale entrate</div>
+          <div class="v2-metric-value" style="color: #059669;"><%= to_visible_amount(@total_in_movements_amount) %>&euro;</div>
+        </div>
+      </div>
+
+      <div class="v2-metric">
+        <div class="v2-metric-icon" style="background: rgba(109,40,217,0.1); color: var(--accent);">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 9l-5 5-2-2-4 4"/></svg>
+        </div>
+        <div>
+          <div class="v2-metric-label">Saldo</div>
+          <div class="v2-metric-value" style="color: <%= @total_movements_amount <= 0 ? '#dc2626' : '#059669' %>;"><%= @total_movements_amount > 0 ? '+' : '' %><%= to_visible_amount(@total_movements_amount, false) %>&euro;</div>
+        </div>
+      </div>
+      <% if @all_movements.present? %>
+        <div class="v2-metric">
+          <%= link_to @count.stats_default_path, class: "v2-metric-link" do %>
+            <div class="v2-metric-icon" style="background: rgba(217,119,6,0.1); color: #d97706;">
+              <svg class="ico" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            </div>
             <div>
-              <small>Movimenti</small>
-              <h5 class="mb-0 balance-positive"><%= @movements_count %></h5>
+              <div class="v2-metric-label">Analisi</div>
+              <div class="v2-metric-value">
+                Visualizza grafici
+                <svg class="ico-sm ico link-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </div>
             </div>
-            <div class="text-center">
-              <small>Giacenza Attuale</small>
-              <h5 class="mb-0 <%= @count.current_amount < 0 ? 'balance-negative' : 'balance-positive' %>"><%= to_visible_amount(@count.current_amount, false) %>€</h5>
-            </div>
-            <div class="text-end">
-              <small>Saldo Periodo</small>
-              <h5 class="mb-0 <%= @total_movements_amount < 0 ? 'balance-negative' : 'balance-positive' %>"><%= to_visible_amount(@total_movements_amount, false) %>€</h5>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+
+    <%# Filters %>
+    <section class="v2-filters">
+      <div class="accordion" id="v2FiltersAccordion">
+        <div class="accordion-item v2-accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button v2-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#v2FiltersBody" aria-expanded="true" aria-controls="v2FiltersBody">
+              <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+              Filtri
+            </button>
+          </h2>
+          <div id="v2FiltersBody" class="accordion-collapse collapse show" data-bs-parent="#v2FiltersAccordion">
+            <div class="accordion-body v2-accordion-body">
+              <%= search_form_for [@organization, @count, @search], html: { class: 'v2-filters-form' } do |f| %>
+                <div class="v2-filter-group">
+                  <%= f.label :causal_cont, 'Causale' %>
+                  <%= f.text_field :causal_cont, placeholder: 'Filtra per causale...', class: 'v2-input' %>
+                </div>
+                <div class="v2-filter-group">
+                  <%= f.label :movement_type_eq, 'Tipo' %>
+                  <%= f.select :movement_type_eq, options_for_select(@movement_types, @search.movement_type_eq), { include_blank: 'Qualunque' }, class: 'v2-select' %>
+                </div>
+                <div class="v2-filter-group">
+                  <%= f.label :expense_item_id_eq, 'Voce di spesa' %>
+                  <%= f.select :expense_item_id_eq, options_for_select(@expense_items, @search.expense_item_id_eq), { include_blank: 'Qualunque' }, class: 'v2-select' %>
+                </div>
+                <div class="v2-filter-group">
+                  <%= f.label :emitted_at_gteq, 'Dal' %>
+                  <%= f.date_field :emitted_at_gteq, class: 'v2-input' %>
+                </div>
+                <div class="v2-filter-group">
+                  <%= f.label :emitted_at_lteq, 'Al' %>
+                  <%= f.date_field :emitted_at_lteq, class: 'v2-input' %>
+                </div>
+                <div class="v2-filter-actions">
+                  <button type="submit" class="v2-btn-search">
+                    <svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+                    Cerca
+                  </button>
+                  <%= link_to @count.movements_default_path, class: "v2-btn-reset", data: { turbo: false } do %>
+                    <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                    Reset
+                  <% end %>
+                </div>
+              <% end %>
             </div>
           </div>
         </div>
       </div>
+    </section>
+
+    <%# Movements container %>
+    <div id="movements" class="v2-mov-container">
+      <%# Title bar with navigation %>
+      <% movements_list_links = @count.fast_movements_list_links(@year, @month) if @time_range_report %>
+      <div class="v2-mov-title-bar">
+        <% if movements_list_links.present? %>
+          <%= link_to movements_list_links[0], class: "v2-mov-nav-arrow", data: { turbo: false } do %>
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+          <% end %>
+        <% end %>
+        <h3 class="v2-mov-title"><%= @table_titles[:main_title] %></h3>
+        <% if movements_list_links.present? %>
+          <%= link_to movements_list_links[1], class: "v2-mov-nav-arrow", data: { turbo: false } do %>
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+          <% end %>
+        <% end %>
+      </div>
+
+      <%# Actions bar %>
+      <div class="v2-mov-actions-bar">
+        <span class="v2-mov-count"><b><%= @movements_count %></b> moviment<%= @movements_count == 1 ? 'o' : 'i' %></span>
+        <% if can? :create, Movement %>
+          <div class="v2-mov-btns">
+            <button type="button" class="v2-btn-out" data-bs-toggle="modal" data-bs-target="#outMovementCreationModal">
+              <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              Uscita
+            </button>
+            <button type="button" class="v2-btn-in" data-bs-toggle="modal" data-bs-target="#inMovementCreationModal">
+              <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              Entrata
+            </button>
+          </div>
+        <% end %>
+      </div>
+
+      <%# Table header (desktop only) %>
+      <div class="v2-mov-table-head">
+        <div class="v2-mov-table-head-section out-head">
+          <div class="v2-mov-table-head-label" style="grid-column: 1 / -1;">Uscite</div>
+          <div class="v2-mov-col-label" style="text-align: left;">Data</div>
+          <div class="v2-mov-col-label">Causale</div>
+          <div class="v2-mov-col-label" style="text-align: right;">Importo</div>
+        </div>
+        <div class="v2-mov-table-head-section">
+          <div class="v2-mov-table-head-label" style="grid-column: 1 / -1;">Entrate</div>
+          <div class="v2-mov-col-label" style="text-align: left;">Data</div>
+          <div class="v2-mov-col-label">Causale</div>
+          <div class="v2-mov-col-label" style="text-align: right;">Importo</div>
+        </div>
+      </div>
+
+      <%# Movements list %>
+      <%= render 'index', movements: @movements, organization: @organization, count: @count, expense_items: @expense_items, movement_types: @movement_types, page: @page + 1, per_page: @per_page %>
+
+      <%# Totals (desktop dual column) %>
+      <div class="v2-mov-totals-dual">
+        <div class="v2-mov-total-col">
+          <span class="v2-mov-total-label">Totale uscite</span>
+          <span class="v2-mov-total-value out"><%= to_visible_amount(@total_out_movements_amount) %>&euro;</span>
+        </div>
+        <div class="v2-mov-total-col">
+          <span class="v2-mov-total-label">Totale entrate</span>
+          <span class="v2-mov-total-value in"><%= to_visible_amount(@total_in_movements_amount) %>&euro;</span>
+        </div>
+      </div>
+
+      <%# Totals (mobile single column) %>
+      <div class="v2-mov-totals v2-mov-totals-single">
+        <div class="v2-mov-total-row">
+          <span class="v2-mov-total-label">Totale uscite</span>
+          <span class="v2-mov-total-value out"><%= to_visible_amount(@total_out_movements_amount) %>&euro;</span>
+        </div>
+        <div class="v2-mov-total-row">
+          <span class="v2-mov-total-label">Totale entrate</span>
+          <span class="v2-mov-total-value in"><%= to_visible_amount(@total_in_movements_amount) %>&euro;</span>
+        </div>
+      </div>
+
+      <%# Summary %>
+      <div class="v2-mov-totals">
+        <% if @time_range_report.present? %>
+          <div class="v2-mov-total-row">
+            <span class="v2-mov-total-label"><%= @table_titles[:start_amount_title] %></span>
+            <span class="v2-mov-total-value"><%= to_visible_amount(@start_amount, false) %>&euro;</span>
+          </div>
+        <% end %>
+        <div class="v2-mov-total-row">
+          <span class="v2-mov-total-label"><%= @table_titles[:total_amount_title] %></span>
+          <span class="v2-mov-total-value <%= @total_movements_amount <= 0 ? 'negative' : 'positive' %>"><%= @total_movements_amount > 0 ? '+' : '' %><%= to_visible_amount(@total_movements_amount, false) %>&euro;</span>
+        </div>
+        <% if @time_range_report.present? %>
+          <div class="v2-mov-total-row">
+            <span class="v2-mov-total-label"><%= @table_titles[:final_amount_title] %></span>
+            <span class="v2-mov-total-value"><%= to_visible_amount(@final_amount, false) %>&euro;</span>
+          </div>
+        <% end %>
+      </div>
+
+      <%# Expense items breakdown %>
+      <% if @movements_amounts_by_expense_items.present? %>
+        <div class="v2-mov-expense-section">
+          <div class="v2-mov-expense-title">Riepilogo per voce di spesa</div>
+          <% @movements_amounts_by_expense_items.each do |expense_item, amount| %>
+            <div class="v2-mov-expense-item">
+              <div class="v2-mov-expense-info">
+                <div class="v2-mov-expense-dot" style="background-color: <%= expense_item.color %>"></div>
+                <span class="v2-mov-expense-name"><%= expense_item.description %></span>
+              </div>
+              <span class="v2-mov-expense-amount"><%= to_visible_amount(amount) %>&euro;</span>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     </div>
-  </div>
+
+    <%# Chart %>
+    <% if @movements_amounts_by_expense_items.present? %>
+      <% chart_title = @table_titles[:expense_items_amounts_chart] %>
+      <% chart_font = { family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" } %>
+      <div class="v2-chart-card v2-mov-chart">
+        <%= column_chart @movements_amounts_by_expense_items.to_a.map { |expense_item, amount| [expense_item.description, (amount * -1).to_f.round(2)] }.to_h,
+                         title: "#{chart_title} - #{to_visible_amount(@total_out_movements_amount)}€",
+                         max: (@movements_amounts_by_expense_items.values.min.to_f * -1.1).to_f.round(2),
+                         colors: @movements_amounts_by_expense_items.keys.map{ |expense_item| expense_item.color },
+                         download: { filename: chart_title, background: "#ffffff" },
+                         loading: "Caricamento...",
+                         empty: "Spiacenti, non ci sono dati disponibili",
+                         suffix: "€",
+                         library: {
+                           plugins: {
+                             title: { color: '#1e293b', font: { **chart_font, size: 15, weight: 600 }, padding: { bottom: 20 } },
+                             legend: { labels: { color: '#475569', font: { **chart_font, size: 11 } } }
+                           },
+                           scales: {
+                             x: { ticks: { color: '#64748b', font: { **chart_font, size: 10 } }, grid: { color: '#f1f5f9' } },
+                             y: { ticks: { color: '#64748b', font: { **chart_font, size: 10 } }, grid: { color: '#f1f5f9' } }
+                           },
+                           datasets: { bar: { borderRadius: 4, borderSkipped: 'bottom' } }
+                         }
+        %>
+      </div>
+    <% end %>
+  </main>
 </div>
 
-<div class="container-xl py-2">
-  <div class="accordion filters-card mb-2" id="filtersAccordion">
-    <div class="accordion-item border-0">
-      <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          <h6 class="mb-0">Filtri di Ricerca</h6>
-        </button>
-      </h2>
-      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
-        <div class="accordion-body">
-          <%= search_form_for [@organization, @count, @search] do |f| %>
-            <div class="row align-items-end">
-              <div class="col-md-4 mb-2">
-                <%= f.label :causal_cont, 'Causale', class: 'form-label' %>
-                <%= f.text_field :causal_cont, placeholder: 'Filtra per causale', class: 'form-control' %>
-              </div>
+<%# Modals (fuori da .v2) %>
+<div class="v2">
+  <%= render "modal", modal_id: "outMovementCreationModal", title: "Aggiungi Uscita", movement: @new_out_movement, expense_items: @expense_items, movement_types: @movement_types, deletion_path: nil %>
+  <%= render "modal", modal_id: "inMovementCreationModal", title: "Aggiungi Entrata", movement: @new_in_movement, expense_items: @expense_items, movement_types: @movement_types, deletion_path: nil %>
 
-              <div class="col-md-4 mb-2">
-                <%= f.label :movement_type_eq, 'Tipo di movimento', class: "form-label" %>
-                <%= f.select :movement_type_eq,
-                             options_for_select(@movement_types, @search.movement_type_eq),
-                             { include_blank: 'Qualunque tipo' },
-                             class: 'form-control'
-                %>
-              </div>
+  <%# Modal importazione %>
+  <div class="modal fade" id="importMovementsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title fs-5">Importa movimenti da file Excel</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mt-2" style="color: var(--txt2); font-size: 0.85rem; margin-bottom: 1rem;">
+            Seleziona un file Excel (.xlsx) contenente i movimenti di cassa da importare nel conto <strong style="color: var(--txt);"><%= @count.name %></strong>.
+          </p>
+          <p style="color: var(--txt3); font-size: 0.75rem; margin-bottom: 1.25rem;">
+            Il file deve avere lo stesso formato di quello esportato dall'applicazione: uscite nelle colonne A-C, entrate nelle colonne D-F, a partire dalla riga 6.
+          </p>
 
-              <div class="col-md-4 mb-2">
-                <%= f.label :expense_item_id_eq, 'Tipo di spesa', class: "form-label" %>
-                <%= f.select :expense_item_id_eq,
-                             options_for_select(@expense_items, @search.expense_item_id_eq),
-                             { include_blank: 'Qualunque voce di spesa' },
-                             class: 'form-control'
-                %>
-              </div>
+          <%= form_tag bulk_create_organization_count_movements_path(organization_id: @organization.id, count_id: @count.id), method: :post, multipart: true, id: "importMovementsForm" do %>
+            <div style="margin-bottom: 1.25rem;">
+              <label style="display: block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--txt2); margin-bottom: 0.35rem;">File Excel</label>
+              <%= file_field_tag :file, accept: ".xlsx", class: "form-control", required: true %>
+            </div>
 
-              <div class="col-md-3 mb-2">
-                <%= f.label :emitted_at_gteq, 'A partire dal', class: 'form-label' %>
-                <%= f.date_field :emitted_at_gteq, attribute: 'date', class: 'form-control' %>
-              </div>
-
-              <div class="col-md-3 mb-2">
-                <%= f.label :emitted_at_lteq, 'Entro il', class: 'form-label' %>
-                <%= f.date_field :emitted_at_lteq, attribute: 'date', class: 'form-control' %>
-              </div>
-
-              <div class="col-md-6 mb-2">
-                <div class="d-flex gap-2">
-                  <button type="submit" class="btn btn-gradient-primary flex-fill">
-                    <i class="fas fa-search me-1"></i> Cerca
-                  </button>
-
-                  <%= link_to @count.movements_default_path, class: "btn btn-outline-secondary" do %>
-                    <i class="fas fa-undo"></i> Reset
-                  <% end %>
-                </div>
-              </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+              <button type="submit" class="btn btn-success" id="importSubmitBtn">Importa</button>
             </div>
           <% end %>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="action-buttons d-flex justify-content-center flex-wrap gap-2 mb-2">
-    <% if @all_movements.present? %>
-      <%= link_to organization_count_movements_path(organization_id: @organization, count_id: @count.id, q: params[:q]&.to_unsafe_h, format: :xlsx), class: "btn btn-gradient-success" do %>
-        <i class="fas fa-download me-1"></i> Esporta movimenti
-      <% end %>
-
-      <%= link_to @count.stats_default_path, class: "btn btn-gradient-info" do %>
-        <i class="fas fa-line-chart me-1"></i> Grafici
-      <% end %>
-    <% end %>
-
-    <%= link_to organization_counts_path(@organization), class: "btn btn-gradient-primary" do %>
-      <i class="fas fa-arrow-left me-1"></i> Torna ai Conti
-    <% end %>
+<%# Overlay di elaborazione %>
+<div id="importOverlay" style="display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); align-items: center; justify-content: center;">
+  <div style="background: #fff; border-radius: 0.85rem; padding: 2.5rem 2rem; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-width: 400px; width: calc(100% - 2rem);">
+    <div style="width: 40px; height: 40px; border: 3px solid #e2e8f0; border-top-color: var(--accent); border-radius: 50%; animation: importSpin 0.8s linear infinite; margin: 0 auto 1.25rem;"></div>
+    <h3 style="font-family: var(--font); font-size: 1rem; font-weight: 700; color: var(--txt); margin: 0 0 0.4rem;">Importazione in corso</h3>
+    <p style="font-family: var(--font); font-size: 0.82rem; color: var(--txt2); margin: 0;">Elaborazione del file in corso, attendere prego...</p>
   </div>
 </div>
 
+<style>
+  @keyframes importSpin {
+    to { transform: rotate(360deg); }
+  }
+</style>
 
+<%= render 'layouts/auto_close_modals' %>
 
-<div class="px-3 px-xl-4 py-2">
-  <div class="chart-card" style="padding: 1rem;">
-    <div class="d-flex flex-wrap justify-content-center justify-content-sm-between align-items-center mb-3">
-      <button type="button" class="btn btn-gradient-primary" data-bs-toggle="modal" data-bs-target="#outMovementCreationModal">
-        <i class="fas fa-minus me-1"></i> Aggiungi Uscita
-      </button>
+<script>
+  document.addEventListener('show.bs.modal', function(event) {
+    var modal = event.target;
+    if (!modal.parentElement.classList.contains('v2-modals-root')) {
+      var root = document.querySelector('.v2-modals-root');
+      if (!root) {
+        root = document.createElement('div');
+        root.className = 'v2 v2-modals-root';
+        document.body.appendChild(root);
+      }
+      root.appendChild(modal);
+    }
+  });
 
-      <button type="button" class="btn btn-gradient-success" data-bs-toggle="modal" data-bs-target="#inMovementCreationModal">
-        <i class="fas fa-plus me-1"></i> Aggiungi Entrata
-      </button>
-    </div>
+  // Import form: mostra overlay al submit
+  document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('importMovementsForm');
+    if (form) {
+      form.addEventListener('submit', function() {
+        // Chiudi la modale
+        var modal = bootstrap.Modal.getInstance(document.getElementById('importMovementsModal'));
+        if (modal) modal.hide();
 
-    <!-- TESTATA DELLA TABELLA -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <% movements_list_links = @count.fast_movements_list_links(@year, @month) if @time_range_report  %>
-      <% if movements_list_links.present? %>
-        <%= link_to movements_list_links[0], class: "btn btn-sm btn-outline-secondary" do %>
-          <i class="fa-solid fa-chevron-left me-1"></i> Precedente
-        <% end %>
-      <% else %>
-        <div></div>
-      <% end %>
-
-      <div class="text-center">
-        <h5 class="mb-0"><%= @table_titles[:main_title] %></h5>
-        <small class="text-muted"><b><%= @movements_count %></b> moviment<%= @movements_count == 1 ? 'o' : 'i' %></small>
-      </div>
-
-      <% if movements_list_links.present? %>
-        <%= link_to movements_list_links[1], class: "btn btn-sm btn-outline-secondary" do %>
-          Successivo <i class="fa-solid fa-chevron-right ms-1"></i>
-        <% end %>
-      <% else %>
-        <div></div>
-      <% end %>
-    </div>
-
-    <!-- HEADERS MODERNI DELLE COLONNE -->
-    <div class="row d-none d-lg-flex mb-2">
-      <div class="col-6">
-        <div class="chart-card-small text-center" style="padding: 0.5rem;">
-          <h6 class="mb-0">
-            <i class="fas fa-arrow-down me-1"></i>Uscite
-          </h6>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="chart-card-small text-center" style="padding: 0.5rem;">
-          <h6 class="mb-0">
-            <i class="fas fa-arrow-up me-1"></i>Entrate
-          </h6>
-        </div>
-      </div>
-    </div>
-
-    <!-- ELENCO DI TUTTI I MOVIMENTI -->
-    <div class="movements-container">
-      <%= render 'index', movements: @movements, organization: @organization, count: @count, expense_items: @expense_items, movement_types: @movement_types, page: @page + 1, per_page: @per_page %>
-    </div>
-
-    
-    <!-- TOTALI USCITE/ENTRATE -->
-    <div class="row d-none d-lg-flex mt-3 mb-2">
-      <div class="col-6">
-        <div class="d-flex justify-content-between align-items-center p-2 border rounded" style="background: linear-gradient(45deg, #fee2e2 0%, #fecaca 100%);">
-          <span class="fw-bold text-danger" style="font-size: 0.85rem;">
-            <i class="fas fa-arrow-down me-1"></i>TOTALE USCITE:
-          </span>
-          <span class="badge bg-danger"><%= to_visible_amount(@total_out_movements_amount) %>€</span>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="d-flex justify-content-between align-items-center p-2 border rounded" style="background: linear-gradient(45deg, #dcfce7 0%, #bbf7d0 100%);">
-          <span class="fw-bold text-success" style="font-size: 0.85rem;">
-            <i class="fas fa-arrow-up me-1"></i>TOTALE ENTRATE:
-          </span>
-          <span class="badge bg-success"><%= to_visible_amount(@total_in_movements_amount) %>€</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- SALDI PERIODO -->
-    <div class="mt-2">
-      <% if @time_range_report.present? %>
-        <div class="d-flex justify-content-between align-items-center p-2 border rounded bg-light mb-1">
-          <span class="fw-bold" style="font-size: 0.85rem;">
-            <i class="fas fa-clock me-1"></i><%= @table_titles[:start_amount_title].upcase %>
-          </span>
-          <span class="badge bg-info"><%= to_visible_amount(@start_amount, false) %>€</span>
-        </div>
-      <% end %>
-
-      <div class="d-flex justify-content-between align-items-center p-2 border rounded bg-light mb-1">
-        <span class="fw-bold" style="font-size: 0.85rem;">
-          <i class="fas fa-balance-scale me-1"></i><%= @table_titles[:total_amount_title].upcase %>
-        </span>
-        <span class="badge bg-<%= @total_movements_amount <= 0 ? 'danger' : 'success' %>">
-          <%= to_visible_amount(@total_movements_amount, false) %>€
-        </span>
-      </div>
-
-      <% if @time_range_report.present? %>
-        <div class="d-flex justify-content-between align-items-center p-2 border rounded bg-light mb-1">
-          <span class="fw-bold" style="font-size: 0.85rem;">
-            <i class="fas fa-wallet me-1"></i><%= @table_titles[:final_amount_title].upcase %>
-          </span>
-          <span class="badge bg-primary"><%= to_visible_amount(@final_amount, false) %>€</span>
-        </div>
-      <% end %>
-    </div>
-
-    <!-- TOTALI PER VOCE DI SPESA -->
-    <% if @movements_amounts_by_expense_items.present? %>
-      <% @movements_amounts_by_expense_items.each do | expense_item, amount | %>
-        <div class="d-flex justify-content-between align-items-center p-2 border rounded mb-1" style="background-color: <%= expense_item.color %>15; border-color: <%= expense_item.color %>33;">
-          <span class="fw-bold" style="color: <%= expense_item.color %>; font-size: 0.85rem;">
-            <i class="fas fa-tag me-1"></i>AMMONTARE <%= expense_item.description.upcase %>:
-          </span>
-          <span class="badge" style="background-color: <%= expense_item.color %>">
-            <%= to_visible_amount(amount) %>€
-          </span>
-        </div>
-      <% end %>
-    <% end %>
-  </div>
-</div>
-
-
-<% if @movements_amounts_by_expense_items.present? %>
-  <div class="px-3 px-xl-4 py-2">
-    <% chart_title = @table_titles[:expense_items_amounts_chart] %>
-    <div class="chart-card">
-      <%= column_chart @movements_amounts_by_expense_items.to_a.map { | expense_item, amount | [expense_item.description, (amount * -1).to_f.round(2)] }.to_h,
-                       title: "#{chart_title} - #{to_visible_amount(@total_out_movements_amount)}€",
-                       max: (@movements_amounts_by_expense_items.values.min.to_f * -1.1).to_f.round(2),
-                       colors: @movements_amounts_by_expense_items.keys.map{ | expense_item | expense_item.color },
-                       download: {filename: "#{chart_title}", background: "#ffffff"},
-                       loading: "Caricamento...",
-                       empty: "Spiacenti, non ci sono dati disponibili",
-                       suffix: "€"
-      %>
-    </div>
-  </div>
-<% end %>
-</div>
-
-
-<!-- Container per i modali dei movimenti (caricati dinamicamente via turbo stream) -->
-<div id="movements-modals-container">
-  <% @movements.each do |movement| %>
-    <%= render "movements/movement_modal", movement: movement, expense_items: @expense_items, movement_types: @movement_types %>
-  <% end %>
-</div>
-
-<!-- Modale per la creazione di un nuovo movimento di cassa in uscita -->
-<%= render "modal",
-           modal_id: "outMovementCreationModal",
-           title: "Aggiungi Uscita",
-           movement: @new_out_movement,
-           expense_items: @expense_items,
-           movement_types: @movement_types,
-           deletion_path: nil
-%>
-
-<!-- Modale per la creazione di un nuovo movimento di cassa in entrata -->
-<%= render "modal",
-           modal_id: "inMovementCreationModal",
-           title: "Aggiungi Entrata",
-           movement: @new_in_movement,
-           expense_items: @expense_items,
-           movement_types: @movement_types,
-           deletion_path: nil
-%>
+        // Mostra overlay
+        var overlay = document.getElementById('importOverlay');
+        overlay.style.display = 'flex';
+      });
+    }
+  });
+</script>

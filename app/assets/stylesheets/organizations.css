@@ -1,0 +1,225 @@
+/* =========================================================
+   Organizations – specific styles (extends .v2 base)
+   ========================================================= */
+
+/* Organization card */
+.v2-org-card {
+  background: var(--surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(109,40,217,0.3);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+  overflow: hidden;
+  animation: fadeUp 0.35s ease-out both;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.3s, box-shadow 0.3s, margin 0.3s;
+}
+
+.v2-org-card:hover {
+  border-color: rgba(109,40,217,0.6);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  margin-top: -5px;
+  margin-bottom: 5px;
+}
+
+/* Card header */
+.v2-org-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.15rem;
+  gap: 0.75rem;
+}
+
+.v2-org-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.v2-org-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--txt);
+  margin: 0 0 0.15rem;
+}
+
+.v2-org-members {
+  font-size: 0.72rem;
+  color: var(--txt2);
+}
+
+.v2-org-actions {
+  display: flex;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+/* Expand toggle */
+.v2-org-toggle {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  border: 1px solid var(--glass-border);
+  border-radius: 0.4rem;
+  color: var(--txt3);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s;
+}
+
+.v2-org-toggle:hover {
+  color: var(--txt);
+  background: var(--surface-h);
+}
+
+.v2-org-toggle .ico {
+  transition: transform 0.25s;
+}
+
+.v2-org-toggle.collapsed .ico {
+  transform: rotate(-90deg);
+}
+
+/* Custom collapse animation */
+.v2-org-collapse {
+  display: grid;
+  grid-template-rows: 1fr;
+  overflow: hidden;
+  height: 100%;
+  transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.v2-org-collapse > .v2-org-body {
+  min-height: 0;
+}
+
+.v2-org-collapse.v2-collapsed {
+  grid-template-rows: 0fr;
+}
+
+.v2-org-collapse.v2-collapsed .v2-org-body {
+  border-top: none;
+}
+
+/* Memberships area */
+.v2-org-body {
+  border-top: 1px solid rgba(109,40,217,0.2);
+  background: transparent;
+}
+
+.membership-cont {
+  margin: 0.75rem 1.15rem;
+}
+
+/* Membership item */
+.v2-membership-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.5rem;
+  border-radius: 0.4rem;
+  transition: background 0.15s;
+}
+
+.v2-membership-item:hover {
+  background: #f3f4f6;
+}
+
+.v2-membership-item + .v2-membership-item {
+  border-top: 1px solid #f3f4f6;
+}
+
+.v2-membership-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.v2-membership-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--txt);
+}
+
+.v2-membership-role {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--txt3);
+  padding: 0.12rem 0.4rem;
+  border-radius: 999px;
+  background: #f1f5f9;
+  border: 1px solid var(--glass-border);
+}
+
+.v2-membership-actions {
+  display: flex;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.v2-membership-empty {
+  font-size: 0.8rem;
+  color: var(--txt3);
+  padding: 0.5rem;
+}
+
+.v2-membership-add {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+}
+
+.v2-btn-add-member {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-l);
+  background: rgba(124,92,252,0.1);
+  border: 1.5px solid rgba(109,40,217,0.15);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.v2-btn-add-member:hover {
+  background: rgba(124,92,252,0.18);
+  border-color: rgba(109,40,217,0.2);
+}
+
+/* Grid */
+.v2-org-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 0.85rem;
+  align-items: stretch;
+}
+
+.v2-org-card:has(.v2-collapsed) {
+  align-self: start;
+}
+
+
+@media (max-width: 420px) {
+  .v2-org-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Staggered animation */
+.v2-org-card:nth-child(1)  { animation-delay: 0.06s; }
+.v2-org-card:nth-child(2)  { animation-delay: 0.12s; }
+.v2-org-card:nth-child(3)  { animation-delay: 0.18s; }
+.v2-org-card:nth-child(4)  { animation-delay: 0.24s; }
+.v2-org-card:nth-child(n+5) { animation-delay: 0.30s; }

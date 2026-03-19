@@ -13,12 +13,12 @@ test:
 
 simulation:
   <<: *default
-  database: batgestionale_simulation
+  database: batgestionale_development
 
 staging:
   <<: *default
   database: batgestionale_staging
 
 production:
-  adapter: postgresql
-  url: <%= ENV['DATABASE_URL'] %>
+  <<: *default
+  database: batgestionale_development

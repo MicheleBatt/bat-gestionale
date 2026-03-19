@@ -1,25 +1,33 @@
-<div class="deadline-item <%= 'deadline-item-urgent' if deadline.upcoming? %>" id="deadline_<%= deadline.id %>">
-  <div class="deadline-item-content">
-    <div class="deadline-date">
-      <span class="deadline-day"><%= parse_date(deadline.expired_at, "%d") %></span>
-      <span class="deadline-month"><%= italian_month(deadline.month) %></span>
-    </div>
-
-    <div class="deadline-description">
-      <h6 class="mb-0"><%= deadline.description %></h6>
-    </div>
+<div class="v2-dl-item <%= deadline.expired? ? 'expired' : (deadline.upcoming? ? 'upcoming' :'') %>" id="deadline_<%= deadline.id %>">
+  <div class="v2-dl-date">
+    <%= parse_date(deadline.expired_at, "%d") %> <%= italian_month(deadline.month) %>
   </div>
 
-  <div class="deadline-actions">
-    <%= link_to edit_organization_deadline_path(@organization, deadline),
-                class: "btn deadline-action-btn deadline-edit-btn",
-                title: "Modifica",
-                data: { turbo_frame: "deadline_edit_frame" } do %>
-      <i class="fas fa-edit"></i>
-    <% end %>
+  <div class="v2-dl-desc"><%= deadline.description %></div>
 
-    <%= button_to organization_deadline_path(@organization, deadline), method: :delete, class: "btn deadline-action-btn deadline-delete-btn", title: "Elimina" do %>
-      <i class="fas fa-trash"></i>
-    <% end %>
-  </div>
+  <% if deadline.expired? %>
+    <span class="v2-dl-expired-badge">Scaduta</span>
+  <% elsif deadline.upcoming? %>
+    <span class="v2-dl-upcoming-badge">In scadenza</span>
+  <% end %>
+
+  <% if can? :update, Deadline %>
+    <div class="v2-dl-actions">
+      <button type="button"
+              class="v2-btn-icon"
+              title="Modifica"
+              data-bs-toggle="modal"
+              data-bs-target="#deadlineEditingModal_<%= deadline.id %>">
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+      </button>
+
+      <button type="button"
+              class="v2-btn-icon danger"
+              title="Elimina"
+              data-bs-toggle="modal"
+              data-bs-target="#deadlineDeleteModal_<%= deadline.id %>">
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+      </button>
+    </div>
+  <% end %>
 </div>

@@ -1,36 +1,35 @@
+<div class="v2">
+  <%= render 'layouts/aurora_background' %>
 
-<div class="container-fluid d-flex justify-content-center" id="login-form-container">
-  <div class="row w-100 pt-5">
-    <div class="col-12 col-md-8 col-lg-6 col-xl-4 mx-auto pt-5">
-      <div class="login-card mt-5">
-        <div class="login-card-header">
-          <h4 class="text-center mb-0 text-white">Accedi</h4>
-        </div>
-
-        <div class="login-card-body">
-          <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-            <div class="row mx-2">
-              <div class="col-12">
-                <div class="my-3 mx-1">
-                  <%= f.label :email, 'Email', class: "form-label" %>
-                  <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control" %>
-                </div>
-              </div>
-
-              <div class="col-12">
-                <div class="my-3 mx-1">
-                  <%= f.label :password, 'Password', class: "form-label" %>
-                  <%= f.password_field :password, autocomplete: "current-password", class: "form-control" %>
-                </div>
-              </div>
-            </div>
-
-            <div class="my-3 d-flex justify-content-center">
-              <%= f.submit "ACCEDI", class: "btn btn-gradient-primary px-5 py-2" %>
-            </div>
-          <% end %>
-        </div>
+  <div class="v2-login-wrapper">
+    <div class="v2-login-card">
+      <div class="v2-login-header">
+        <h1 class="v2-login-title">BatGestionale</h1>
+        <p class="v2-login-subtitle">Accedi al tuo account</p>
       </div>
+
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+        <div class="v2-login-field">
+          <%= f.label :email, 'Email', class: "v2-login-label" %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "v2-input", placeholder: "nome@esempio.com" %>
+        </div>
+
+        <div class="v2-login-field">
+          <%= f.label :password, 'Password', class: "v2-login-label" %>
+          <%= f.password_field :password, autocomplete: "current-password", class: "v2-input", placeholder: "La tua password" %>
+        </div>
+
+        <div class="v2-login-remember">
+          <label class="v2-login-remember-label">
+            <%= f.check_box :remember_me, class: "v2-login-checkbox" %>
+            <span>Ricordami</span>
+          </label>
+        </div>
+
+        <div class="v2-login-actions">
+          <%= f.submit "Accedi", class: "v2-login-btn" %>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

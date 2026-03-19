@@ -11,21 +11,29 @@
         <%= render "form", movement: movement, expense_items: expense_items, movement_types: movement_types, modal_id: modal_id %>
 
         <% if deletion_path.present? %>
-          <ul class="mt-5 mb-3 d-flex flex-wrap justify-content-end nav nav-pills" id="asynchronousJobs_<%= movement.id %>" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button class="btn btn-danger mx-2 mx-sm-4 mt-2" id="deletion-tab_<%= movement.id %>" data-bs-toggle="tab" data-bs-target="#deletion-tab-pane_<%= movement.id %>" type="button" role="tab" aria-controls="deletion-tab-pane" aria-selected="false">
-                Rimuovi dal conto
-              </button>
-            </li>
-          </ul>
+          <div style="border-top: 1px solid rgba(109,40,217,0.15); margin-top: 1.25rem; padding-top: 1rem; display: flex; justify-content: flex-end;">
+            <button type="button"
+                    style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 1rem; font-family: var(--font); font-size: 0.78rem; font-weight: 600; color: #dc2626; background: rgba(220,38,38,0.06); border: 1.5px solid rgba(220,38,38,0.2); border-radius: 0.55rem; cursor: pointer; transition: all 0.2s;"
+                    onmouseover="this.style.background='rgba(220,38,38,0.12)'; this.style.borderColor='rgba(220,38,38,0.35)';"
+                    onmouseout="this.style.background='rgba(220,38,38,0.06)'; this.style.borderColor='rgba(220,38,38,0.2)';"
+                    onclick="var pane = document.getElementById('deletion-pane_<%= movement.id %>'); pane.style.display = pane.style.display === 'none' ? 'block' : 'none';">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+              Rimuovi dal conto
+            </button>
+          </div>
 
-          <div class="tab-content mx-2 mx-sm-4" id="asynchronousJobsContent_<%= movement.id %>">
-            <div class="tab-pane fade" id="deletion-tab-pane_<%= movement.id %>" role="tabpanel" aria-labelledby="deletion-tab" tabindex="0">
-              <p class="d-flex justify-content-end text-secondary mb-0 mt-2">Sei sicuro di voler rimuovere questo movimento di cassa?</p>
-              <p class="d-flex justify-content-end text-secondary mb-4">L'operazione non potrà essere annullata</p>
-              <div class="d-flex justify-content-end">
-                <%= button_to "Conferma rimozione", deletion_path, method: :delete, class: "btn btn-warning" %>
-              </div>
+          <div id="deletion-pane_<%= movement.id %>" style="display: none; margin-top: 1rem; padding: 1rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.55rem;">
+            <p style="color: var(--txt2); font-size: 0.85rem; margin: 0 0 0.25rem; text-align: right;">Sei sicuro di voler rimuovere questo movimento di cassa?</p>
+            <p style="color: var(--txt3); font-size: 0.75rem; margin: 0 0 1rem; text-align: right;">Questa azione non può essere annullata.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <button type="button"
+                      class="btn btn-secondary"
+                      onclick="document.getElementById('deletion-pane_<%= movement.id %>').style.display = 'none';">
+                Annulla
+              </button>
+              <%= button_to deletion_path, method: :delete, class: "btn btn-success", style: "background: #dc2626; border-color: #dc2626;" do %>
+                Conferma rimozione
+              <% end %>
             </div>
           </div>
         <% end %>
@@ -33,6 +41,5 @@
     </div>
   </div>
 </div>
-
 
 <%= render "layouts/modal_closing" %>

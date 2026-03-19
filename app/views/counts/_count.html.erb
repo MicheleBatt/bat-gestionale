@@ -1,68 +1,64 @@
-<div class="count-card" id="count_<%= count.id %>">
-  <div class="count-card-header">
-    <div class="d-flex justify-content-between align-items-start">
-      <div class="count-info-container">
-        <h6 class="mb-0 text-white">
-          <%= link_to count.name, count.movements_default_path, class: "text-white text-decoration-none" %>
-        </h6>
-        <% if count.description.present? %>
-          <p class="text-muted mb-0" style="font-size: 0.7rem;"><%= count.description %></p>
-        <% end %>
+<div class="v2-card"
+     id="count_<%= count.id %>"
+     onclick="window.location.href='<%= count.movements_default_path %>'">
+  <div class="v2-card-top mb-3">
+    <div class="v2-card-icon t-bank">
+      <svg class="ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="16.5" cy="14" r="1.5" fill="currentColor" stroke="none"/></svg>
+    </div>
+    <div class="v2-card-title-group">
+      <span class="v2-card-name"><%= count.name %></span>
+      <span class="v2-card-badge"><%= parsed_count_type(count.count_type) %></span>
+    </div>
+  </div>
+
+  <% if count.description.present? %>
+    <div class="v2-card-desc"><%= count.description %></div>
+  <% end %>
+
+  <% if count.iban.present? %>
+    <div class="v2-card-iban" onclick="event.stopPropagation();">
+      <span id="count_<%= count.id %>_iban"><%= count.iban %></span>
+      <button type="button"
+              class="v2-btn-copy"
+              title="Copia IBAN"
+              onclick="event.stopPropagation(); navigator.clipboard.writeText(document.querySelector('#count_<%= count.id %>_iban').innerText.trim())">
+        <svg class="ico-sm ico" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      </button>
+    </div>
+  <% else %>
+    <div class="v2-card-iban v2-card-iban-empty">
+      <span>Codice IBAN non inserito</span>
+    </div>
+  <% end %>
+
+  <div class="v2-card-bottom">
+    <div>
+      <div class="v2-balance-label">Giacenza attuale</div>
+      <div class="v2-balance-amount <%= count.current_amount < 0 ? 'neg' : '' %>">
+        <%= to_visible_amount(count.current_amount, false) %><span class="v2-balance-currency">&euro;</span>
       </div>
-      <div class="d-flex gap-1">
-        <button type="button" class="btn count-action-btn count-edit-btn" data-bs-toggle="modal" data-bs-target="#countEditingModal_<%= count.id %>" title="Modifica">
-          <i class="fas fa-edit"></i>
+    </div>
+
+    <% if can? :update, Count %>
+      <div class="v2-card-actions" onclick="event.stopPropagation();">
+        <button type="button"
+                class="v2-btn-icon"
+                title="Modifica"
+                data-bs-toggle="modal"
+                data-bs-target="#countEditingModal_<%= count.id %>">
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
         </button>
+
         <% if count.movements.blank? %>
-          <%= button_to organization_count_path(@organization, count), method: :delete, class: "btn count-action-btn count-delete-btn", title: "Elimina" do %>
-            <i class="fas fa-trash"></i>
-          <% end %>
+          <button type="button"
+                class="v2-btn-icon danger"
+                title="Elimina"
+                data-bs-toggle="modal"
+                data-bs-target="#countDeleteModal_<%= count.id %>">
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+        </button>
         <% end %>
       </div>
-    </div>
+    <% end %>
   </div>
-
-  <div class="count-card-body">
-    <div class="iban-section mb-2">
-      <% if count.iban.present? %>
-        <small class="text-muted d-block mb-0">IBAN</small>
-        <div class="d-flex align-items-center">
-          <code class="me-1" id="count_<%= count.id %>_iban" style="font-size: 0.75rem;"><%= count.iban %></code>
-          <i class="fas fa-copy iban-copy-btn flex-shrink-0"
-             role="button"
-             id="<%= count.id %>"
-             onclick="((event) => {
-               event.stopPropagation();
-               navigator.clipboard.writeText(document.querySelector(`#count_${event.target.id}_iban`).innerHTML?.trim());
-               event.target.classList.add('fa-check');
-               event.target.classList.remove('fa-copy');
-               setTimeout(() => {
-                 event.target.classList.add('fa-copy');
-                 event.target.classList.remove('fa-check');
-               }, 2000);
-             })(event)"
-             title="Copia IBAN"
-          ></i>
-        </div>
-      <% end %>
-    </div>
-
-    <div class="balance-section mt-auto">
-      <div class="balance-card">
-        <small class="text-muted d-block mb-0">Giacenza Attuale</small>
-        <h4 class="mb-0 <%= count.current_amount < 0 ? 'balance-negative' : 'balance-positive' %>" style="font-size: 1.1rem;">
-          <%= to_visible_amount(count.current_amount, false) %>€
-        </h4>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modale per la cancellazione / modifica di un conto corrente -->
-<div id="count_modal_<%= count.id %>">
-  <%= render "modal",
-             modal_id: "countEditingModal_#{count.id}",
-             title: "Modifica conto",
-             count: count
-  %>
 </div>

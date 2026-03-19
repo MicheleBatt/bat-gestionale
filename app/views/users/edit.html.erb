@@ -1,42 +1,26 @@
-<%= render 'layouts/navbar' %>
+<div class="v2">
+  <%= render 'layouts/aurora_background' %>
+  <%= render 'layouts/navbar_v2' %>
 
-<div class="counts-header">
-  <div class="container-xl">
-    <h2 class="text-center mb-3">Modifica Utente</h2>
-    <div class="row justify-content-center">
-      <div class="col-md-6 col-lg-4">
-        <div class="counts-stats text-muted">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <small>Nome</small>
-              <h5 class="mb-0 balance-positive"><%= @user.first_name %></h5>
-            </div>
-            <div class="text-end">
-              <small>Cognome</small>
-              <h5 class="mb-0 balance-positive"><%= @user.last_name %></h5>
-            </div>
-          </div>
-        </div>
+  <main class="v2-main">
+    <%# Hero %>
+    <header class="v2-hero">
+      <div>
+        <h1 class="v2-hero-title">Impostazioni Account</h1>
+        <span class="v2-hero-sub"><%= @user.full_name %></span>
       </div>
+    </header>
+
+    <%# Form card %>
+    <div class="v2-edit-card">
+      <div id="_error_messages"></div>
+
+      <%= render "form",
+                 user: @user,
+                 modal_id: nil,
+                 path: user_path(@user),
+                 method: :patch
+      %>
     </div>
-  </div>
-</div>
-
-<div class="container-xl py-4">
-  <div class="chart-card">
-    <div id="_error_messages"></div>
-
-    <%= render "form",
-               user: @user,
-               modal_id: nil,
-               path: user_path(@user),
-               method: :patch
-    %>
-  </div>
-
-  <div class="action-buttons d-flex justify-content-center gap-2 mt-3">
-    <%= link_to users_path, class: "btn btn-gradient-info" do %>
-      <i class="fas fa-arrow-left me-1"></i> Torna agli Utenti
-    <% end %>
-  </div>
+  </main>
 </div>

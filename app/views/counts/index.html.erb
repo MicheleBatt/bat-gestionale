@@ -1,110 +1,188 @@
-<%= render 'layouts/navbar' %>
+<div class="v2">
+  <%= render 'layouts/aurora_background' %>
 
-<div class="counts-header">
-  <div class="container-xl">
-    <h1 class="text-center mb-2">I Tuoi Conti</h1>
-    <div class="row justify-content-center">
-      <div class="col-md-6 col-lg-4">
-        <div class="counts-stats text-muted">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <small>Cont<%= @counts_count == 1 ? 'o' : 'i' %> Total<%= @counts_count == 1 ? 'e' : 'i' %></small>
-              <h5 class="mb-0 balance-positive"><%= @counts_count %></h5>
-            </div>
-            <div class="text-end">
-              <small>Giacenza Totale</small>
-              <h5 class="mb-0 <%= @counts_global_amount < 0 ? 'balance-negative' : 'balance-positive' %>"><%= to_visible_amount(@counts_global_amount, false) %>€</h5>
-            </div>
+  <%# Navbar %>
+  <%= render 'layouts/navbar_v2' %>
+
+  <%# Main content %>
+  <main class="v2-main">
+    <%# Hero %>
+    <header class="v2-hero">
+      <div>
+        <h1 class="v2-hero-title">I tuoi conti</h1>
+        <span class="v2-hero-sub"><%= @organization.name %></span>
+      </div>
+      <div class="v2-hero-actions">
+        <%= link_to organization_counts_path(@organization, q: params[:q]&.to_unsafe_h, format: :text), class: "v2-btn-export" do %>
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+          Esporta IBAN
+        <% end %>
+        <% if can? :create, Count %>
+          <button type="button" class="v2-btn-primary" data-bs-toggle="modal" data-bs-target="#countCreationModal">
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Nuovo conto
+          </button>
+        <% end %>
+      </div>
+    </header>
+
+    <%# Metrics %>
+    <section class="v2-metrics">
+      <div class="v2-metric">
+        <div class="v2-metric-icon purple">
+          <svg class="ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="16.5" cy="14" r="1.5" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <div>
+          <div class="v2-metric-label">Conti attivi</div>
+          <div class="v2-metric-value"><%= @counts_count %></div>
+        </div>
+      </div>
+
+      <div class="v2-metric">
+        <div class="v2-metric-icon green <%= @counts_global_amount < 0 ? 'neg' : '' %>">
+          <svg class="ico" viewBox="0 0 640 640" style="fill: currentColor !important; stroke: none !important;"><path d="M320 32C373 32 416 75 416 128C416 181 373 224 320 224C267 224 224 181 224 128C224 75 267 32 320 32zM80 368C80 297.9 127 236.6 197.1 203.1C222.4 244.4 268 272 320 272C375.7 272 424.1 240.3 448 194C463.8 182.7 483.1 176 504 176L523.5 176C533.9 176 541.5 185.8 539 195.9L521.9 264.2C531.8 276.6 540.1 289.9 546.3 304L568 304C581.3 304 592 314.7 592 328L592 440C592 453.3 581.3 464 568 464L528 464C511.5 486 489.5 503.6 464 514.7L464 544C464 561.7 449.7 576 432 576L399 576C384.7 576 372.2 566.5 368.2 552.8L361.1 528L278.8 528L271.7 552.8C267.8 566.5 255.3 576 241 576L208 576C190.3 576 176 561.7 176 544L176 514.7C119.5 490 80 433.6 80 368zM456 384C469.3 384 480 373.3 480 360C480 346.7 469.3 336 456 336C442.7 336 432 346.7 432 360C432 373.3 442.7 384 456 384z"/></svg>
+        </div>
+        <div>
+          <div class="v2-metric-label">Giacenza complessiva</div>
+          <div class="v2-metric-value <%= @counts_global_amount < 0 ? 'neg' : '' %>">
+            <%= to_visible_amount(@counts_global_amount, false) %><span class="v2-metric-currency">&euro;</span>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
 
-<div class="container-xl py-2">
-  <div class="accordion filters-card mb-2" id="filtersAccordion">
-    <div class="accordion-item border-0">
-      <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          <h6 class="mb-0">Filtri di Ricerca</h6>
-        </button>
-      </h2>
-      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
-        <div class="accordion-body">
-      <%= search_form_for [@organization, @search] do |f| %>
-        <div class="row align-items-end">
-          <div class="col-md-4 mb-2">
-            <%= f.label :name_cont, 'Nome', class: 'form-label' %>
-            <%= f.text_field :name_cont, placeholder: 'Cerca per nome...', class: 'form-control' %>
-          </div>
+      <% if @organization.movements.present? %>
+        <div class="v2-metric">
+          <%= link_to stats_organization_path(id: @organization.id), class: "v2-metric-link" do %>
+            <div class="v2-metric-icon amber">
+              <svg class="ico" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            </div>
+            <div>
+              <div class="v2-metric-label">Analisi</div>
+              <div class="v2-metric-value">
+                Visualizza grafici
+                <svg class="ico-sm ico link-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
 
-          <div class="col-md-4 mb-2">
-            <%= f.label :count_type_eq, 'Tipo di conto', class: "form-label" %>
-            <%= f.select :count_type_eq,
-                         options_for_select(count_types_for_select, @search.count_type_eq),
-                         { include_blank: "Tutti i tipi" },
-                         class: 'form-control'
-            %>
-          </div>
-
-          <div class="col-md-4 mb-2">
-            <div class="d-flex gap-2">
-              <button type="submit" class="btn btn-gradient-primary flex-fill">
-                <i class="fas fa-search me-1"></i> Cerca
-              </button>
-
-              <%= link_to organization_counts_path(@organization), class: "btn btn-outline-secondary" do %>
-                <i class="fas fa-undo"></i> Reset
+    <%# Filters (accordion) %>
+    <section class="v2-filters">
+      <div class="accordion" id="v2FiltersAccordion">
+        <div class="accordion-item v2-accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button v2-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#v2FiltersBody" aria-expanded="true" aria-controls="v2FiltersBody">
+              <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+              Filtri
+            </button>
+          </h2>
+          <div id="v2FiltersBody" class="accordion-collapse collapse show" data-bs-parent="#v2FiltersAccordion">
+            <div class="accordion-body v2-accordion-body">
+              <%= search_form_for [@organization, @search], html: { class: 'v2-filters-form' } do |f| %>
+                <div class="v2-filter-group">
+                  <%= f.label :name_cont, 'Nome' %>
+                  <%= f.text_field :name_cont, placeholder: 'Cerca per nome...', class: 'v2-input' %>
+                </div>
+                <div class="v2-filter-group">
+                  <%= f.label :count_type_eq, 'Tipo di conto' %>
+                  <%= f.select :count_type_eq,
+                               options_for_select(count_types_for_select, @search.count_type_eq),
+                               { include_blank: "Tutti i tipi" },
+                               class: 'v2-select'
+                  %>
+                </div>
+                <div class="v2-filter-actions">
+                  <button type="submit" class="v2-btn-search">
+                    <svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+                    Cerca
+                  </button>
+                  <%= link_to organization_counts_path(@organization), class: "v2-btn-reset", data: { turbo: false } do %>
+                    <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                    Reset
+                  <% end %>
+                </div>
               <% end %>
             </div>
           </div>
         </div>
-      <% end %>
+      </div>
+    </section>
 
-      <div class="action-buttons d-flex justify-content-center gap-2 mt-2">
-        <% if @organization.movements.present? %>
-          <%= link_to stats_organization_path(id: @organization.id), class: "btn btn-gradient-info" do %>
-            <i class="fas fa-chart-line me-1"></i> Visualizza Grafici
-          <% end %>
+    <%# Grid %>
+    <% if @counts.any? %>
+      <div class="v2-section-head">
+        <h2 class="v2-section-title">Panoramica conti</h2>
+        <span class="v2-section-badge"><%= @counts_count %> cont<%= @counts_count == 1 ? 'o' : 'i' %></span>
+      </div>
+
+      <div id="counts" class="v2-grid">
+        <% @counts.each do |count| %>
+          <%= render count %>
         <% end %>
-
-        <button type="button" class="btn btn-gradient-success" data-bs-toggle="modal" data-bs-target="#countCreationModal">
-          <i class="fas fa-plus-circle me-1"></i> Nuovo Conto
+      </div>
+    <% else %>
+      <div class="v2-empty">
+        <div class="v2-empty-icon">
+          <svg class="ico ico-lg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><path d="M12 8v8M8 12h8"/></svg>
+        </div>
+        <h3>Nessun conto trovato</h3>
+        <p>Modifica i filtri di ricerca oppure aggiungi il tuo primo conto per iniziare.</p>
+        <button type="button" class="v2-btn-ghost" data-bs-toggle="modal" data-bs-target="#countCreationModal">
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Aggiungi conto
         </button>
       </div>
-        </div>
-      </div>
-    </div>
-  </div>
+    <% end %>
+  </main>
 </div>
 
-<div class="px-3 px-xl-4 py-2">
-  <div class="row justify-content-center mb-3">
-    <div class="col-12">
-      <div id="counts" class="row d-flex justify-content-center g-3">
-        <% @counts.each do | count | %>
-          <div class="col-12 col-md-6 col-lg-4">
-            <%= render count %>
+<%# Modals (fuori da .v2 per evitare problemi di stacking context) %>
+<div class="v2">
+  <%= render "modal",
+             modal_id: "countCreationModal",
+             title: "Aggiungi un nuovo conto",
+             count: Count.new
+  %>
+
+  <% @counts.each do |count| %>
+    <%= render "modal",
+               modal_id: "countEditingModal_#{count.id}",
+               title: "Modifica conto",
+               count: count
+    %>
+
+    <% if count.movements.blank? %>
+      <div class="modal fade" id="countDeleteModal_<%= count.id %>" tabindex="-1" aria-labelledby="countDeleteModal_<%= count.id %>Label" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title fs-5" id="countDeleteModal_<%= count.id %>Label">Conferma cancellazione</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p style="color: var(--txt2); font-size: 0.88rem; margin: 0.5rem 0;">
+                Sei sicuro di voler eliminare il conto <strong style="color: var(--txt);"><%= count.name %></strong>?
+              </p>
+              <p style="color: var(--txt3); font-size: 0.78rem; margin: 0 0 1.5rem;">
+                Questa azione non può essere annullata.
+              </p>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <%= button_to organization_count_path(@organization, count),
+                              method: :delete,
+                              class: "btn btn-success",
+                              style: "background: #dc2626; border-color: #dc2626;" do %>
+                  Conferma
+                <% end %>
+              </div>
+            </div>
           </div>
-        <% end %>
-      </div>
-      
-      <% if @counts.empty? %>
-        <div class="text-center py-4">
-          <i class="fas fa-piggy-bank fa-3x text-muted mb-2"></i>
-          <h5 class="text-muted mb-1">Nessun conto trovato</h5>
-          <p class="text-muted small mb-0">Inizia creando il tuo primo conto corrente</p>
         </div>
-      <% end %>
-    </div>
-  </div>
+      </div>
+    <% end %>
+  <% end %>
 </div>
 
-
-<!-- Modale per la creazione di un nuovo movimento di cassa -->
-<%= render "modal",
-           modal_id: "countCreationModal",
-           title: "Aggiungi un nuovo conto",
-           count: Count.new
-%>
+<%= render 'layouts/auto_close_modals' %>

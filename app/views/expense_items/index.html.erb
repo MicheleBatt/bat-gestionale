@@ -1,98 +1,132 @@
-<%= render 'layouts/navbar' %>
+<div class="v2">
+  <%= render 'layouts/aurora_background' %>
 
-<div class="counts-header">
-  <div class="container-xl">
-    <h1 class="text-center mb-2">Voci di Spesa</h1>
-    <div class="row justify-content-center">
-      <div class="col-md-6 col-lg-4">
-        <div class="counts-stats text-muted">
-          <div class="d-flex justify-content-center align-items-center">
-            <div class="text-center">
-              <small>Voc<%= @expense_items_count == 1 ? 'e' : 'i' %> di Spesa Total<%= @expense_items_count == 1 ? 'e' : 'i' %></small>
-              <h5 class="mb-0 balance-positive"><%= @expense_items_count %></h5>
-            </div>
-          </div>
-        </div>
+  <%# Navbar %>
+  <%= render 'layouts/navbar_v2' %>
+
+  <%# Main content %>
+  <main class="v2-main">
+    <%# Hero %>
+    <header class="v2-hero">
+      <div>
+        <h1 class="v2-hero-title">Voci di spesa</h1>
+        <span class="v2-hero-sub"><%= @organization.name %></span>
       </div>
-    </div>
-  </div>
-</div>
-
-<div class="container-xl py-2">
-  <div class="accordion filters-card mb-2" id="filtersAccordion">
-    <div class="accordion-item border-0">
-      <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          <h6 class="mb-0">Filtri di Ricerca</h6>
+      <% if can? :create, ExpenseItem %>
+        <button type="button" class="v2-btn-primary" data-bs-toggle="modal" data-bs-target="#expense_itemCreationModal">
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Nuova voce di spesa
         </button>
-      </h2>
-      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#filtersAccordion">
-        <div class="accordion-body">
-          <%= search_form_for [@organization, @search] do |f| %>
-            <div class="row align-items-end">
-              <div class="col-md-8 mb-2">
-                <%= f.label :description_cont, 'Descrizione', class: 'form-label' %>
-                <%= f.text_field :description_cont, placeholder: 'Cerca per descrizione...', class: 'form-control' %>
-              </div>
+      <% end %>
+    </header>
 
-              <div class="col-md-4 mb-2">
-                <div class="d-flex gap-2">
-                  <button type="submit" class="btn btn-gradient-primary flex-fill">
-                    <i class="fas fa-search me-1"></i> Cerca
+    <%# Filters (accordion) %>
+    <section class="v2-filters">
+      <div class="accordion" id="v2FiltersAccordion">
+        <div class="accordion-item v2-accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button v2-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#v2FiltersBody" aria-expanded="true" aria-controls="v2FiltersBody">
+              <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+              Filtri
+            </button>
+          </h2>
+          <div id="v2FiltersBody" class="accordion-collapse collapse show" data-bs-parent="#v2FiltersAccordion">
+            <div class="accordion-body v2-accordion-body">
+              <%= search_form_for [@organization, @search], html: { class: 'v2-filters-form' } do |f| %>
+                <div class="v2-filter-group">
+                  <%= f.label :description_cont, 'Descrizione' %>
+                  <%= f.text_field :description_cont, placeholder: 'Cerca per descrizione...', class: 'v2-input' %>
+                </div>
+                <div class="v2-filter-actions">
+                  <button type="submit" class="v2-btn-search">
+                    <svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+                    Cerca
                   </button>
-
-                  <%= link_to organization_expense_items_path(@organization), class: "btn btn-outline-secondary" do %>
-                    <i class="fas fa-undo"></i> Reset
+                  <%= link_to organization_expense_items_path(@organization), class: "v2-btn-reset", data: { turbo: false } do %>
+                    <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                    Reset
                   <% end %>
                 </div>
-              </div>
+              <% end %>
             </div>
-          <% end %>
-
-          <div class="action-buttons d-flex justify-content-center gap-2 mt-2">
-            <button type="button" class="btn btn-gradient-success" data-bs-toggle="modal" data-bs-target="#expense_itemCreationModal">
-              <i class="fas fa-plus-circle me-1"></i> Nuova Voce di Spesa
-            </button>
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
 
+    <%# List %>
+    <% if @expense_items.any? %>
+      <div class="v2-section-head">
+        <h2 class="v2-section-title">Elenco voci</h2>
+        <span class="v2-section-badge"><%= @expense_items_count %> voc<%= @expense_items_count == 1 ? 'e' : 'i' %></span>
+      </div>
 
-</div>
-
-<div class="px-3 px-xl-4 py-2">
-  <div class="row justify-content-center mb-3">
-    <div class="col-12">
-      <div id="expense_items" class="row d-flex justify-content-center g-3">
+      <div id="expense_items" class="v2-ei-list">
         <% @expense_items.each do |expense_item| %>
-          <div class="col-12 col-md-6 col-xl-4">
-            <%= render expense_item %>
-          </div>
+          <%= render expense_item %>
         <% end %>
       </div>
-
-      <% if @expense_items.empty? %>
-        <div class="text-center py-4">
-          <i class="fas fa-tags fa-3x text-muted mb-2"></i>
-          <h5 class="text-muted mb-1">Nessuna voce di spesa trovata</h5>
-          <p class="text-muted small mb-0">Inizia creando la tua prima voce di spesa</p>
+    <% else %>
+      <div class="v2-empty">
+        <div class="v2-empty-icon">
+          <svg class="ico ico-lg" viewBox="0 0 24 24"><path d="M4 4h7l9 9-7 7-9-9V4z"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/></svg>
         </div>
-      <% end %>
-
-      <div class="d-flex justify-content-center mt-3">
-        <%= paginate @expense_items %>
+        <h3>Nessuna voce di spesa trovata</h3>
+        <p>Modifica i filtri di ricerca oppure aggiungi la tua prima voce di spesa.</p>
+        <button type="button" class="v2-btn-ghost" data-bs-toggle="modal" data-bs-target="#expense_itemCreationModal">
+          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Aggiungi voce di spesa
+        </button>
       </div>
-    </div>
-  </div>
+    <% end %>
+  </main>
 </div>
 
+<%# Modals (fuori da .v2 per evitare problemi di stacking context) %>
+<div class="v2">
+  <%= render "modal",
+             modal_id: "expense_itemCreationModal",
+             title: "Aggiungi una voce di spesa",
+             expense_item: ExpenseItem.new
+  %>
 
+  <% @expense_items.each do |expense_item| %>
+    <%= render "modal",
+               modal_id: "expense_itemEditingModal_#{expense_item.id}",
+               title: "Modifica voce di spesa",
+               expense_item: expense_item
+    %>
 
-<!-- Modale per la creazione di un nuovo movimento di cassa -->
-<%= render "modal",
-           modal_id: "expense_itemCreationModal",
-           title: "Aggiungi una voce di spesa",
-           expense_item: ExpenseItem.new
-%>
+    <% if expense_item.movements.blank? %>
+      <div class="modal fade" id="expense_itemDeleteModal_<%= expense_item.id %>" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title fs-5">Conferma cancellazione</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p style="color: var(--txt2); font-size: 0.88rem; margin: 0.5rem 0;">
+                Sei sicuro di voler eliminare la voce di spesa <strong style="color: var(--txt);"><%= expense_item.description %></strong>?
+              </p>
+              <p style="color: var(--txt3); font-size: 0.78rem; margin: 0 0 1.5rem;">
+                Questa azione non può essere annullata.
+              </p>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <%= button_to organization_expense_item_path(@organization, expense_item),
+                              method: :delete,
+                              class: "btn btn-success",
+                              style: "background: #dc2626; border-color: #dc2626;" do %>
+                  Conferma
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<%= render 'layouts/auto_close_modals' %>

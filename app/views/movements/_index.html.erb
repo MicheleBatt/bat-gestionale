@@ -1,10 +1,10 @@
 <% movements.each do |movement| %>
-  <div class="row w-100 m-auto">
+  <div class="v2-mov-row">
     <% if movement.movement_type == 'out' %>
       <%= render movement, expense_items: expense_items, movement_types: movement_types %>
-      <div class="col-6 d-none d-lg-flex"></div>
+      <div class="v2-mov-empty"></div>
     <% else %>
-      <div class="col-6 d-none d-lg-flex"></div>
+      <div class="v2-mov-empty"></div>
       <%= render movement, expense_items: expense_items, movement_types: movement_types %>
     <% end %>
   </div>
@@ -12,13 +12,12 @@
 
 <% if movements.count >= per_page %>
   <div id="movements-container-<%= page.to_i %>">
-    <div class="d-flex justify-content-center my-4">
-      <%= link_to organization_count_movements_path(organization_id: organization, count_id: count.id, q: { **params[:q]&.to_unsafe_h }, page: page.to_i),
-                  class: "btn btn-outline-secondary",
+    <div class="v2-mov-load-more">
+      <%= link_to 'Carica altri',
+                  organization_count_movements_path(organization_id: organization, count_id: count.id, q: { **params[:q]&.to_unsafe_h }, page: page.to_i),
                   data: { turbo_stream: true },
-                  method: :get do %>
-        <i class="fas fa-chevron-down me-1"></i> Carica Altri Movimenti
-      <% end %>
+                  method: :get
+      %>
     </div>
   </div>
 <% end %>
