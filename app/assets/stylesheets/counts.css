@@ -982,32 +982,34 @@ a.v2-btn-icon,
 
 .v2 .modal-content {
   background: #ffffff;
-  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(109,40,217,0.2);
   color: var(--txt);
-  border-radius: var(--radius);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  border-radius: 1rem;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(109,40,217,0.05);
+  overflow: hidden;
 }
 
 .v2 .modal-header {
-  border-bottom: 1px solid var(--glass-border);
-  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid rgba(109,40,217,0.1);
+  padding: 0.8rem 1.25rem;
+  background: #faf8ff;
 }
 
 .v2 .modal-header .modal-title {
   font-family: var(--font);
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 600;
+  font-size: 0.92rem !important;
   color: var(--txt);
 }
 
 .v2 .modal-header .btn-close {
   filter: none;
-  opacity: 0.6;
+  opacity: 0.4;
   transition: opacity 0.2s;
 }
 
 .v2 .modal-header .btn-close:hover {
-  opacity: 1;
+  opacity: 0.8;
 }
 
 .v2 .alert-dismissible .btn-close {
@@ -1029,18 +1031,26 @@ a.v2-btn-icon,
 }
 
 .v2 .modal-body {
-  padding: 1rem 1.25rem;
+  padding: 0.3rem 1.25rem 1rem;
+}
+
+/* Form field spacing inside modals */
+.v2 .modal-body .m-4,
+.v2 .modal-body .my-4,
+.v2 .modal-body .mx-2 {
+  margin: 0.6rem 0 !important;
 }
 
 .v2 .modal-body .form-control,
 .v2 .modal-body .form-select,
 .v2 .modal-body textarea.form-control {
   font-family: var(--font);
-  background: #f3f4f6;
-  border: 1.5px solid var(--glass-border);
+  font-size: 0.85rem;
+  background: #f8f9fb;
+  border: 1.5px solid #e2e8f0;
   color: var(--txt);
   border-radius: 0.55rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.55rem 0.85rem;
   transition: all 0.2s;
 }
 
@@ -1053,7 +1063,7 @@ a.v2-btn-icon,
 .v2 .modal-body textarea.form-control:focus {
   background: #ffffff;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(124,92,252,0.15);
+  box-shadow: 0 0 0 3px rgba(109,40,217,0.08);
   color: var(--txt);
   outline: none;
 }
@@ -1061,40 +1071,70 @@ a.v2-btn-icon,
 .v2 .modal-body .form-label {
   font-family: var(--font);
   color: var(--txt2);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  margin-bottom: 0.3rem;
+}
+
+.v2 .modal-body .form-control option,
+.v2 .modal-body .form-select option {
+  background: #ffffff;
+  color: var(--txt);
+}
+
+.v2 .modal-body .form-control option:checked,
+.v2 .modal-body .form-select option:checked {
+  background: #ede9fe;
+  color: var(--txt);
+}
+
+/* Modal buttons */
+/* Remove Bootstrap margins on modal buttons */
+.v2 .modal-body .btn-secondary,
+.v2 .modal-body .btn-success {
+  margin: 0 !important;
 }
 
 .v2 .btn-secondary {
   font-family: var(--font);
-  background: #f1f5f9;
-  border: 1.5px solid var(--glass-border);
+  font-size: 0.82rem;
+  background: #f8f9fb;
+  border: 1.5px solid #e2e8f0;
   color: var(--txt2);
   border-radius: 0.55rem;
   font-weight: 600;
+  padding: 0.5rem 1.25rem;
   transition: all 0.2s;
 }
 
 .v2 .btn-secondary:hover {
-  background: #e5e7eb;
-  border-color: var(--glass-hover);
+  background: #f1f5f9;
+  border-color: #cbd5e1;
   color: var(--txt);
 }
 
 .v2 .btn-success {
   font-family: var(--font);
+  font-size: 0.82rem;
   background: linear-gradient(135deg, var(--accent), var(--accent-l));
   border: none;
   border-radius: 0.55rem;
   font-weight: 600;
-  box-shadow: 0 4px 14px rgba(124,92,252,0.3);
+  padding: 0.5rem 1.25rem;
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(109,40,217,0.25);
   transition: all 0.2s;
 }
 
 .v2 .btn-success:hover {
-  box-shadow: 0 6px 20px rgba(124,92,252,0.45);
+  box-shadow: 0 5px 16px rgba(109,40,217,0.35);
+  transform: translateY(-1px);
+}
+
+.v2 .btn-success:active {
+  transform: translateY(0);
 }
 
 .v2 .btn-success {
