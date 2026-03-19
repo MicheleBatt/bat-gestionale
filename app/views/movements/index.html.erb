@@ -150,13 +150,13 @@
       <% movements_list_links = @count.fast_movements_list_links(@year, @month) if @time_range_report %>
       <div class="v2-mov-title-bar">
         <% if movements_list_links.present? %>
-          <%= link_to movements_list_links[0], class: "v2-mov-nav-arrow" do %>
+          <%= link_to movements_list_links[0], class: "v2-mov-nav-arrow", data: { turbo: false } do %>
             <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
           <% end %>
         <% end %>
         <h3 class="v2-mov-title"><%= @table_titles[:main_title] %></h3>
         <% if movements_list_links.present? %>
-          <%= link_to movements_list_links[1], class: "v2-mov-nav-arrow" do %>
+          <%= link_to movements_list_links[1], class: "v2-mov-nav-arrow", data: { turbo: false } do %>
             <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
           <% end %>
         <% end %>
