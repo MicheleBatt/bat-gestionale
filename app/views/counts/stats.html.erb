@@ -9,7 +9,7 @@
         <h1 class="v2-hero-title">Statistiche</h1>
         <span class="v2-hero-sub"><%= @count.name %></span>
       </div>
-      <%= link_to @count.movements_default_path, class: "v2-btn-export" do %>
+      <%= link_to @count.movements_default_path, class: "v2-btn-export", data: { turbo: false } do %>
         <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         Torna ai movimenti
       <% end %>

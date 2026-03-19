@@ -801,7 +801,7 @@
   align-items: center;
   gap: 0.4rem;
   font-size: 0.65rem;
-  color: var(--txt2);
+  color: #d63384;
   font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
   letter-spacing: 0.04em;
   padding: 0.25rem 0.5rem;
