@@ -149,7 +149,7 @@ class MovementsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def movement_params
-      params.require(:movement).permit(:count_id, :expense_item_id, :amount, :causal, :movement_type, :emitted_at, :year, :month)
+      params.require(:movement).permit(:count_id, :expense_item_id, :amount, :causal, :movement_type, :emitted_at, :year, :month, :karat, :price_at_transaction)
     end
 
     def set_timerange

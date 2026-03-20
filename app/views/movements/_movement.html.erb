@@ -7,19 +7,27 @@
          data-bs-toggle="modal"
          data-bs-target="#movementEditingModal_<%= movement.id %>">
       <%= movement.causal %>
+      <% if @count.metal_account? && movement.karat.present? %>
+        <span style="color: var(--txt3); font-size: 0.65rem; margin-left: 0.3rem;"><%= movement.karat.to_i %>k</span>
+      <% end %>
     </div>
   <% else %>
-    <div class="v2-mov-causal" style="cursor: default;"><%= movement.causal %></div>
+    <div class="v2-mov-causal" style="cursor: default;">
+      <%= movement.causal %>
+      <% if @count.metal_account? && movement.karat.present? %>
+        <span style="color: var(--txt3); font-size: 0.65rem; margin-left: 0.3rem;"><%= movement.karat.to_i %>k</span>
+      <% end %>
+    </div>
   <% end %>
   <div class="v2-mov-amount <%= movement.movement_type %>">
-    <span class="d-inline d-lg-none"><%= movement.movement_type == 'in' ? '+' : '-' %></span><%= to_visible_amount(movement.amount) %>&euro;
+    <span class="d-inline d-lg-none"><%= movement.movement_type == 'in' ? '+' : '-' %></span><%= to_visible_amount(movement.amount) %><%= @count.metal_account? ? 'g' : '€' %>
   </div>
 </div>
 
 <% if can? :update, Movement %>
   <%= render "modal",
              modal_id: "movementEditingModal_#{movement.id}",
-             title: movement.movement_type == 'out' ? "Modifica Uscita" : "Modifica Entrata",
+             title: @count.metal_account? ? (movement.movement_type == 'out' ? "Modifica Vendita" : "Modifica Acquisto") : (movement.movement_type == 'out' ? "Modifica Uscita" : "Modifica Entrata"),
              movement: movement,
              expense_items: expense_items,
              movement_types: movement_types,

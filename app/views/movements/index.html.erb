@@ -37,45 +37,91 @@
         </div>
       </div>
 
-      <div class="v2-metric">
-        <div class="v2-metric-icon green">
-          <svg class="ico" viewBox="0 0 640 640" style="fill: currentColor !important; stroke: none !important;"><path d="M320 32C373 32 416 75 416 128C416 181 373 224 320 224C267 224 224 181 224 128C224 75 267 32 320 32zM80 368C80 297.9 127 236.6 197.1 203.1C222.4 244.4 268 272 320 272C375.7 272 424.1 240.3 448 194C463.8 182.7 483.1 176 504 176L523.5 176C533.9 176 541.5 185.8 539 195.9L521.9 264.2C531.8 276.6 540.1 289.9 546.3 304L568 304C581.3 304 592 314.7 592 328L592 440C592 453.3 581.3 464 568 464L528 464C511.5 486 489.5 503.6 464 514.7L464 544C464 561.7 449.7 576 432 576L399 576C384.7 576 372.2 566.5 368.2 552.8L361.1 528L278.8 528L271.7 552.8C267.8 566.5 255.3 576 241 576L208 576C190.3 576 176 561.7 176 544L176 514.7C119.5 490 80 433.6 80 368zM456 384C469.3 384 480 373.3 480 360C480 346.7 469.3 336 456 336C442.7 336 432 346.7 432 360C432 373.3 442.7 384 456 384z"/></svg>
-        </div>
-        <div>
-          <div class="v2-metric-label">Giacenza attuale</div>
-          <div class="v2-metric-value" style="color: <%= @count.current_amount < 0 ? '#dc2626' : 'var(--txt)' %>;"><%= to_visible_amount(@count.current_amount, false) %><span class="v2-metric-currency">&euro;</span></div>
-        </div>
-      </div>
+      <% unit = @count.metal_account? ? 'g' : '€' %>
 
-      <div class="v2-metric">
-        <div class="v2-metric-icon" style="background: rgba(220,38,38,0.1); color: #dc2626;">
-          <svg class="ico" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      <% if @count.metal_account? %>
+        <%# Metrics per conti metallo %>
+        <div class="v2-metric">
+          <div class="v2-metric-icon" style="background: rgba(217,119,6,0.1); color: #d97706;">
+            <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div>
+            <div class="v2-metric-label">Giacenza totale</div>
+            <div class="v2-metric-value"><%= to_visible_amount(@count.current_amount, false) %>g</div>
+          </div>
         </div>
-        <div>
-          <div class="v2-metric-label">Totale uscite</div>
-          <div class="v2-metric-value" style="color: #dc2626;"><%= to_visible_amount(@total_out_movements_amount) %>&euro;</div>
-        </div>
-      </div>
 
-      <div class="v2-metric">
-        <div class="v2-metric-icon" style="background: rgba(5,150,105,0.1); color: #059669;">
-          <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        <div class="v2-metric">
+          <div class="v2-metric-icon green">
+            <svg class="ico" viewBox="0 0 640 640" style="fill: currentColor !important; stroke: none !important;"><path d="M320 32C373 32 416 75 416 128C416 181 373 224 320 224C267 224 224 181 224 128C224 75 267 32 320 32zM80 368C80 297.9 127 236.6 197.1 203.1C222.4 244.4 268 272 320 272C375.7 272 424.1 240.3 448 194C463.8 182.7 483.1 176 504 176L523.5 176C533.9 176 541.5 185.8 539 195.9L521.9 264.2C531.8 276.6 540.1 289.9 546.3 304L568 304C581.3 304 592 314.7 592 328L592 440C592 453.3 581.3 464 568 464L528 464C511.5 486 489.5 503.6 464 514.7L464 544C464 561.7 449.7 576 432 576L399 576C384.7 576 372.2 566.5 368.2 552.8L361.1 528L278.8 528L271.7 552.8C267.8 566.5 255.3 576 241 576L208 576C190.3 576 176 561.7 176 544L176 514.7C119.5 490 80 433.6 80 368zM456 384C469.3 384 480 373.3 480 360C480 346.7 469.3 336 456 336C442.7 336 432 346.7 432 360C432 373.3 442.7 384 456 384z"/></svg>
+          </div>
+          <div>
+            <div class="v2-metric-label">Valore stimato</div>
+            <div class="v2-metric-value"><%= to_visible_amount(@count.current_economic_value || 0, false) %><span class="v2-metric-currency">&euro;</span></div>
+          </div>
         </div>
-        <div>
-          <div class="v2-metric-label">Totale entrate</div>
-          <div class="v2-metric-value" style="color: #059669;"><%= to_visible_amount(@total_in_movements_amount) %>&euro;</div>
-        </div>
-      </div>
 
-      <div class="v2-metric">
-        <div class="v2-metric-icon" style="background: rgba(109,40,217,0.1); color: var(--accent);">
-          <svg class="ico" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 9l-5 5-2-2-4 4"/></svg>
+        <div class="v2-metric">
+          <div class="v2-metric-icon" style="background: rgba(5,150,105,0.1); color: #059669;">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          </div>
+          <div>
+            <div class="v2-metric-label">Acquisti</div>
+            <div class="v2-metric-value" style="color: #059669;"><%= to_visible_amount(@total_in_movements_amount) %>g</div>
+          </div>
         </div>
-        <div>
-          <div class="v2-metric-label">Saldo</div>
-          <div class="v2-metric-value" style="color: <%= @total_movements_amount <= 0 ? '#dc2626' : '#059669' %>;"><%= @total_movements_amount > 0 ? '+' : '' %><%= to_visible_amount(@total_movements_amount, false) %>&euro;</div>
+
+        <div class="v2-metric">
+          <div class="v2-metric-icon" style="background: rgba(220,38,38,0.1); color: #dc2626;">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          </div>
+          <div>
+            <div class="v2-metric-label">Vendite</div>
+            <div class="v2-metric-value" style="color: #dc2626;"><%= to_visible_amount(@total_out_movements_amount) %>g</div>
+          </div>
         </div>
-      </div>
+      <% else %>
+        <%# Metrics per conti normali %>
+        <div class="v2-metric">
+          <div class="v2-metric-icon green">
+            <svg class="ico" viewBox="0 0 640 640" style="fill: currentColor !important; stroke: none !important;"><path d="M320 32C373 32 416 75 416 128C416 181 373 224 320 224C267 224 224 181 224 128C224 75 267 32 320 32zM80 368C80 297.9 127 236.6 197.1 203.1C222.4 244.4 268 272 320 272C375.7 272 424.1 240.3 448 194C463.8 182.7 483.1 176 504 176L523.5 176C533.9 176 541.5 185.8 539 195.9L521.9 264.2C531.8 276.6 540.1 289.9 546.3 304L568 304C581.3 304 592 314.7 592 328L592 440C592 453.3 581.3 464 568 464L528 464C511.5 486 489.5 503.6 464 514.7L464 544C464 561.7 449.7 576 432 576L399 576C384.7 576 372.2 566.5 368.2 552.8L361.1 528L278.8 528L271.7 552.8C267.8 566.5 255.3 576 241 576L208 576C190.3 576 176 561.7 176 544L176 514.7C119.5 490 80 433.6 80 368zM456 384C469.3 384 480 373.3 480 360C480 346.7 469.3 336 456 336C442.7 336 432 346.7 432 360C432 373.3 442.7 384 456 384z"/></svg>
+          </div>
+          <div>
+            <div class="v2-metric-label">Giacenza attuale</div>
+            <div class="v2-metric-value" style="color: <%= @count.current_amount < 0 ? '#dc2626' : 'var(--txt)' %>;"><%= to_visible_amount(@count.current_amount, false) %><span class="v2-metric-currency">&euro;</span></div>
+          </div>
+        </div>
+
+        <div class="v2-metric">
+          <div class="v2-metric-icon" style="background: rgba(220,38,38,0.1); color: #dc2626;">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          </div>
+          <div>
+            <div class="v2-metric-label">Totale uscite</div>
+            <div class="v2-metric-value" style="color: #dc2626;"><%= to_visible_amount(@total_out_movements_amount) %>&euro;</div>
+          </div>
+        </div>
+
+        <div class="v2-metric">
+          <div class="v2-metric-icon" style="background: rgba(5,150,105,0.1); color: #059669;">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          </div>
+          <div>
+            <div class="v2-metric-label">Totale entrate</div>
+            <div class="v2-metric-value" style="color: #059669;"><%= to_visible_amount(@total_in_movements_amount) %>&euro;</div>
+          </div>
+        </div>
+
+        <div class="v2-metric">
+          <div class="v2-metric-icon" style="background: rgba(109,40,217,0.1); color: var(--accent);">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 9l-5 5-2-2-4 4"/></svg>
+          </div>
+          <div>
+            <div class="v2-metric-label">Saldo</div>
+            <div class="v2-metric-value" style="color: <%= @total_movements_amount <= 0 ? '#dc2626' : '#059669' %>;"><%= @total_movements_amount > 0 ? '+' : '' %><%= to_visible_amount(@total_movements_amount, false) %>&euro;</div>
+          </div>
+        </div>
+      <% end %>
       <% if @all_movements.present? %>
         <div class="v2-metric">
           <%= link_to @count.stats_default_path, class: "v2-metric-link" do %>
@@ -169,11 +215,11 @@
           <div class="v2-mov-btns">
             <button type="button" class="v2-btn-out" data-bs-toggle="modal" data-bs-target="#outMovementCreationModal">
               <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-              Uscita
+              <%= @count.metal_account? ? 'Vendita' : 'Uscita' %>
             </button>
             <button type="button" class="v2-btn-in" data-bs-toggle="modal" data-bs-target="#inMovementCreationModal">
               <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-              Entrata
+              <%= @count.metal_account? ? 'Acquisto' : 'Entrata' %>
             </button>
           </div>
         <% end %>
@@ -182,16 +228,16 @@
       <%# Table header (desktop only) %>
       <div class="v2-mov-table-head">
         <div class="v2-mov-table-head-section out-head">
-          <div class="v2-mov-table-head-label" style="grid-column: 1 / -1;">Uscite</div>
+          <div class="v2-mov-table-head-label" style="grid-column: 1 / -1;"><%= @count.metal_account? ? 'Vendite' : 'Uscite' %></div>
           <div class="v2-mov-col-label" style="text-align: left;">Data</div>
           <div class="v2-mov-col-label">Causale</div>
-          <div class="v2-mov-col-label" style="text-align: right;">Importo</div>
+          <div class="v2-mov-col-label" style="text-align: right;"><%= @count.metal_account? ? 'Grammi' : 'Importo' %></div>
         </div>
         <div class="v2-mov-table-head-section">
-          <div class="v2-mov-table-head-label" style="grid-column: 1 / -1;">Entrate</div>
+          <div class="v2-mov-table-head-label" style="grid-column: 1 / -1;"><%= @count.metal_account? ? 'Acquisti' : 'Entrate' %></div>
           <div class="v2-mov-col-label" style="text-align: left;">Data</div>
           <div class="v2-mov-col-label">Causale</div>
-          <div class="v2-mov-col-label" style="text-align: right;">Importo</div>
+          <div class="v2-mov-col-label" style="text-align: right;"><%= @count.metal_account? ? 'Grammi' : 'Importo' %></div>
         </div>
       </div>
 
@@ -201,24 +247,24 @@
       <%# Totals (desktop dual column) %>
       <div class="v2-mov-totals-dual">
         <div class="v2-mov-total-col">
-          <span class="v2-mov-total-label">Totale uscite</span>
-          <span class="v2-mov-total-value out"><%= to_visible_amount(@total_out_movements_amount) %>&euro;</span>
+          <span class="v2-mov-total-label"><%= @count.metal_account? ? 'Totale vendite' : 'Totale uscite' %></span>
+          <span class="v2-mov-total-value out"><%= to_visible_amount(@total_out_movements_amount) %><%= unit %></span>
         </div>
         <div class="v2-mov-total-col">
-          <span class="v2-mov-total-label">Totale entrate</span>
-          <span class="v2-mov-total-value in"><%= to_visible_amount(@total_in_movements_amount) %>&euro;</span>
+          <span class="v2-mov-total-label"><%= @count.metal_account? ? 'Totale acquisti' : 'Totale entrate' %></span>
+          <span class="v2-mov-total-value in"><%= to_visible_amount(@total_in_movements_amount) %><%= unit %></span>
         </div>
       </div>
 
       <%# Totals (mobile single column) %>
       <div class="v2-mov-totals v2-mov-totals-single">
         <div class="v2-mov-total-row">
-          <span class="v2-mov-total-label">Totale uscite</span>
-          <span class="v2-mov-total-value out"><%= to_visible_amount(@total_out_movements_amount) %>&euro;</span>
+          <span class="v2-mov-total-label"><%= @count.metal_account? ? 'Totale vendite' : 'Totale uscite' %></span>
+          <span class="v2-mov-total-value out"><%= to_visible_amount(@total_out_movements_amount) %><%= unit %></span>
         </div>
         <div class="v2-mov-total-row">
-          <span class="v2-mov-total-label">Totale entrate</span>
-          <span class="v2-mov-total-value in"><%= to_visible_amount(@total_in_movements_amount) %>&euro;</span>
+          <span class="v2-mov-total-label"><%= @count.metal_account? ? 'Totale acquisti' : 'Totale entrate' %></span>
+          <span class="v2-mov-total-value in"><%= to_visible_amount(@total_in_movements_amount) %><%= unit %></span>
         </div>
       </div>
 
@@ -227,20 +273,39 @@
         <% if @time_range_report.present? %>
           <div class="v2-mov-total-row">
             <span class="v2-mov-total-label"><%= @table_titles[:start_amount_title] %></span>
-            <span class="v2-mov-total-value"><%= to_visible_amount(@start_amount, false) %>&euro;</span>
+            <span class="v2-mov-total-value"><%= to_visible_amount(@start_amount, false) %><%= unit %></span>
           </div>
         <% end %>
         <div class="v2-mov-total-row">
           <span class="v2-mov-total-label"><%= @table_titles[:total_amount_title] %></span>
-          <span class="v2-mov-total-value <%= @total_movements_amount <= 0 ? 'negative' : 'positive' %>"><%= @total_movements_amount > 0 ? '+' : '' %><%= to_visible_amount(@total_movements_amount, false) %>&euro;</span>
+          <span class="v2-mov-total-value <%= @total_movements_amount <= 0 ? 'negative' : 'positive' %>"><%= @total_movements_amount > 0 ? '+' : '' %><%= to_visible_amount(@total_movements_amount, false) %><%= unit %></span>
         </div>
         <% if @time_range_report.present? %>
           <div class="v2-mov-total-row">
             <span class="v2-mov-total-label"><%= @table_titles[:final_amount_title] %></span>
-            <span class="v2-mov-total-value"><%= to_visible_amount(@final_amount, false) %>&euro;</span>
+            <span class="v2-mov-total-value"><%= to_visible_amount(@final_amount, false) %><%= unit %></span>
           </div>
         <% end %>
       </div>
+
+      <%# Metal holdings breakdown %>
+      <% if @count.metal_account? %>
+        <% holdings = @count.metal_holdings %>
+        <% if holdings.present? %>
+          <div class="v2-mov-expense-section">
+            <div class="v2-mov-expense-title">Giacenza per caratura</div>
+            <% holdings.each do |karat, grams| %>
+              <div class="v2-mov-expense-item">
+                <div class="v2-mov-expense-info">
+                  <div class="v2-mov-expense-dot" style="background-color: #d97706"></div>
+                  <span class="v2-mov-expense-name"><%= karat.to_i %>k</span>
+                </div>
+                <span class="v2-mov-expense-amount" style="color: var(--txt);"><%= to_visible_amount(grams, false) %>g</span>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
 
       <%# Expense items breakdown %>
       <% if @movements_amounts_by_expense_items.present? %>
@@ -291,8 +356,8 @@
 
 <%# Modals (fuori da .v2) %>
 <div class="v2">
-  <%= render "modal", modal_id: "outMovementCreationModal", title: "Aggiungi Uscita", movement: @new_out_movement, expense_items: @expense_items, movement_types: @movement_types, deletion_path: nil %>
-  <%= render "modal", modal_id: "inMovementCreationModal", title: "Aggiungi Entrata", movement: @new_in_movement, expense_items: @expense_items, movement_types: @movement_types, deletion_path: nil %>
+  <%= render "modal", modal_id: "outMovementCreationModal", title: @count.metal_account? ? "Aggiungi Vendita" : "Aggiungi Uscita", movement: @new_out_movement, expense_items: @expense_items, movement_types: @movement_types, deletion_path: nil %>
+  <%= render "modal", modal_id: "inMovementCreationModal", title: @count.metal_account? ? "Aggiungi Acquisto" : "Aggiungi Entrata", movement: @new_in_movement, expense_items: @expense_items, movement_types: @movement_types, deletion_path: nil %>
 
   <%# Modal importazione %>
   <div class="modal fade" id="importMovementsModal" tabindex="-1" aria-hidden="true">

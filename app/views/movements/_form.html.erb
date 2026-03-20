@@ -3,7 +3,7 @@
   <%= form.hidden_field :movement_type, value: movement.movement_type %>
   <%= form.hidden_field :modal_id, value: modal_id %>
 
-  <% if movement.movement_type == 'out' %>
+  <% if !@count.metal_account? && movement.movement_type == 'out' %>
     <div class="my-4 mx-2 mx-sm-4">
       <%= form.label :expense_item_id, 'Voce di spesa', class: "form-label" %>
       <%= form.select :expense_item_id,
@@ -25,9 +25,26 @@
   </div>
 
   <div class="my-4 mx-2 mx-sm-4">
-    <%= form.label :amount, 'Importo', class: "form-label" %>
+    <%= form.label :amount, @count.metal_account? ? 'Grammi' : 'Importo', class: "form-label" %>
     <%= form.number_field :amount, step: :any, class: "form-control" %>
   </div>
+
+  <% if @count.metal_account? %>
+    <div class="my-4 mx-2 mx-sm-4">
+      <%= form.label :karat, 'Caratura', class: "form-label" %>
+      <%= form.select :karat,
+                      options_for_select(@count.available_karats, movement.karat),
+                      { include_blank: 'Seleziona la caratura' },
+                      class: 'form-control'
+      %>
+    </div>
+
+    <div class="my-4 mx-2 mx-sm-4">
+      <%= form.label :price_at_transaction, 'Prezzo al grammo (€)', class: "form-label" %>
+      <%= form.number_field :price_at_transaction, step: :any, class: "form-control",
+                            value: movement.price_at_transaction || MetalValue.find_by(metal: @count.metal_type, karat: movement.karat || 24)&.value %>
+    </div>
+  <% end %>
 
   <div class="mt-4 d-flex flex-wrap justify-content-between">
     <button type="button" class="btn btn-secondary mx-2 mx-sm-4 my-2" data-bs-dismiss="modal">Annulla</button>

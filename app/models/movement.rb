@@ -10,6 +10,7 @@ class Movement < ApplicationRecord
   validates :amount, :causal, :movement_type, :emitted_at, :year, :month, :day, :year_month_day, presence: true
   validate :valid_amount?
   validate :valid_expense_item_reference?
+  validate :valid_metal_fields?
   enum movement_type: MOVEMENT_TYPES.index_by(&:itself), _prefix: :movement_type
 
   # Callbacks
@@ -20,6 +21,8 @@ class Movement < ApplicationRecord
   before_validation { self.year_month_day = date_to_integer(self.emitted_at.year, self.emitted_at.month, self.emitted_at.day) if self.emitted_at }
   before_save { self.causal = self.causal.to_s.strip if self.causal }
   before_save { self.amount = self.amount.to_f.round(2) if self.amount }
+  before_save { self.karat = self.karat.to_f.round(2) if self.karat }
+  before_save { self.price_at_transaction = self.price_at_transaction.to_f.round(2) if self.price_at_transaction }
 
   after_save { self.count.set_current_amount }
   after_update { self.count.set_current_amount }
@@ -49,6 +52,8 @@ class Movement < ApplicationRecord
   end
 
   def valid_expense_item_reference?
+    return if metal_account?
+
     if self.movement_type == 'out' && self.expense_item_id.blank?
       errors.add(:expense_item_id, "Specifica una voce di spesa!")
     end
@@ -56,5 +61,22 @@ class Movement < ApplicationRecord
     if self.movement_type == 'in' && self.expense_item_id.present?
       errors.add(:expense_item_id, "La voce di spesa può essere selezionata solo per movimenti di cassa in uscita!")
     end
+  end
+
+  def valid_metal_fields?
+    if metal_account?
+      errors.add(:karat, "Specifica la caratura!") if self.karat.blank?
+      errors.add(:price_at_transaction, "Specifica il prezzo al grammo!") if self.price_at_transaction.blank?
+    end
+  end
+
+  def metal_account?
+    self.count&.currency == 'grams'
+  end
+
+  # Valore economico del movimento (grammi × prezzo/grammo)
+  def economic_value
+    return nil unless metal_account? && price_at_transaction.present?
+    (amount.to_f.abs * price_at_transaction.to_f).round(2)
   end
 end

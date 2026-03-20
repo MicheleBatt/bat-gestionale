@@ -182,6 +182,67 @@ class Count < ApplicationRecord
     self.currency = 'grams' if metal_investment_accounts.include?(self.count_type)
   end
 
+  def metal_account?
+    self.currency == 'grams'
+  end
+
+  # Tipo di metallo del conto (es. 'XAU', 'XAG')
+  def metal_type
+    return nil unless metal_account?
+    ALL_METALS.keys.find { |key| self.count_type.start_with?(key.to_s.downcase) }&.to_s
+  end
+
+  # Giacenza multi-caratura: { karat => grammi }
+  def metal_holdings(movements = self.movements)
+    return {} unless metal_account?
+    movements.where.not(karat: nil).group(:karat).sum(:amount).transform_values { |v| v.to_f.round(2) }
+  end
+
+  # Grammi totali nel piano (somma di tutte le carature)
+  def total_grams(movements = self.movements)
+    return 0 unless metal_account?
+    movements.sum(:amount).to_f.round(2)
+  end
+
+  # Valore economico corrente del piano (usa i prezzi correnti da MetalValue)
+  def current_economic_value
+    return nil unless metal_account?
+    metal = metal_type
+    return 0 if metal.blank?
+
+    holdings = metal_holdings
+    total = 0
+    holdings.each do |karat, grams|
+      price = MetalValue.find_by(metal: metal, karat: karat)&.value || 0
+      total += grams.abs * price
+    end
+    total.round(2)
+  end
+
+  # Valore economico alla data specificata (usa i prezzi storici)
+  def economic_value_at_date(date)
+    return nil unless metal_account?
+    metal = metal_type
+    return 0 if metal.blank?
+
+    movements_at_date = self.movements.where('emitted_at <= ?', date)
+    holdings = movements_at_date.where.not(karat: nil).group(:karat).sum(:amount)
+    total = 0
+    holdings.each do |karat, grams|
+      price_record = MetalPriceHistory.price_at_date(metal, karat, date)
+      price = price_record&.price_per_gram || 0
+      total += grams.abs * price
+    end
+    total.round(2)
+  end
+
+  # Carature disponibili per le select nei form
+  def available_karats
+    return [] unless metal_account?
+    metal = metal_type
+    MetalValue.where(metal: metal).order(:karat).pluck(:karat).map { |k| ["#{k.to_i}k", k] }
+  end
+
   def set_current_amount
     self.update_columns(current_amount: self.get_current_amount)
   end

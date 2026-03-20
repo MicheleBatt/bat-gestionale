@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_01_231919) do
+ActiveRecord::Schema[7.1].define(version: 2026_03_20_102623) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -77,6 +77,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_01_231919) do
     t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
+  create_table "metal_price_histories", force: :cascade do |t|
+    t.string "metal", null: false
+    t.float "karat", null: false
+    t.float "price_per_gram", null: false
+    t.date "recorded_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["metal", "karat", "recorded_at"], name: "idx_metal_price_histories_unique", unique: true
+    t.index ["recorded_at"], name: "index_metal_price_histories_on_recorded_at"
+  end
+
   create_table "metal_values", force: :cascade do |t|
     t.string "metal", null: false
     t.float "value", null: false
@@ -102,6 +113,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_01_231919) do
     t.datetime "updated_at", null: false
     t.integer "year_month_day", null: false
     t.integer "day", null: false
+    t.float "karat"
+    t.float "price_at_transaction"
     t.index ["amount"], name: "index_movements_on_amount"
     t.index ["count_id"], name: "index_movements_on_count_id"
     t.index ["day"], name: "index_movements_on_day"

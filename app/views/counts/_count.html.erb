@@ -33,10 +33,21 @@
 
   <div class="v2-card-bottom">
     <div>
-      <div class="v2-balance-label">Giacenza attuale</div>
-      <div class="v2-balance-amount <%= count.current_amount < 0 ? 'neg' : '' %>">
-        <%= to_visible_amount(count.current_amount, false) %><span class="v2-balance-currency">&euro;</span>
-      </div>
+      <% if count.metal_account? %>
+        <div class="v2-balance-label">Giacenza attuale</div>
+        <div class="v2-balance-amount">
+          <%= to_visible_amount(count.current_amount, false) %><span class="v2-balance-currency">g</span>
+        </div>
+        <div class="v2-balance-label" style="margin-top: 0.35rem;">Valore stimato</div>
+        <div class="v2-balance-amount" style="font-size: 0.9rem;">
+          <%= to_visible_amount(count.current_economic_value || 0, false) %><span class="v2-balance-currency">&euro;</span>
+        </div>
+      <% else %>
+        <div class="v2-balance-label">Giacenza attuale</div>
+        <div class="v2-balance-amount <%= count.current_amount < 0 ? 'neg' : '' %>">
+          <%= to_visible_amount(count.current_amount, false) %><span class="v2-balance-currency">&euro;</span>
+        </div>
+      <% end %>
     </div>
 
     <% if can? :update, Count %>
