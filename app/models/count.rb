@@ -229,7 +229,7 @@ class Count < ApplicationRecord
     holdings = movements_at_date.where.not(karat: nil).group(:karat).sum(:amount)
     total = 0
     holdings.each do |karat, grams|
-      price_record = MetalPriceHistory.price_at_date(metal, karat, date)
+      price_record = MetalValue.price_at_date(metal, karat, date)
       price = price_record&.price_per_gram || 0
       total += grams.abs * price
     end
