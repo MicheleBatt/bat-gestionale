@@ -71,7 +71,7 @@ class Movement < ApplicationRecord
   end
 
   def metal_account?
-    self.count&.currency == 'grams'
+    self.count&.metal_account?
   end
 
   # Valore economico del movimento (grammi × prezzo/grammo)
