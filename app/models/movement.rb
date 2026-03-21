@@ -35,7 +35,7 @@ class Movement < ApplicationRecord
   end
 
   def self.ransackable_attributes(auth_object = nil)
-    %w(causal movement_type expense_item_id emitted_at year month count_id)
+    %w(causal movement_type expense_item_id emitted_at year month count_id karat)
   end
 
   def self.ransackable_associations(auth_object = nil)

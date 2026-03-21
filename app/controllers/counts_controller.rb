@@ -3,6 +3,8 @@ class CountsController < ApplicationController
   before_action :set_count, only: %i[ update destroy stats ]
 
   include ApplicationHelper
+  include CountsHelper
+  include MetalValuesHelper
 
   # GET /counts or /counts.json
   def index
@@ -84,14 +86,16 @@ class CountsController < ApplicationController
 
   def stats
     @search = @count.movements.ransack(params[:q])
+    @search.karat_eq = MetalValuesHelper::DEFAULT_KARAT_PARAM if @search.karat_eq.blank?
     movements = @search.result
 
     @years_range,
     @final_amounts_by_date,
+    @metal_values_by_date,
     @movements_global_amount_by_expense_items,
     @year,
     @movements_max_amount,
-    @in_out_global_amounts = stats_for_charts(@count, movements, params)
+    @in_out_global_amounts = stats_for_charts(@count, movements, params, @count.metal_type)
   end
 
   private

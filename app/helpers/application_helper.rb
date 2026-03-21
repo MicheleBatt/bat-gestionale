@@ -1,5 +1,7 @@
 module ApplicationHelper
 
+  include MetalValuesHelper
+
   DEFAULT_PAGE = 1.freeze
   DEFAULT_PER_PAGE_PARAM = 100.freeze
 
@@ -68,11 +70,13 @@ module ApplicationHelper
     "#{year.to_i}#{month.to_i.to_s.rjust(2, '0')}#{day.to_i.to_s.rjust(2, '0')}".to_i
   end
 
-  def stats_for_charts(entity, movements, params = nil)
+  def stats_for_charts(entity, movements, params = nil, metal = nil)
     years_range = entity.years_range
     final_amounts_by_date = {}
+    metal_values_by_date = {}
     movements_global_amount_by_expense_items = {}
     year = params[:q].present? ? params[:q][:year_eq] : nil
+    karat = params[:q].present? ? params[:q][:karat_eq].to_f : MetalValuesHelper::DEFAULT_KARAT_PARAM
     months = (1..12).to_a
 
     entity.expense_items.each_with_object({}) do |expense_item, hash|
@@ -94,6 +98,15 @@ module ApplicationHelper
         final_amounts_by_date[it_month] = entity.initial_amount_by_date(year, time_range + 1, 1)
       else
         final_amounts_by_date[time_range] = entity.initial_amount_by_date(time_range + 1, 1, 1)
+      end
+
+      # Se il conto è un piano d'accumulo su un metallo prezioso, estraggo il valore di quel metallo a fine di ogni mese / anno
+      if metal.present?
+        if year.present?
+          metal_values_by_date[it_month] = MetalValue.price_at_date(metal, karat, Date.new(year, time_range + 1, 1))
+        else
+          metal_values_by_date[time_range] = MetalValue.price_at_date(metal, karat, Date.new(time_range + 1, 1, 1))
+        end
       end
 
       # Calcolo le uscite / entrate complessive ad ogni mese / anno
@@ -132,6 +145,7 @@ module ApplicationHelper
     [
       years_range,
       final_amounts_by_date,
+      metal_values_by_date,
       movements_global_amount_by_expense_items,
       year,
       movements_max_amount,
@@ -140,11 +154,25 @@ module ApplicationHelper
   end
 
   def min_year_by(entity)
-    entity.movements.minimum('year') || Time.now.year
+    if entity.metal_account?
+      [
+        MetalValue.where(metal: entity.metal_type).minimum('recorded_at').year,
+        entity.movements.minimum('year')
+      ].compact.min || Time.now.year
+    else
+      entity.movements.minimum('year') || Time.now.year
+    end
   end
 
   def max_year_by(entity)
-    entity.movements.maximum('year') || Time.now.year
+    if entity.metal_account?
+      [
+        MetalValue.where(metal: entity.metal_type).maximum('recorded_at')&.year,
+        entity.movements.maximum('year')
+      ].compact.max || Time.now.year
+    else
+      entity.movements.maximum('year') || Time.now.year
+    end
   end
 
   def years_range_by(entity)
@@ -152,7 +180,14 @@ module ApplicationHelper
   end
 
   def max_month_by(entity)
-    entity.movements.where(year: entity.max_year).maximum('month') || Time.now.month
+    if entity.metal_account?
+      [
+        MetalValue.where(metal: entity.metal_type).where("EXTRACT(YEAR FROM recorded_at) = ?", entity.max_year).maximum('recorded_at')&.month,
+        entity.movements.where(year: entity.max_year).maximum('month')
+      ].compact.max || Time.now.month
+    else
+      entity.movements.where(year: entity.max_year).maximum('month') || Time.now.month
+    end
   end
 
   def initial_amount_by(entity, year, month, day)

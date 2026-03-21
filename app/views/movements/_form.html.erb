@@ -33,7 +33,7 @@
     <div class="my-4 mx-2 mx-sm-4">
       <%= form.label :karat, 'Caratura', class: "form-label" %>
       <%= form.select :karat,
-                      options_for_select(@count.available_karats, movement.karat),
+                      options_for_select(available_karats_for_select(@count.metal_type), movement.karat),
                       { include_blank: 'Seleziona la caratura' },
                       class: 'form-control'
       %>

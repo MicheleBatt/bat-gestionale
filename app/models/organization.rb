@@ -64,4 +64,8 @@ class Organization < ApplicationRecord
   def get_current_amount(movements = self.movements)
     (self.counts.pluck(:initial_amount).sum.to_f + movements.sum(&:amount)).to_f.round(2)
   end
+
+  def metal_account?
+    false
+  end
 end
