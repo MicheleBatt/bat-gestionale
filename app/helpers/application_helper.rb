@@ -73,6 +73,7 @@ module ApplicationHelper
   def stats_for_charts(entity, movements, params = nil, metal = nil)
     years_range = entity.years_range
     final_amounts_by_date = {}
+    final_valued_amounts_by_date = {}
     metal_values_by_date = {}
     movements_global_amount_by_expense_items = {}
     year = params[:q].present? ? params[:q][:year_eq] : nil
@@ -100,8 +101,20 @@ module ApplicationHelper
         final_amounts_by_date[time_range] = entity.initial_amount_by_date(time_range + 1, 1, 1)
       end
 
-      # Se il conto è un piano d'accumulo su un metallo prezioso, estraggo il valore di quel metallo a fine di ogni mese / anno
+      # Se il conto è un piano d'accumulo su un metallo prezioso
       if metal.present?
+        # Calcolo la il valore della giacenza finale globale a fine di ogni mese / anno
+        if year.present?
+          price = MetalValue.price_at_date(metal, karat, Date.new(year, time_range + 1, 1)).to_f
+          grams = entity.initial_amount_by_date(year, time_range + 1, 1)
+          final_valued_amounts_by_date[it_month] = grams.abs * price
+        else
+          price = MetalValue.price_at_date(metal, karat, Date.new(time_range + 1, 1, 1)).to_f
+          grams = entity.initial_amount_by_date(time_range + 1, 1, 1)
+          final_valued_amounts_by_date[time_range] = grams.abs * price
+        end
+
+        # Estraggo il valore di quel metallo a fine di ogni mese / anno
         if year.present?
           metal_values_by_date[it_month] = MetalValue.price_at_date(metal, karat, Date.new(year, time_range + 1, 1))
         else
@@ -145,6 +158,7 @@ module ApplicationHelper
     [
       years_range,
       final_amounts_by_date,
+      final_valued_amounts_by_date,
       metal_values_by_date,
       movements_global_amount_by_expense_items,
       year,

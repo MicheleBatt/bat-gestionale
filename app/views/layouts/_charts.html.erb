@@ -37,6 +37,38 @@
   %>
 </div>
 
+<%# Valore della gianceza complessiva %>
+<div class="v2-chart-card">
+  <% chart_title = "Valore della Giacenza #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
+  <% min_value = final_valued_amounts_by_date.values.min.to_f.round(2) %>
+  <%= line_chart final_valued_amounts_by_date,
+                 title: chart_title,
+                 min: (min_value - (min_value * 0.1)).to_f.round(2),
+                 download: { filename: chart_title, background: "#ffffff" },
+                 loading: "Caricamento...",
+                 empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                 suffix: suffix,
+                 library: chart_lib
+  %>
+</div>
+
+<%# Valore del metallo nel tempo %>
+<% if metal_values_by_date.present? %>
+  <div class="v2-chart-card">
+    <% chart_title = "Andamento del valore di 1 grammo di #{CountsHelper::ALL_METALS[metal.to_sym][:italian_name]} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
+    <% min_value = metal_values_by_date.values.compact.min.to_f.round(2) %>
+    <%= line_chart metal_values_by_date,
+                   title: chart_title,
+                   min: (min_value - (min_value * 0.1)).to_f.round(2),
+                   download: { filename: chart_title, background: "#ffffff" },
+                   loading: "Caricamento...",
+                   empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                   suffix: '€',
+                   library: chart_lib
+    %>
+  </div>
+<% end %>
+
 <%# Entrate/Uscite %>
 <div class="v2-chart-card">
   <% chart_title = "Entrate/Uscite #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
@@ -91,23 +123,6 @@
         %>
       </div>
     <% end %>
-  </div>
-<% end %>
-
-<%# Valore del metallo nel tempo %>
-<% if metal.present? %>
-  <div class="v2-chart-card">
-    <% chart_title = "Andamento del valore di 1 grammo di #{CountsHelper::ALL_METALS[metal.to_sym][:italian_name]} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
-    <% min_value = metal_values_by_date.values.compact.min.to_f.round(2) %>
-    <%= line_chart metal_values_by_date,
-                   title: chart_title,
-                   min: (min_value - (min_value * 0.1)).to_f.round(2),
-                   download: { filename: chart_title, background: "#ffffff" },
-                   loading: "Caricamento...",
-                   empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                   suffix: '€',
-                   library: chart_lib
-    %>
   </div>
 <% end %>
 

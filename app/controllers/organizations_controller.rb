@@ -74,6 +74,7 @@ class OrganizationsController < ApplicationController
 
     @years_range,
     @final_amounts_by_date,
+    @final_valued_amounts_by_date,
     @metal_values_by_date,
     @movements_global_amount_by_expense_items,
     @year,
