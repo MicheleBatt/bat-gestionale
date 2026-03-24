@@ -37,7 +37,7 @@
         <div class="d-block">
           <div class="v2-balance-label">Giacenza attuale</div>
           <div class="v2-balance-amount">
-            <%= to_visible_amount(count.current_amount, false) %><span class="v2-balance-currency">g</span>
+            <%= to_visible_amount(count.current_amount, false) %><span class="v2-balance-currency"><%= count.unit %></span>
           </div>
         </div>
         <div class="d-block ms-3">
@@ -50,7 +50,7 @@
         <div class="d-block">
           <div class="v2-balance-label">Giacenza attuale</div>
           <div class="v2-balance-amount <%= count.current_amount < 0 ? 'neg' : '' %>">
-            <%= to_visible_amount(count.current_amount, false) %><span class="v2-balance-currency">&euro;</span>
+            <%= to_visible_amount(count.current_amount, false) %><span class="v2-balance-currency"><%= count.unit %></span>
           </div>
         </div>
       <% end %>

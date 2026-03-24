@@ -88,7 +88,7 @@ class CountsController < ApplicationController
   end
 
   def stats
-    @search = @count.movements.ransack(params[:q])
+    @search = @count.movements.includes(:count).ransack(params[:q])
     movements = @search.result
 
     @years_range,
@@ -98,7 +98,8 @@ class CountsController < ApplicationController
     @movements_global_amount_by_expense_items,
     @year,
     @movements_max_amount,
-    @in_out_global_amounts = stats_for_charts(@count, movements, params, @count.metal_type)
+    @in_out_global_amounts,
+    @in_out_global_valued_amounts= stats_for_charts(@count, movements, params, @count.metal_type)
     @metal_values_by_last_days = @count.metal_values_by_last_days((params[:q] || {})[:karat_eq])
   end
 

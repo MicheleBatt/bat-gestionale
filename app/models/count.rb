@@ -185,6 +185,15 @@ class Count < ApplicationRecord
     self.metal_type.present?
   end
 
+  def unit
+    case self.set_currency
+    when 'grams'
+      'g'
+    else
+      '€'
+    end
+  end
+
   # Tipo di metallo del conto (es. 'XAU', 'XAG')
   def metal_type
     ALL_METALS.keys.find { |key| self.count_type.start_with?(key.to_s.downcase) }.presence

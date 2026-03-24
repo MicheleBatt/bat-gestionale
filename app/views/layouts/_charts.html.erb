@@ -114,20 +114,54 @@
   </div>
 <% end %>
 
-<%# Entrate/Uscite %>
-<div class="v2-chart-card">
-  <% chart_title = "Entrate/Uscite #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
-  <%= column_chart in_out_global_amounts,
-                   stacked: false,
-                   title: chart_title,
-                   download: { filename: chart_title, background: "#ffffff" },
-                   colors: ["#DC3545", "#198754"],
-                   loading: "Caricamento...",
-                   empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                   suffix: suffix,
-                   library: bar_lib.deep_merge({ plugins: { legend: { display: false } } })
-  %>
-</div>
+<% if in_out_global_amounts.present? %>
+  <div class="v2-chart-row">
+    <%# Entrate/Uscite %>
+    <div class="v2-chart-card">
+      <% chart_title = "Entrate/Uscite #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
+      <%= column_chart in_out_global_amounts,
+                       stacked: false,
+                       title: chart_title,
+                       download: { filename: chart_title, background: "#ffffff" },
+                       colors: ["#DC3545", "#198754"],
+                       loading: "Caricamento...",
+                       empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                       suffix: suffix,
+                       library: bar_lib.deep_merge({ plugins: { legend: { display: false } } })
+      %>
+    </div>
+
+    <%# Valore delle Entrate/Uscite %>
+    <div class="v2-chart-card">
+      <% chart_title = "Valore delle Entrate/Uscite sul #{entity.name} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
+      <%= column_chart in_out_global_valued_amounts,
+                       stacked: false,
+                       title: chart_title,
+                       download: { filename: chart_title, background: "#ffffff" },
+                       colors: ["#DC3545", "#198754"],
+                       loading: "Caricamento...",
+                       empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                       suffix: '€',
+                       library: bar_lib.deep_merge({ plugins: { legend: { display: false } } })
+      %>
+    </div>
+  </div>
+<% else %>
+  <%# Entrate/Uscite %>
+  <div class="v2-chart-card">
+    <% chart_title = "Entrate/Uscite #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
+    <%= column_chart in_out_global_valued_amounts,
+                     stacked: false,
+                     title: chart_title,
+                     download: { filename: chart_title, background: "#ffffff" },
+                     colors: ["#DC3545", "#198754"],
+                     loading: "Caricamento...",
+                     empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                     suffix: suffix,
+                     library: bar_lib.deep_merge({ plugins: { legend: { display: false } } })
+    %>
+  </div>
+<% end %>
 
 <%# Pie charts row %>
 <% if movements_global_amount_by_counts.present? || savings_global_amount_by_counts.present? %>

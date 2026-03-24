@@ -67,7 +67,7 @@ class OrganizationsController < ApplicationController
   end
 
   def stats
-    @search = @organization.movements.ransack(params[:q])
+    @search = @organization.movements.includes(:count).ransack(params[:q])
     movements = @search.result
 
     @count = @organization.counts.find(params[:q][:count_id_eq]) if params[:q].present? && params[:q][:count_id_eq].present?
@@ -79,7 +79,8 @@ class OrganizationsController < ApplicationController
     @movements_global_amount_by_expense_items,
     @year,
     @movements_max_amount,
-    @in_out_global_amounts = stats_for_charts(@count || @organization, movements, params)
+    @in_out_global_amounts,
+    @in_out_global_valued_amounts = stats_for_charts(@count || @organization, movements, params)
 
     if @count.blank?
       @movements_global_amount_by_counts,

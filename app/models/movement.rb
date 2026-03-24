@@ -11,6 +11,7 @@ class Movement < ApplicationRecord
   validate :valid_amount?
   validate :valid_expense_item_reference?
   validate :valid_metal_fields?
+  validates :price_at_transaction, numericality: { greater_than_or_equal_to: 0.0 }, allow_nil: true
   enum movement_type: MOVEMENT_TYPES.index_by(&:itself), _prefix: :movement_type
 
   # Callbacks
@@ -65,8 +66,8 @@ class Movement < ApplicationRecord
 
   def valid_metal_fields?
     if metal_account?
-      errors.add(:karat, "Specifica la caratura!") if self.karat.blank?
-      errors.add(:price_at_transaction, "Specifica il prezzo al grammo!") if self.price_at_transaction.blank?
+      errors.add(:karat, "can't be blank") if self.karat.blank?
+      errors.add(:price_at_transaction, "can't be blank") if self.price_at_transaction.blank?
     end
   end
 
