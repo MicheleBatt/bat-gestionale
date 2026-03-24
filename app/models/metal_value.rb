@@ -20,11 +20,11 @@ class MetalValue < ApplicationRecord
 
   # Prezzo più recente per un metallo e una caratura
   def self.latest_price(metal, karat)
-    where(metal: metal, karat: karat).order(recorded_at: :desc).first.value
+    where(metal: metal, karat: karat).order(recorded_at: :desc).first&.value.round(2)
   end
 
   # Prezzo alla data specificata (o il più recente prima di quella data)
   def self.price_at_date(metal, karat, date)
-    where(metal: metal, karat: karat).where('recorded_at <= ?', date).order(recorded_at: :desc).first&.value
+    where(metal: metal, karat: karat).where('recorded_at <= ?', date).order(recorded_at: :desc).first&.value.to_f.round(2)
   end
 end

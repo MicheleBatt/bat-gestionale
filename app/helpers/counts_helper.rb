@@ -17,8 +17,9 @@ module CountsHelper
     "government_bond_investment_plan" => "piano di investimento su titoli di stato",
     "derivative_investment_plan" => "piano di investimento su derivati"
    }
-  metals = ALL_METALS.keys.map{ | key | ["#{key.downcase}_investment_account", "fondo di investimento su #{ALL_METALS[key][:italian_name]}"] }.uniq.to_h
+  metals = ALL_METALS.keys.map{ | metal_type | ["#{metal_type.downcase}_investment_account", "fondo di investimento su #{ALL_METALS[metal_type][:italian_name]}"] }.uniq.to_h
   ALL_COUNT_TYPES = { **base_count_types, **metals }.freeze
+  METALS_COUNT_TYPES = ALL_METALS.keys.map { | metal_type | "#{metal_type.downcase}_investment_account" }.freeze
 
   base_currencies = %w[EUR]
   metals_currencies = ALL_METALS.keys.map{ | key | ALL_METALS[key][:unit] }.uniq

@@ -82,17 +82,8 @@ class OrganizationsController < ApplicationController
     @in_out_global_amounts = stats_for_charts(@count || @organization, movements, params)
 
     if @count.blank?
-      @movements_global_amount_by_counts = {}
-      @savings_global_amount_by_counts = {}
-      @organization.counts.each do | count |
-        if @year.present?
-          global_amount = count.initial_amount_by_date(@year.to_i + 1, 1, 1)
-        else
-          global_amount = count.initial_amount_by_date(count.max_year + 1, 1, 1)
-        end
-        @movements_global_amount_by_counts[count.name] = global_amount
-        @savings_global_amount_by_counts[count.name] = global_amount if count.count_type != 'bank_account'
-      end
+      @movements_global_amount_by_counts,
+      @savings_global_amount_by_counts = @organization.additional_stats_for_charts(@year)
     end
   end
 

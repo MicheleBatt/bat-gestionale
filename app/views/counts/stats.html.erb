@@ -43,7 +43,7 @@
                     <%= f.label :karat_eq, 'Caratura' %>
                     <%= f.select :karat_eq,
                                  options_for_select(available_karats_for_select(@count.metal_type), @search.karat_eq),
-                                 { include_blank: false },
+                                 { include_blank: "Qualunque caratura" },
                                  class: 'v2-select'
                     %>
                   </div>
@@ -75,6 +75,7 @@
                final_amounts_by_date: @final_amounts_by_date,
                final_valued_amounts_by_date: @final_valued_amounts_by_date,
                metal_values_by_date: @metal_values_by_date,
+               metal_values_by_last_days: @metal_values_by_last_days,
                in_out_global_amounts: @in_out_global_amounts,
                movements_global_amount_by_expense_items: @movements_global_amount_by_expense_items,
                movements_max_amount: @movements_max_amount,

@@ -22,50 +22,95 @@
   }
 } %>
 
-<%# Giacenza complessiva %>
-<div class="v2-chart-card">
-  <% chart_title = "Giacenza #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
-  <% min_value = final_amounts_by_date.values.min.to_f.round(2) %>
-  <%= line_chart final_amounts_by_date,
-                 title: chart_title,
-                 min: (min_value - (min_value * 0.1)).to_f.round(2),
-                 download: { filename: chart_title, background: "#ffffff" },
-                 loading: "Caricamento...",
-                 empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                 suffix: suffix,
-                 library: chart_lib
-  %>
-</div>
+<% if final_valued_amounts_by_date.present? %>
+  <%# Giacenza + Valore affiancati (full width) %>
+  <div class="v2-chart-row">
+    <div class="v2-chart-card">
+      <% chart_title = "Giacenza #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
+      <% min_value = final_amounts_by_date.values.min.to_f.round(2) %>
+      <%= line_chart final_amounts_by_date,
+                     title: chart_title,
+                     min: (min_value * 0.9).round(2),
+                     download: { filename: chart_title, background: "#ffffff" },
+                     loading: "Caricamento...",
+                     empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                     suffix: suffix,
+                     library: chart_lib
+      %>
+    </div>
 
-<%# Valore della gianceza complessiva %>
-<div class="v2-chart-card">
-  <% chart_title = "Valore della Giacenza #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
-  <% min_value = final_valued_amounts_by_date.values.min.to_f.round(2) %>
-  <%= line_chart final_valued_amounts_by_date,
-                 title: chart_title,
-                 min: (min_value - (min_value * 0.1)).to_f.round(2),
-                 download: { filename: chart_title, background: "#ffffff" },
-                 loading: "Caricamento...",
-                 empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                 suffix: suffix,
-                 library: chart_lib
-  %>
-</div>
-
-<%# Valore del metallo nel tempo %>
-<% if metal_values_by_date.present? %>
+    <div class="v2-chart-card">
+      <% chart_title = "Valore della giacenza #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
+      <% min_value = final_valued_amounts_by_date.values.min.to_f.round(2) %>
+      <%= line_chart final_valued_amounts_by_date,
+                     title: chart_title,
+                     min: (min_value * 0.9).round(2),
+                     download: { filename: chart_title, background: "#ffffff" },
+                     loading: "Caricamento...",
+                     empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                     suffix: '€',
+                     library: chart_lib
+      %>
+    </div>
+  </div>
+<% else %>
+  <%# Solo giacenza (conti normali) %>
   <div class="v2-chart-card">
-    <% chart_title = "Andamento del valore di 1 grammo di #{CountsHelper::ALL_METALS[metal.to_sym][:italian_name]} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
-    <% min_value = metal_values_by_date.values.compact.min.to_f.round(2) %>
-    <%= line_chart metal_values_by_date,
+    <% chart_title = "Giacenza #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
+    <% min_value = final_amounts_by_date.values.min.to_f.round(2) %>
+    <%= line_chart final_amounts_by_date,
                    title: chart_title,
-                   min: (min_value - (min_value * 0.1)).to_f.round(2),
+                   min: (min_value * 0.9).round(2),
                    download: { filename: chart_title, background: "#ffffff" },
                    loading: "Caricamento...",
                    empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                   suffix: '€',
+                   suffix: suffix,
                    library: chart_lib
     %>
+  </div>
+<% end %>
+
+<% if metal_values_by_date.present? || metal_values_by_last_days.present? %>
+  <% metal_chart_lib = chart_lib.deep_merge({
+    plugins: {
+      title: { display: true, font: { size: 15, weight: 600 }, padding: { bottom: 20 } },
+      legend: { position: 'bottom', labels: { color: '#475569', font: { **chart_font, size: 11 }, padding: 12, usePointStyle: true, pointStyle: 'circle' }, title: { display: true, text: '', padding: { top: 16 } } }
+    }
+  }) %>
+  <% metal_name = CountsHelper::ALL_METALS[metal.to_sym][:italian_name] %>
+
+  <div class="v2-chart-row">
+    <% if metal_values_by_date.present? %>
+      <div class="v2-chart-card">
+        <% chart_title = "Andamento del valore di 1g di #{metal_name} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
+        <%= line_chart metal_values_by_date,
+                       title: chart_title,
+                       min: 0,
+                       download: { filename: chart_title, background: "#ffffff" },
+                       loading: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                       empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                       suffix: '€',
+                       library: metal_chart_lib
+        %>
+      </div>
+    <% end %>
+
+    <% if metal_values_by_last_days.present? %>
+      <div class="v2-chart-card">
+        <% chart_title = "Andamento del valore di 1g di #{metal_name} negli ultimi giorni" %>
+        <% all_values = metal_values_by_last_days.flat_map { |serie| serie[:data].values }.compact %>
+        <% min_value = all_values.min.to_f.round(2) %>
+        <%= line_chart metal_values_by_last_days,
+                       title: chart_title,
+                       min: min_value,
+                       download: { filename: chart_title, background: "#ffffff" },
+                       loading: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                       empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                       suffix: '€',
+                       library: metal_chart_lib
+        %>
+      </div>
+    <% end %>
   </div>
 <% end %>
 
@@ -102,7 +147,7 @@
                       download: { filename: chart_title, background: "#ffffff" },
                       loading: "Caricamento...",
                       empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                      suffix: suffix
+                      suffix: '€'
         %>
       </div>
     <% end %>
@@ -119,7 +164,7 @@
                       download: { filename: chart_title, background: "#ffffff" },
                       loading: "Caricamento...",
                       empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
-                      suffix: suffix
+                      suffix: '€'
         %>
       </div>
     <% end %>

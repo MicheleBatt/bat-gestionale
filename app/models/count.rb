@@ -169,11 +169,11 @@ class Count < ApplicationRecord
     max_month_by(self)
   end
 
-  def initial_amount_by_date(year, month, day)
-    initial_amount_by(self, year, month, day)
+  def initial_amount_by_date(year, month, day, karat = nil)
+    initial_amount_by(self, year, month, day, karat)
   end
 
-  def get_current_amount(movements = self.movements)
+  def get_current_amount(movements = self.movements, date = nil)
     (self.initial_amount.to_f + movements.sum(&:amount)).to_f.round(2)
   end
 
@@ -193,36 +193,66 @@ class Count < ApplicationRecord
   # Metodo che calcola la giacenza (espressa in termini di grammi) per caratura
   def metal_holdings(movements = self.movements)
     return {} unless metal_account?
-    movements.where.not(karat: nil).group(:karat).sum(:amount).transform_values { |v| v.to_f.round(2) }
+    movements.reorder('').group(:karat).sum(:amount).transform_values { |v| v.to_f.round(2) }
   end
 
   # Metodo che calcola i grammi totali nel piano
   def total_grams(movements = self.movements)
     return 0 unless metal_account?
-    movements.sum(:amount).to_f.round(2)
+    movements.reorder('').sum(:amount).to_f.round(2)
   end
 
   # Metodo che calcola il valore economico corrente del piano di accumulo su un metallo prezioso
   # (usa i valori correnti estratti da MetalValue)
-  def current_economic_value
-    self.economic_value_at_date(Time.now)
+  def current_economic_value(movements = self.movements)
+    self.economic_value_at_date(Date.today, movements)
   end
 
   # Metodo che calcola il valore economico a una certa data del piano di accumulo su un metallo prezioso
   # (usa i valori storicizzati estratti da MetalValue)
-  def economic_value_at_date(date)
+  def economic_value_at_date(date, movements = self.movements)
     return nil unless metal_account?
     metal = metal_type
     return 0 if metal.blank?
 
-    movements_at_date = self.movements.where('emitted_at <= ?', date)
+    movements_at_date = movements.where('emitted_at <= ?', date)
     holdings = metal_holdings(movements_at_date)
     total = 0
     holdings.each do |karat, grams|
-      price = MetalValue.price_at_date(metal, karat, date).to_f
+      price = MetalValue.price_at_date(metal, karat, date)
       total += grams.abs * price
     end
     total.round(2)
+  end
+
+  # Andamento negli ultimi 30 giorni del valore del metallo prezioso gestito dal piano di accumulo corrente
+  def metal_values_by_last_days(karat = nil)
+    return nil unless self.metal_account?
+
+    date_format = "%-d %b"
+    dates = ((Date.today - 30.days)..(Date.today)).to_a
+    metal_values = MetalValue.where(metal: self.metal_type, recorded_at: dates).order(recorded_at: :asc)
+    metal_values = metal_values.where(karat: karat) if karat.present?
+    metal_values = metal_values.group_by(&:karat)
+    dates = dates.map{ | date | parse_date(date, date_format) }
+
+    metal_values_by_karat = {}
+    metal_values.keys.each do | karat |
+      metal_values[karat] = metal_values[karat].group_by{ | mv | parse_date(mv.recorded_at, date_format) }
+      # Estraggo il valore di quel metallo per caratura alla data specifica
+      metal_values_by_karat[karat] ||= {}
+      dates.each do | date |
+        value = metal_values[karat][date]&.sort_by(&:value)&.last&.value
+        metal_values_by_karat[karat][date] = value if value.present?
+      end
+    end
+
+    metal_values_by_date = []
+    metal_values_by_karat.keys.sort.reverse.each do |karat|
+      metal_values_by_date << { name: "#{karat.to_s.gsub('.0', '')}k", data: metal_values_by_karat[karat] }
+    end
+
+    metal_values_by_date
   end
 
   def set_current_amount

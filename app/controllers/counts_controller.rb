@@ -11,7 +11,10 @@ class CountsController < ApplicationController
     @search = @organization.counts.ransack(params[:q])
     @counts = @search.result
     @counts_count = @counts.length
-    @counts_global_amount = @counts.sum(:current_amount).to_f.round(2)
+    @counts_global_amount = @counts.where.not(count_type: CountsHelper::METALS_COUNT_TYPES).sum(:current_amount).to_f.round(2)
+    @counts.where(count_type: CountsHelper::METALS_COUNT_TYPES).each do | count |
+      @counts_global_amount += count.current_economic_value.to_f.round(2)
+    end
 
     respond_to do |format|
       format.html do
@@ -86,7 +89,6 @@ class CountsController < ApplicationController
 
   def stats
     @search = @count.movements.ransack(params[:q])
-    @search.karat_eq = MetalValuesHelper::DEFAULT_KARAT_PARAM if @count.metal_account? && @search.karat_eq.blank?
     movements = @search.result
 
     @years_range,
@@ -97,6 +99,7 @@ class CountsController < ApplicationController
     @year,
     @movements_max_amount,
     @in_out_global_amounts = stats_for_charts(@count, movements, params, @count.metal_type)
+    @metal_values_by_last_days = @count.metal_values_by_last_days((params[:q] || {})[:karat_eq])
   end
 
   private
