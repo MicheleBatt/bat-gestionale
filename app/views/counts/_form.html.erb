@@ -37,7 +37,10 @@
 
   <div class="m-4">
     <%= form.label :initial_amount, 'Giacenza Iniziale', class: "form-label" %>
-    <%= form.number_field :initial_amount, step: :any, class: "form-control" %>
+    <div class="v2-input-group">
+      <%= form.number_field :initial_amount, step: :any, class: "form-control" %>
+      <span class="v2-input-group-unit"><%= count.metal_account? ? 'g' : '€' %></span>
+    </div>
   </div>
 
   <div class="m-4">

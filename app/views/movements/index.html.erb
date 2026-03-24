@@ -225,16 +225,26 @@
 
       <%# Table header (desktop only) %>
       <div class="v2-mov-table-head">
-        <div class="v2-mov-table-head-section out-head">
+        <div class="v2-mov-table-head-section out-head <%= 'metal-head' if @count.metal_account? %>">
           <div class="v2-mov-table-head-label" style="grid-column: 1 / -1;"><%= @count.metal_account? ? 'Vendite' : 'Uscite' %></div>
           <div class="v2-mov-col-label" style="text-align: left;">Data</div>
           <div class="v2-mov-col-label">Causale</div>
+          <% if @count.metal_account? %>
+            <div class="v2-mov-col-label">€/g</div>
+            <div class="v2-mov-col-label">Totale</div>
+            <div class="v2-mov-col-label">Spread</div>
+          <% end %>
           <div class="v2-mov-col-label" style="text-align: right;"><%= @count.metal_account? ? 'Grammi' : 'Importo' %></div>
         </div>
-        <div class="v2-mov-table-head-section">
+        <div class="v2-mov-table-head-section <%= 'metal-head' if @count.metal_account? %>">
           <div class="v2-mov-table-head-label" style="grid-column: 1 / -1;"><%= @count.metal_account? ? 'Acquisti' : 'Entrate' %></div>
           <div class="v2-mov-col-label" style="text-align: left;">Data</div>
           <div class="v2-mov-col-label">Causale</div>
+          <% if @count.metal_account? %>
+            <div class="v2-mov-col-label">€/g</div>
+            <div class="v2-mov-col-label">Totale</div>
+            <div class="v2-mov-col-label">Spread</div>
+          <% end %>
           <div class="v2-mov-col-label" style="text-align: right;"><%= @count.metal_account? ? 'Grammi' : 'Importo' %></div>
         </div>
       </div>

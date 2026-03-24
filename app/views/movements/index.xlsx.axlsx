@@ -1,180 +1,374 @@
 wb = xlsx_package.workbook
+is_metal = @count.metal_account?
 
 wb.add_worksheet(name: "Movimenti del mese") do |sheet|
-  # Pre-definisco gli stili
-  s_title = wb.styles.add_style({font_name: "Calibri", fg_color: 'c9211e', sz: 16, b: true, u: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :medium, color: '000000'}})
-  s_section = wb.styles.add_style({font_name: "Calibri", fg_color: 'ff0800', sz: 14, b: true, u: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
-  s_col_head = wb.styles.add_style({font_name: "Calibri", sz: 12, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
-  s_col_head_r = wb.styles.add_style({font_name: "Calibri", sz: 12, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
-  s_empty = wb.styles.add_style({border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
-  s_empty_m = wb.styles.add_style({border: {style: :medium, color: '000000'}})
-  s_label_r = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, alignment: { horizontal: :right, vertical: :center }, border: {style: :thin, color: '000000'}})
-  s_label_r2 = wb.styles.add_style({font_name: "Calibri", sz: 10, alignment: { horizontal: :right, vertical: :center }, border: {style: :thin, color: '000000'}})
-  s_in_cell = wb.styles.add_style({font_name: "Calibri", sz: 10, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
-  s_in_num = wb.styles.add_style({font_name: "Calibri", sz: 10, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, format_code: '#,##0.00 €'})
-  s_total_out = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, fg_color: '000000', bg_color: 'ff0000', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, format_code: '#,##0.00 €'})
-  s_total_in = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, fg_color: '000000', bg_color: '2cfe22', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, format_code: '#,##0.00 €'})
-  s_saldo_pos = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, fg_color: '000000', bg_color: '2cfe22', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, format_code: '#,##0.00 €'})
-  s_saldo_neg = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, fg_color: '000000', bg_color: 'ff0000', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, format_code: '#,##0.00 €'})
-  s_fondo = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, format_code: '#,##0.00 €'})
+  if is_metal
+    # =====================================================================
+    # LAYOUT PER CONTI METALLO (10 colonne: Data, Causale, Caratura, €/g, Grammi × 2)
+    # =====================================================================
+    s_title = wb.styles.add_style({font_name: "Calibri", fg_color: 'c9211e', sz: 16, b: true, u: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :medium, color: '000000'}})
+    s_section = wb.styles.add_style({font_name: "Calibri", fg_color: 'ff0800', sz: 14, b: true, u: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+    s_col_head = wb.styles.add_style({font_name: "Calibri", sz: 12, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+    s_col_head_r = wb.styles.add_style({font_name: "Calibri", sz: 12, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
+    s_empty = wb.styles.add_style({border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
+    s_empty_m = wb.styles.add_style({border: {style: :medium, color: '000000'}})
+    s_cell = wb.styles.add_style({font_name: "Calibri", sz: 10, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+    s_num = wb.styles.add_style({font_name: "Calibri", sz: 10, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
+    s_price = wb.styles.add_style({font_name: "Calibri", sz: 10, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+    s_label_r = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, alignment: { horizontal: :right, vertical: :center }, border: {style: :thin, color: '000000'}})
+    s_label_r2 = wb.styles.add_style({font_name: "Calibri", sz: 10, alignment: { horizontal: :right, vertical: :center }, border: {style: :thin, color: '000000'}})
+    s_total_out = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, fg_color: '000000', bg_color: 'ff0000', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
+    s_total_in = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, fg_color: '000000', bg_color: '2cfe22', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
+    s_saldo_pos = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, fg_color: '000000', bg_color: '2cfe22', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
+    s_saldo_neg = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, fg_color: '000000', bg_color: 'ff0000', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
+    s_fondo = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
 
+    # TESTATA (14 colonne: A-G vendite, H-N acquisti)
+    e14 = [""] * 14
+    sheet.add_row [@table_titles[:main_title].upcase] + [""] * 13, style: [s_title]*14
+    sheet.add_row e14, style: [s_title]*14
+    sheet.add_row e14, style: [s_title]*14
+    sheet.add_row ["VENDITE", "", "", "", "", "", "", "ACQUISTI", "", "", "", "", "", ""], style: [s_section, s_section, s_section, s_section, s_section, s_section, s_col_head_r, s_section, s_section, s_section, s_section, s_section, s_section, s_col_head_r]
+    sheet.add_row ["Data", "Causale", "Caratura", "€/grammo", "Totale", "Spread", "Grammi", "Data", "Causale", "Caratura", "€/grammo", "Totale", "Spread", "Grammi"], style: [s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head_r, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head_r]
 
-  # TESTATA DELLA TABELLA
-  sheet.add_row [@table_titles[:main_title].upcase, "", "", "", "", ""], style: [s_title]*6
-  sheet.add_row ["", "", "", "", "", ""], style: [s_title]*6
-  sheet.add_row ["", "", "", "", "", ""], style: [s_title]*6
+    # MOVIMENTI
+    first_data_row = 6
+    current_row = first_data_row
+    cells_to_merge = []
+    last_empty_row_type = nil
+    karat_out_rows = {}  # { karat => [row_numbers] } per vendite
+    karat_in_rows = {}   # { karat => [row_numbers] } per acquisti
 
-  sheet.add_row ["USCITE", "", "", "ENTRATE", "", ""], style: [s_section, s_section, s_col_head_r, s_section, s_section, s_col_head_r]
+    @movements.each do |movement|
+      amount_val = movement.amount.to_f.abs
+      karat_label = movement.karat.present? ? "#{movement.karat.to_i}k" : ""
+      ppg_val = movement.price_per_gram_at_transaction.present? ? movement.price_per_gram_at_transaction.to_f : ""
+      spread_str = movement.spread.present? ? "#{to_visible_amount(movement.spread, false)}%" : ""
+      e7 = [""] * 7
 
-  sheet.add_row ["Data", "Causale", "Spesa", "Data", "Causale", "Spesa"], style: [s_col_head, s_col_head, s_col_head_r, s_col_head, s_col_head, s_col_head_r]
-
-
-  # RIGHE DELLA TABELLA CHE RIPORTANO I MOVIMENTI DI CASSA DEL MESE
-  first_data_row = 6
-  current_row = first_data_row
-  cells_to_merge = []
-  last_empty_row_type = nil
-  expense_item_rows = {}
-
-  @movements.each do |movement|
-    amount_value = movement.amount.to_f.abs
-
-    if movement.movement_type == 'out'
-      color = movement.expense_item.color.gsub('#', '')
-      s_out_cell = wb.styles.add_style({font_name: "Calibri", sz: 10, fg_color: '000000', bg_color: color, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
-      s_out_num = wb.styles.add_style({font_name: "Calibri", sz: 10, fg_color: '000000', bg_color: color, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, format_code: '#,##0.00 €'})
-
-      sheet.add_row [parse_date(movement.emitted_at, '%d.%m.%y'), movement.causal, amount_value, "", "", ""],
-                    style: [s_out_cell, s_out_cell, s_out_num, s_empty, s_empty, s_empty]
-
-      if last_empty_row_type == 'in'
-        cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:F#{current_row}"
+      if movement.movement_type == 'out'
+        row = sheet.add_row [parse_date(movement.emitted_at, '%d.%m.%y'), movement.causal, karat_label, ppg_val, nil, spread_str, amount_val] + e7,
+                            style: [s_cell, s_cell, s_cell, s_cell, s_cell, s_cell, s_num, s_empty, s_empty, s_empty, s_empty, s_empty, s_empty, s_empty]
+        if movement.price_per_gram_at_transaction.present?
+          row.cells[4].escape_formulas = false
+          row.cells[4].value = "=D#{current_row}*G#{current_row}"
+        end
+        if last_empty_row_type == 'in'
+          cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:N#{current_row}"
+        else
+          cells_to_merge << "H#{current_row}:N#{current_row}"
+        end
+        last_empty_row_type = 'in'
+        if movement.karat.present?
+          karat_out_rows[movement.karat] ||= []
+          karat_out_rows[movement.karat] << current_row
+        end
       else
-        cells_to_merge << "D#{current_row}:F#{current_row}"
+        row = sheet.add_row e7 + [parse_date(movement.emitted_at, '%d.%m.%y'), movement.causal, karat_label, ppg_val, nil, spread_str, amount_val],
+                            style: [s_empty, s_empty, s_empty, s_empty, s_empty, s_empty, s_empty, s_cell, s_cell, s_cell, s_cell, s_cell, s_cell, s_num]
+        if movement.price_per_gram_at_transaction.present?
+          row.cells[11].escape_formulas = false
+          row.cells[11].value = "=K#{current_row}*N#{current_row}"
+        end
+        if last_empty_row_type == 'out'
+          cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:G#{current_row}"
+        else
+          cells_to_merge << "A#{current_row}:G#{current_row}"
+        end
+        last_empty_row_type = 'out'
+        if movement.karat.present?
+          karat_in_rows[movement.karat] ||= []
+          karat_in_rows[movement.karat] << current_row
+        end
       end
-      last_empty_row_type = 'in'
-
-      if movement.expense_item_id.present?
-        expense_item_rows[movement.expense_item_id] ||= []
-        expense_item_rows[movement.expense_item_id] << current_row
-      end
-    else
-      sheet.add_row ["", "", "", parse_date(movement.emitted_at, '%d.%m.%y'), movement.causal, amount_value],
-                    style: [s_empty, s_empty, s_empty, s_in_cell, s_in_cell, s_in_num]
-
-      if last_empty_row_type == 'out'
-        cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:C#{current_row}"
-      else
-        cells_to_merge << "A#{current_row}:C#{current_row}"
-      end
-      last_empty_row_type = 'out'
+      current_row += 1
     end
+    last_data_row = current_row - 1
+
+    # RIGA VUOTA
+    sheet.add_row e14, style: [s_empty]*14
+    if last_empty_row_type == 'in'
+      cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:N#{current_row}"
+      cells_to_merge << "A#{current_row}:G#{current_row}"
+    elsif cells_to_merge.present?
+      cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:G#{current_row}"
+      cells_to_merge << "H#{current_row}:N#{current_row}"
+    end
+    totals_row = current_row + 1
     current_row += 1
-  end
 
-  last_data_row = current_row - 1
-
-
-  # UNA RIGA VUOTA
-  sheet.add_row ["", "", "", "", "", ""], style: [s_empty]*6
-  if last_empty_row_type == 'in'
-    cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:F#{current_row}"
-    cells_to_merge << "A#{current_row}:C#{current_row}"
-  elsif cells_to_merge.present?
-    cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:C#{current_row}"
-    cells_to_merge << "D#{current_row}:F#{current_row}"
-  end
-  totals_row = current_row + 1
-  current_row += 1
-
-
-  # TOTALI (con formule)
-  row = sheet.add_row ["TOTALE:", "", nil, "TOTALE:", "", nil],
-                      style: [s_label_r, s_label_r, s_total_out, s_label_r, s_label_r, s_total_in]
-  row.cells[2].escape_formulas = false
-  row.cells[2].value = "=SUM(C#{first_data_row}:C#{last_data_row})"
-  row.cells[5].escape_formulas = false
-  row.cells[5].value = "=SUM(F#{first_data_row}:F#{last_data_row})"
-  ["A#{current_row}:B#{current_row}", "D#{current_row}:E#{current_row}"].each { |ci| cells_to_merge << ci }
-  current_row += 1
-
-
-  # DUE RIGHE VUOTE
-  sheet.add_row ["", "", "", "", "", ""], style: [s_empty_m]*6
-  sheet.add_row ["", "", "", "", "", ""], style: [s_empty_m]*6
-  cells_to_merge << "A#{current_row}:F#{current_row + 1}"
-  current_row += 2
-
-
-  # FONDO CASSA
-  start_amount_row = nil
-
-  if @time_range_report.present?
-    start_amount_row = current_row
-    sheet.add_row [@table_titles[:start_amount_title].upcase, "", "", "", "", @start_amount.to_f],
-                  style: [s_label_r2, s_label_r2, s_label_r2, s_label_r2, s_label_r2, s_fondo]
-    sheet.merge_cells("A#{current_row}:E#{current_row}")
+    # TOTALI (con formule)
+    row = sheet.add_row ["TOTALE:", "", "", "", "", "", nil, "TOTALE:", "", "", "", "", "", nil],
+                        style: [s_label_r, s_label_r, s_label_r, s_label_r, s_label_r, s_label_r, s_total_out, s_label_r, s_label_r, s_label_r, s_label_r, s_label_r, s_label_r, s_total_in]
+    row.cells[6].escape_formulas = false
+    row.cells[6].value = "=SUM(G#{first_data_row}:G#{last_data_row})"
+    row.cells[13].escape_formulas = false
+    row.cells[13].value = "=SUM(N#{first_data_row}:N#{last_data_row})"
+    cells_to_merge << "A#{current_row}:F#{current_row}"
+    cells_to_merge << "H#{current_row}:M#{current_row}"
     current_row += 1
-  end
 
-  saldo_row = current_row
-  row = sheet.add_row [@table_titles[:total_amount_title].upcase, "", "", "", "", nil],
-                      style: [s_label_r2, s_label_r2, s_label_r2, s_label_r2, s_label_r2, @total_movements_amount <= 0 ? s_saldo_neg : s_saldo_pos]
-  row.cells[5].escape_formulas = false
-  row.cells[5].value = "=F#{totals_row}-C#{totals_row}"
-  sheet.merge_cells("A#{current_row}:E#{current_row}")
-  current_row += 1
+    # DUE RIGHE VUOTE
+    sheet.add_row e14, style: [s_empty_m]*14
+    sheet.add_row e14, style: [s_empty_m]*14
+    cells_to_merge << "A#{current_row}:N#{current_row + 1}"
+    current_row += 2
 
-  if @time_range_report.present?
-    row = sheet.add_row [@table_titles[:final_amount_title].upcase, "", "", "", "", nil],
-                        style: [s_label_r2, s_label_r2, s_label_r2, s_label_r2, s_label_r2, s_fondo]
+    # GIACENZA (con formule)
+    start_amount_row = nil
+    if @time_range_report.present?
+      start_amount_row = current_row
+      sheet.add_row [@table_titles[:start_amount_title].upcase] + [""] * 12 + [@start_amount.to_f],
+                    style: ([s_label_r2]*13) + [s_fondo]
+      sheet.merge_cells("A#{current_row}:M#{current_row}")
+      current_row += 1
+    end
+
+    saldo_row = current_row
+    row = sheet.add_row [@table_titles[:total_amount_title].upcase] + [""] * 12 + [nil],
+                        style: ([s_label_r2]*13) + [@total_movements_amount <= 0 ? s_saldo_neg : s_saldo_pos]
+    row.cells[13].escape_formulas = false
+    row.cells[13].value = "=N#{totals_row}-G#{totals_row}"
+    sheet.merge_cells("A#{current_row}:M#{current_row}")
+    current_row += 1
+
+    if @time_range_report.present?
+      row = sheet.add_row [@table_titles[:final_amount_title].upcase] + [""] * 12 + [nil],
+                          style: ([s_label_r2]*13) + [s_fondo]
+      row.cells[13].escape_formulas = false
+      row.cells[13].value = "=N#{start_amount_row}+N#{saldo_row}"
+      sheet.merge_cells("A#{current_row}:M#{current_row}")
+      current_row += 1
+    end
+
+    # DUE RIGHE VUOTE
+    sheet.add_row e14, style: [s_empty_m]*14
+    sheet.add_row e14, style: [s_empty_m]*14
+    cells_to_merge << "A#{current_row}:N#{current_row + 1}"
+    current_row += 2
+
+    # GIACENZA PER CARATURA
+    holdings = @count.metal_holdings
+    if holdings.present?
+      holdings_keys = holdings.keys.sort.reverse
+      total_rows = holdings_keys.length
+
+      # Stili: solo i bordi esterni della tabella sono medium, tutto il resto è thin
+      # Posizioni: 0=A (bordo sinistro medium), 9=J (bordo destro medium)
+      # Prima riga: bordo superiore medium. Ultima riga: bordo inferiore medium.
+
+      # Titolo (prima riga della tabella: top medium, left medium su A, right medium su J)
+      s_title_l = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border_top: {style: :medium, color: '000000'}, border_left: {style: :medium, color: '000000'}, border_bottom: {style: :thin, color: '000000'}, border_right: {style: :thin, color: '000000'}})
+      s_title_m = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border_top: {style: :medium, color: '000000'}, border_bottom: {style: :thin, color: '000000'}, border_left: {style: :thin, color: '000000'}, border_right: {style: :thin, color: '000000'}})
+      s_title_r = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border_top: {style: :medium, color: '000000'}, border_right: {style: :medium, color: '000000'}, border_bottom: {style: :thin, color: '000000'}, border_left: {style: :thin, color: '000000'}})
+
+      sheet.add_row ["GIACENZA PER CARATURA"] + [""] * 13,
+                    style: [s_title_l] + ([s_title_m] * 12) + [s_title_r]
+      sheet.merge_cells("A#{current_row}:N#{current_row}")
+      current_row += 1
+
+      # Header (riga interna: left medium su A, right medium su J, top/bottom thin)
+      s_head_l = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, alignment: { horizontal: :center, vertical: :center }, border_left: {style: :medium, color: '000000'}, border_top: {style: :thin, color: '000000'}, border_bottom: {style: :thin, color: '000000'}, border_right: {style: :thin, color: '000000'}})
+      s_head_m = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+      s_head_r = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, alignment: { horizontal: :center, vertical: :center }, border_right: {style: :medium, color: '000000'}, border_top: {style: :thin, color: '000000'}, border_bottom: {style: :thin, color: '000000'}, border_left: {style: :thin, color: '000000'}})
+
+      sheet.add_row ["Caratura", "", "", "", "", "", "", "Grammi", "", "", "", "", "", ""],
+                    style: [s_head_l] + ([s_head_m] * 12) + [s_head_r]
+      sheet.merge_cells("A#{current_row}:G#{current_row}")
+      sheet.merge_cells("H#{current_row}:N#{current_row}")
+      current_row += 1
+
+      # Righe per caratura (con formule)
+      holdings_keys.each_with_index do |karat, idx|
+        is_last = idx == total_rows - 1
+        bb = is_last ? :medium : :thin
+
+        s_row_l = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, alignment: { horizontal: :center, vertical: :center }, border_left: {style: :medium, color: '000000'}, border_top: {style: :thin, color: '000000'}, border_bottom: {style: bb, color: '000000'}, border_right: {style: :thin, color: '000000'}})
+        s_row_m = wb.styles.add_style({font_name: "Calibri", sz: 10, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_bottom: {style: bb, color: '000000'}})
+        s_row_r = wb.styles.add_style({font_name: "Calibri", sz: 10, alignment: { horizontal: :center, vertical: :center }, border_right: {style: :medium, color: '000000'}, border_top: {style: :thin, color: '000000'}, border_bottom: {style: bb, color: '000000'}, border_left: {style: :thin, color: '000000'}})
+
+        # Formula: somma grammi acquisti - grammi vendite per questa caratura
+        out_refs = (karat_out_rows[karat] || []).map { |r| "G#{r}" }
+        in_refs = (karat_in_rows[karat] || []).map { |r| "N#{r}" }
+        has_formula = out_refs.present? || in_refs.present?
+        formula_parts = []
+        formula_parts << in_refs.join("+") if in_refs.present?
+        formula_parts << out_refs.map { |r| "-#{r}" }.join("") if out_refs.present?
+
+        row = sheet.add_row ["#{karat.to_i}k", "", "", "", "", "", "", has_formula ? nil : 0, "", "", "", "", "", ""],
+                            style: [s_row_l] + ([s_row_m] * 12) + [s_row_r]
+        if has_formula
+          row.cells[7].escape_formulas = false
+          row.cells[7].value = "=#{formula_parts.join('')}"
+        end
+        sheet.merge_cells("A#{current_row}:G#{current_row}")
+        sheet.merge_cells("H#{current_row}:N#{current_row}")
+        current_row += 1
+      end
+    end
+
+    # MERGE E LARGHEZZE
+    sheet.merge_cells("A1:N3")
+    sheet.merge_cells("A4:G4")
+    sheet.merge_cells("H4:N4")
+    cells_to_merge.each { |ci| sheet.merge_cells(ci) }
+    causal_col_width = @year.present? || @month.present? ? 25 : 35
+    sheet.column_widths 10, causal_col_width, 10, 12, 12, 10, 12, 10, causal_col_width, 10, 12, 12, 10, 12
+
+  else
+    # =====================================================================
+    # LAYOUT PER CONTI NORMALI (6 colonne – codice originale invariato)
+    # =====================================================================
+    s_title = wb.styles.add_style({font_name: "Calibri", fg_color: 'c9211e', sz: 16, b: true, u: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :medium, color: '000000'}})
+    s_section = wb.styles.add_style({font_name: "Calibri", fg_color: 'ff0800', sz: 14, b: true, u: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+    s_col_head = wb.styles.add_style({font_name: "Calibri", sz: 12, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+    s_col_head_r = wb.styles.add_style({font_name: "Calibri", sz: 12, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
+    s_empty = wb.styles.add_style({border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
+    s_empty_m = wb.styles.add_style({border: {style: :medium, color: '000000'}})
+    s_label_r = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, alignment: { horizontal: :right, vertical: :center }, border: {style: :thin, color: '000000'}})
+    s_label_r2 = wb.styles.add_style({font_name: "Calibri", sz: 10, alignment: { horizontal: :right, vertical: :center }, border: {style: :thin, color: '000000'}})
+    s_in_cell = wb.styles.add_style({font_name: "Calibri", sz: 10, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+    s_in_num = wb.styles.add_style({font_name: "Calibri", sz: 10, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, format_code: '#,##0.00 €'})
+    s_total_out = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, fg_color: '000000', bg_color: 'ff0000', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, format_code: '#,##0.00 €'})
+    s_total_in = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, fg_color: '000000', bg_color: '2cfe22', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, format_code: '#,##0.00 €'})
+    s_saldo_pos = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, fg_color: '000000', bg_color: '2cfe22', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, format_code: '#,##0.00 €'})
+    s_saldo_neg = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, fg_color: '000000', bg_color: 'ff0000', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, format_code: '#,##0.00 €'})
+    s_fondo = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, format_code: '#,##0.00 €'})
+
+    # TESTATA
+    sheet.add_row [@table_titles[:main_title].upcase, "", "", "", "", ""], style: [s_title]*6
+    sheet.add_row ["", "", "", "", "", ""], style: [s_title]*6
+    sheet.add_row ["", "", "", "", "", ""], style: [s_title]*6
+    sheet.add_row ["USCITE", "", "", "ENTRATE", "", ""], style: [s_section, s_section, s_col_head_r, s_section, s_section, s_col_head_r]
+    sheet.add_row ["Data", "Causale", "Spesa", "Data", "Causale", "Spesa"], style: [s_col_head, s_col_head, s_col_head_r, s_col_head, s_col_head, s_col_head_r]
+
+    # MOVIMENTI
+    first_data_row = 6
+    current_row = first_data_row
+    cells_to_merge = []
+    last_empty_row_type = nil
+    expense_item_rows = {}
+
+    @movements.each do |movement|
+      amount_value = movement.amount.to_f.abs
+      if movement.movement_type == 'out'
+        color = movement.expense_item&.color.to_s.gsub('#', '') || 'FFFFFF'
+        s_out_cell = wb.styles.add_style({font_name: "Calibri", sz: 10, fg_color: '000000', bg_color: color, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
+        s_out_num = wb.styles.add_style({font_name: "Calibri", sz: 10, fg_color: '000000', bg_color: color, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, format_code: '#,##0.00 €'})
+        sheet.add_row [parse_date(movement.emitted_at, '%d.%m.%y'), movement.causal, amount_value, "", "", ""],
+                      style: [s_out_cell, s_out_cell, s_out_num, s_empty, s_empty, s_empty]
+        if last_empty_row_type == 'in'
+          cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:F#{current_row}"
+        else
+          cells_to_merge << "D#{current_row}:F#{current_row}"
+        end
+        last_empty_row_type = 'in'
+        if movement.expense_item_id.present?
+          expense_item_rows[movement.expense_item_id] ||= []
+          expense_item_rows[movement.expense_item_id] << current_row
+        end
+      else
+        sheet.add_row ["", "", "", parse_date(movement.emitted_at, '%d.%m.%y'), movement.causal, amount_value],
+                      style: [s_empty, s_empty, s_empty, s_in_cell, s_in_cell, s_in_num]
+        if last_empty_row_type == 'out'
+          cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:C#{current_row}"
+        else
+          cells_to_merge << "A#{current_row}:C#{current_row}"
+        end
+        last_empty_row_type = 'out'
+      end
+      current_row += 1
+    end
+    last_data_row = current_row - 1
+
+    # RIGA VUOTA
+    sheet.add_row ["", "", "", "", "", ""], style: [s_empty]*6
+    if last_empty_row_type == 'in'
+      cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:F#{current_row}"
+      cells_to_merge << "A#{current_row}:C#{current_row}"
+    elsif cells_to_merge.present?
+      cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:C#{current_row}"
+      cells_to_merge << "D#{current_row}:F#{current_row}"
+    end
+    totals_row = current_row + 1
+    current_row += 1
+
+    # TOTALI
+    row = sheet.add_row ["TOTALE:", "", nil, "TOTALE:", "", nil],
+                        style: [s_label_r, s_label_r, s_total_out, s_label_r, s_label_r, s_total_in]
+    row.cells[2].escape_formulas = false
+    row.cells[2].value = "=SUM(C#{first_data_row}:C#{last_data_row})"
     row.cells[5].escape_formulas = false
-    row.cells[5].value = "=F#{start_amount_row}+F#{saldo_row}"
-    sheet.merge_cells("A#{current_row}:E#{current_row}")
+    row.cells[5].value = "=SUM(F#{first_data_row}:F#{last_data_row})"
+    ["A#{current_row}:B#{current_row}", "D#{current_row}:E#{current_row}"].each { |ci| cells_to_merge << ci }
     current_row += 1
-  end
 
+    # DUE RIGHE VUOTE
+    sheet.add_row ["", "", "", "", "", ""], style: [s_empty_m]*6
+    sheet.add_row ["", "", "", "", "", ""], style: [s_empty_m]*6
+    cells_to_merge << "A#{current_row}:F#{current_row + 1}"
+    current_row += 2
 
-  # DUE RIGHE VUOTE
-  sheet.add_row ["", "", "", "", "", ""], style: [s_empty_m]*6
-  sheet.add_row ["", "", "", "", "", ""], style: [s_empty_m]*6
-  cells_to_merge << "A#{current_row}:F#{current_row + 1}"
-  current_row += 2
-
-
-  # TOTALI PER VOCI DI SPESA (con formule)
-  index = 1
-  total_expense_items = @movements_amounts_by_expense_items.keys.length
-  @movements_amounts_by_expense_items.each do |expense_item, amount|
-    rows_for_item = expense_item_rows[expense_item.id] || []
-    color = expense_item.color.gsub('#', '')
-    border_b = index == total_expense_items ? :medium : :thin
-
-    s_ei_label = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, fg_color: '000000', bg_color: color, alignment: { horizontal: :right, vertical: :center }, border: {style: :thin, color: '000000'}, border_bottom: {style: border_b, color: '000000'}})
-    s_ei_val = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, fg_color: '000000', bg_color: color, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, border_bottom: {style: border_b, color: '000000'}, format_code: '#,##0.00 €'})
-
-    formula = rows_for_item.present? ? "=" + rows_for_item.map { |r| "C#{r}" }.join("+") : nil
-
-    row = sheet.add_row ["AMMONTARE COMPLESSIVO #{expense_item.description.upcase}:", "", "", "", "", rows_for_item.present? ? nil : 0],
-                        style: [s_ei_label, s_ei_label, s_ei_label, s_ei_label, s_ei_label, s_ei_val]
-    if formula
-      row.cells[5].escape_formulas = false
-      row.cells[5].value = formula
+    # FONDO CASSA
+    start_amount_row = nil
+    if @time_range_report.present?
+      start_amount_row = current_row
+      sheet.add_row [@table_titles[:start_amount_title].upcase, "", "", "", "", @start_amount.to_f],
+                    style: [s_label_r2, s_label_r2, s_label_r2, s_label_r2, s_label_r2, s_fondo]
+      sheet.merge_cells("A#{current_row}:E#{current_row}")
+      current_row += 1
     end
+
+    saldo_row = current_row
+    row = sheet.add_row [@table_titles[:total_amount_title].upcase, "", "", "", "", nil],
+                        style: [s_label_r2, s_label_r2, s_label_r2, s_label_r2, s_label_r2, @total_movements_amount <= 0 ? s_saldo_neg : s_saldo_pos]
+    row.cells[5].escape_formulas = false
+    row.cells[5].value = "=F#{totals_row}-C#{totals_row}"
     sheet.merge_cells("A#{current_row}:E#{current_row}")
     current_row += 1
-    index += 1
+
+    if @time_range_report.present?
+      row = sheet.add_row [@table_titles[:final_amount_title].upcase, "", "", "", "", nil],
+                          style: [s_label_r2, s_label_r2, s_label_r2, s_label_r2, s_label_r2, s_fondo]
+      row.cells[5].escape_formulas = false
+      row.cells[5].value = "=F#{start_amount_row}+F#{saldo_row}"
+      sheet.merge_cells("A#{current_row}:E#{current_row}")
+      current_row += 1
+    end
+
+    # DUE RIGHE VUOTE
+    sheet.add_row ["", "", "", "", "", ""], style: [s_empty_m]*6
+    sheet.add_row ["", "", "", "", "", ""], style: [s_empty_m]*6
+    cells_to_merge << "A#{current_row}:F#{current_row + 1}"
+    current_row += 2
+
+    # TOTALI PER VOCI DI SPESA
+    index = 1
+    total_expense_items = @movements_amounts_by_expense_items.keys.length
+    @movements_amounts_by_expense_items.each do |expense_item, amount|
+      rows_for_item = expense_item_rows[expense_item.id] || []
+      color = expense_item.color.gsub('#', '')
+      border_b = index == total_expense_items ? :medium : :thin
+      s_ei_label = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, fg_color: '000000', bg_color: color, alignment: { horizontal: :right, vertical: :center }, border: {style: :thin, color: '000000'}, border_bottom: {style: border_b, color: '000000'}})
+      s_ei_val = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, fg_color: '000000', bg_color: color, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}, border_bottom: {style: border_b, color: '000000'}, format_code: '#,##0.00 €'})
+      formula = rows_for_item.present? ? "=" + rows_for_item.map { |r| "C#{r}" }.join("+") : nil
+      row = sheet.add_row ["AMMONTARE COMPLESSIVO #{expense_item.description.upcase}:", "", "", "", "", rows_for_item.present? ? nil : 0],
+                          style: [s_ei_label, s_ei_label, s_ei_label, s_ei_label, s_ei_label, s_ei_val]
+      if formula
+        row.cells[5].escape_formulas = false
+        row.cells[5].value = formula
+      end
+      sheet.merge_cells("A#{current_row}:E#{current_row}")
+      current_row += 1
+      index += 1
+    end
+
+    # MERGE E LARGHEZZE
+    sheet.merge_cells("A1:F3")
+    sheet.merge_cells("A4:C4")
+    sheet.merge_cells("D4:F4")
+    cells_to_merge.each { |ci| sheet.merge_cells(ci) }
+    causal_col_width = @year.present? || @month.present? ? 65 : 80
+    sheet.column_widths 10, causal_col_width, 15, 10, causal_col_width, 15
   end
-
-
-  # MERGE CELLE
-  sheet.merge_cells("A1:F3")
-  sheet.merge_cells("A4:C4")
-  sheet.merge_cells("D4:F4")
-  cells_to_merge.each { |ci| sheet.merge_cells(ci) }
-
-
-  # LARGHEZZA COLONNE
-  causal_col_width = @year.present? || @month.present? ? 65 : 80
-  sheet.column_widths 10, causal_col_width, 15, 10, causal_col_width, 15
 end

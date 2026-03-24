@@ -26,7 +26,10 @@
 
   <div class="my-4 mx-2 mx-sm-4">
     <%= form.label :amount, @count.metal_account? ? 'Grammi' : 'Importo', class: "form-label" %>
-    <%= form.number_field :amount, step: :any, class: "form-control" %>
+    <div class="v2-input-group">
+      <%= form.number_field :amount, step: :any, class: "form-control" %>
+      <span class="v2-input-group-unit"><%= @count.metal_account? ? 'g' : '€' %></span>
+    </div>
   </div>
 
   <% if @count.metal_account? %>
@@ -40,8 +43,11 @@
     </div>
 
     <div class="my-4 mx-2 mx-sm-4">
-      <%= form.label :price_at_transaction, 'Prezzo al grammo (€)', class: "form-label" %>
-      <%= form.number_field :price_at_transaction, step: :any, class: "form-control" %>
+      <%= form.label :price_per_gram_at_transaction, 'Prezzo al grammo', class: "form-label" %>
+      <div class="v2-input-group">
+        <%= form.number_field :price_per_gram_at_transaction, step: :any, class: "form-control" %>
+        <span class="v2-input-group-unit">&euro;/g</span>
+      </div>
     </div>
   <% end %>
 

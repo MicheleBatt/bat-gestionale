@@ -274,17 +274,17 @@ namespace :initDB do
         Date.new(2025, 4, 14), Date.new(2025, 4, 24), Date.new(2025, 5, 26), Date.new(2025, 9, 1),
         Date.new(2026, 2, 13), Date.new(2026, 3, 11), Date.today - 1.day
       ].each do | date |
-        GetRealTimeGoldPriceCommand.call(['XAU'], date)
+        GetRealTimeMetalsValueCommand.call(['XAU'], date)
       end
 
       [
         Date.new(2024, 1, 1), Date.new(2024, 5, 14), Date.new(2024, 9, 4), Date.new(2024, 12, 31), Date.new(2025, 1, 1), Date.new(2025, 12, 31), Date.new(2026, 1, 1)
       ].each do | date |
-        GetRealTimeGoldPriceCommand.call(['XAG'], date)
+        GetRealTimeMetalsValueCommand.call(['XAG'], date)
       end
 
       ((Date.today - 35.days)..(Date.today - 5.days)).to_a.each do | date |
-        GetRealTimeGoldPriceCommand.call(['XAU', 'XAG'], date)
+        GetRealTimeMetalsValueCommand.call(['XAU', 'XAG'], date)
       end
     else
       puts '****** RAKE ABORTED!!! ******'

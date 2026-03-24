@@ -74,12 +74,9 @@ class OrganizationsController < ApplicationController
 
     @years_range,
     @final_amounts_by_date,
-    @final_valued_amounts_by_date,
-    @metal_values_by_date,
     @movements_global_amount_by_expense_items,
     @year,
     @movements_max_amount,
-    @in_out_global_amounts,
     @in_out_global_valued_amounts = stats_for_charts(@count || @organization, movements, params)
 
     if @count.blank?

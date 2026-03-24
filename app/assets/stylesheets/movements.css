@@ -122,7 +122,7 @@
 
   .v2-mov-table-head-section {
     display: grid;
-    grid-template-columns: 80px 1fr 90px;
+    grid-template-columns: 70px 1fr 80px;
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -144,6 +144,11 @@
     text-align: center;
     border-top: 1px solid rgba(109,40,217,0.1);
     border-bottom: 1px solid rgba(109,40,217,0.1);
+  }
+
+  /* Metal account: 6 colonne per lato */
+  .v2-mov-table-head-section.metal-head {
+    grid-template-columns: 70px 1fr 65px 70px 55px 65px;
   }
 }
 
@@ -173,8 +178,21 @@
   position: relative;
 }
 
+.v2-mov-cell.metal-cell {
+  grid-template-columns: 70px 1fr 65px 70px 55px 65px;
+}
+
 .v2-mov-cell:hover {
   background: rgba(109,40,217,0.03);
+}
+
+/* Metal extra columns */
+.v2-mov-metal-col {
+  padding: 0.4rem 0.35rem;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--txt2);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Expense item color background */
@@ -194,9 +212,7 @@
   padding: 0.4rem 0.5rem;
   color: var(--txt);
   font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  word-break: break-word;
   cursor: pointer;
   transition: color 0.15s;
 }
@@ -390,7 +406,17 @@
     font-size: 0.72rem;
   }
 
+  .v2-mov-cell.metal-cell {
+    grid-template-columns: 55px 1fr 50px 55px 45px 55px;
+    font-size: 0.65rem;
+  }
+
   .v2-mov-date {
     font-size: 0.65rem;
+  }
+
+  .v2-mov-metal-col {
+    font-size: 0.6rem;
+    padding: 0.3rem 0.2rem;
   }
 }

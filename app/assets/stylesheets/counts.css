@@ -1078,6 +1078,32 @@ a.v2-btn-icon,
   margin-bottom: 0.3rem;
 }
 
+/* Input group with unit label */
+.v2-input-group {
+  display: flex;
+  align-items: stretch;
+}
+
+.v2-input-group .form-control {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  border-right: none !important;
+}
+
+.v2-input-group-unit {
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  font-family: var(--font);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-l));
+  border: none;
+  border-radius: 0 0.55rem 0.55rem 0;
+  white-space: nowrap;
+}
+
 .v2 .modal-body .form-control option,
 .v2 .modal-body .form-select option {
   background: #ffffff;

@@ -70,31 +70,30 @@ module ApplicationHelper
     "#{year.to_i}#{month.to_i.to_s.rjust(2, '0')}#{day.to_i.to_s.rjust(2, '0')}".to_i
   end
 
-  def stats_for_charts(entity, movements, params = nil, metal = nil)
+  def time_scope(entity, params)
     years_range = entity.years_range
-    final_amounts_by_date = {}
-    final_valued_amounts_by_date = {}
-    metal_values_by_date = []
-    metal_values_by_karat = {}
-    movements_global_amount_by_expense_items = {}
     year = params[:q].present? ? params[:q][:year_eq] : nil
     months = (1..12).to_a
-    if metal.present?
-      karats = MetalValuesHelper::available_karats_for_select(metal)
-      karats = karats.filter{ | k | k[1] == params[:q][:karat_eq].to_f } if params[:q].present? && params[:q][:karat_eq].present?
-    end
+    now = Time.now
+    time_ranges = year.present? ? months : years_range
+
+    return [
+      years_range, year, months, now, time_ranges
+    ]
+  end
+
+  def stats_for_charts(entity, movements, params = nil, metal = nil)
+    final_amounts_by_date = {}
+    movements_global_amount_by_expense_items = {}
+    movements_max_amount = 0
+    out_global_valued_amounts = []
+    in_global_valued_amounts = []
 
     entity.expense_items.each_with_object({}) do |expense_item, hash|
       movements_global_amount_by_expense_items[expense_item] = {'total' => 0}
     end
 
-    movements_max_amount = 0
-    out_global_amounts = []
-    in_global_amounts = []
-    out_global_valued_amounts = []
-    in_global_valued_amounts = []
-    now = Time.now
-    time_ranges = year.present? ? months : years_range
+    years_range, year, months, now, time_ranges = time_scope(entity, params)
     time_ranges.each do | time_range |
       break if year.present? && year.to_i >= now.year && time_range > now.month
 
@@ -115,37 +114,8 @@ module ApplicationHelper
         end
       end
 
-      # Se l'entità corrente è un piano d'accumulo su un metallo prezioso
-      if metal.present?
-        # Calcolo il valore della giacenza globale a fine di ogni mese / anno
-        movements_by_karats = entity.movements.where(karat: karats.map{ | k | k[1] })
-        if year.present?
-          final_valued_amounts_by_date[it_month] = entity.economic_value_at_date(Date.new(year.to_i, time_range, 1).end_of_month, movements_by_karats)
-        else
-          final_valued_amounts_by_date[time_range] = entity.economic_value_at_date(Date.new(time_range, 12, 31), movements_by_karats)
-        end
 
-        karats.each do | karat |
-          # Estraggo il valore di quel metallo per caratura a fine di ogni mese / anno
-          metal_values_by_karat[karat] ||= {}
-          if year.present?
-            metal_values_by_karat[karat][it_month] = MetalValue.price_at_date(metal, karat, Date.new(year.to_i, time_range, 1).end_of_month)
-          else
-            metal_values_by_karat[karat][time_range] = MetalValue.price_at_date(metal, karat, Date.new(time_range, 12, 31))
-          end
-        end
-
-        # Calcolo le uscite / entrate complessive ad ogni mese / anno
-        if year.present?
-          out_global_amounts << [it_month, movements.where(month: time_range, movement_type: 'out').sum(&:amount).to_f.round(2) * -1]
-          in_global_amounts << [it_month, movements.where(month: time_range, movement_type: 'in').sum(&:amount).to_f.round(2)]
-        else
-          out_global_amounts << [time_range, movements.where(year: time_range, movement_type: 'out').sum(&:amount).to_f.round(2) * -1]
-          in_global_amounts << [time_range, movements.where(year: time_range, movement_type: 'in').sum(&:amount).to_f.round(2)]
-        end
-      end
-
-      # Calcolo il valore delle uscite / entrate complessive ad ogni mese / anno
+      # Calcolo il valore delle entrate / uscite complessive ad ogni mese / anno
       if year.present?
         out_movements = movements.where(month: time_range, movement_type: 'out')
         out_amount = out_movements.where(karat: nil).sum(&:amount).to_f.round(2)
@@ -192,33 +162,12 @@ module ApplicationHelper
       }
     ]
 
-    if metal.present?
-      in_out_global_amounts = [
-        {
-          name: "Uscite",
-          data: out_global_amounts
-        },
-        {
-          name: "Entrate",
-          data: in_global_amounts
-        }
-      ]
-    end
-
-    # Costruisco l'array multi-linea per il grafico dei valori del metallo per caratura
-    metal_values_by_karat.each do |karat, data|
-      metal_values_by_date << { name: "#{karat[0]}", data: data }
-    end
-
     [
       years_range,
       final_amounts_by_date,
-      final_valued_amounts_by_date,
-      metal_values_by_date,
       movements_global_amount_by_expense_items,
       year,
       movements_max_amount,
-      in_out_global_amounts,
       in_out_global_valued_amounts
     ]
   end

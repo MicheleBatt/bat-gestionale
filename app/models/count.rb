@@ -234,36 +234,6 @@ class Count < ApplicationRecord
     total.round(2)
   end
 
-  # Andamento negli ultimi 30 giorni del valore del metallo prezioso gestito dal piano di accumulo corrente
-  def metal_values_by_last_days(karat = nil)
-    return nil unless self.metal_account?
-
-    date_format = "%-d %b"
-    dates = ((Date.today - 30.days)..(Date.today)).to_a
-    metal_values = MetalValue.where(metal: self.metal_type, recorded_at: dates).order(recorded_at: :asc)
-    metal_values = metal_values.where(karat: karat) if karat.present?
-    metal_values = metal_values.group_by(&:karat)
-    dates = dates.map{ | date | parse_date(date, date_format) }
-
-    metal_values_by_karat = {}
-    metal_values.keys.each do | karat |
-      metal_values[karat] = metal_values[karat].group_by{ | mv | parse_date(mv.recorded_at, date_format) }
-      # Estraggo il valore di quel metallo per caratura alla data specifica
-      metal_values_by_karat[karat] ||= {}
-      dates.each do | date |
-        value = metal_values[karat][date]&.sort_by(&:value)&.last&.value
-        metal_values_by_karat[karat][date] = value if value.present?
-      end
-    end
-
-    metal_values_by_date = []
-    metal_values_by_karat.keys.sort.reverse.each do |karat|
-      metal_values_by_date << { name: "#{karat.to_s.gsub('.0', '')}k", data: metal_values_by_karat[karat] }
-    end
-
-    metal_values_by_date
-  end
-
   def set_current_amount
     self.update_columns(current_amount: self.get_current_amount)
   end
@@ -275,5 +245,107 @@ class Count < ApplicationRecord
         counts.where("ordering_number >= ?", self.ordering_number).update_all("ordering_number = ordering_number + 1")
       end
     end
+  end
+
+  def additional_stats_for_charts(params)
+    metal_values_by_last_days = []
+    final_valued_amounts_by_date = {}
+    metal_values_by_date = []
+    metal_values_by_karats = {}
+    metal_values_by_karat = {}
+    out_global_amounts = []
+    in_global_amounts = []
+
+    if self.metal_account?
+      metal = self.metal_type
+      karats = MetalValuesHelper::available_karats_for_select(metal)
+      karats = karats.filter{ | k | k[1] == params[:q][:karat_eq].to_f } if params[:q].present? && params[:q][:karat_eq].present?
+      karats_values = karats.map{ | k | k[1] }
+
+      # Estraggo il valore di quel metallo per caratura negli ultimi 31 giorni
+      date_format = "%-d %b"
+      dates = ((Date.today - 30.days)..(Date.today)).to_a
+      metal_values = MetalValue.where(metal: self.metal_type, recorded_at: dates).order(recorded_at: :asc)
+      metal_values = metal_values.where(karat: karats_values )
+      metal_values = metal_values.group_by(&:karat)
+      dates = dates.map{ | date | parse_date(date, date_format) }
+
+      metal_values.keys.each do | karat |
+        metal_values[karat] = metal_values[karat].group_by{ | mv | parse_date(mv.recorded_at, date_format) }
+        metal_values_by_karats[karat] ||= {}
+        dates.each do | date |
+          value = metal_values[karat][date]&.sort_by(&:value)&.last&.value
+          metal_values_by_karats[karat][date] = value if value.present?
+        end
+      end
+
+      metal_values_by_karats.keys.sort.reverse.each do |karat|
+        metal_values_by_last_days << { name: "#{karat.to_s.gsub('.0', '')}k", data: metal_values_by_karats[karat] }
+      end
+
+
+      _, year, _, now, time_ranges = ApplicationHelper::time_scope(self, params)
+      time_ranges.each do | time_range |
+        break if year.present? && year.to_i >= now.year && time_range > now.month
+
+        it_month = italian_month(time_range) if year.present?
+
+        # Calcolo il valore della giacenza globale a fine di ogni mese / anno
+        movements_by_karats = self.movements.where(karat: karats_values)
+        if year.present?
+          final_valued_amounts_by_date[it_month] = self.economic_value_at_date(Date.new(year.to_i, time_range, 1).end_of_month, movements_by_karats)
+        else
+          final_valued_amounts_by_date[time_range] = self.economic_value_at_date(Date.new(time_range, 12, 31), movements_by_karats)
+        end
+
+
+        karats.each do | karat |
+          # Estraggo il valore di quel metallo per caratura a fine di ogni mese / anno
+          metal_values_by_karat[karat] ||= {}
+          if year.present?
+            metal_values_by_karat[karat][it_month] = MetalValue.price_at_date(metal, karat, Date.new(year.to_i, time_range, 1).end_of_month)
+          else
+            metal_values_by_karat[karat][time_range] = MetalValue.price_at_date(metal, karat, Date.new(time_range, 12, 31))
+          end
+        end
+
+
+        # Calcolo le entrate / uscite complessive ad ogni mese / anno
+        if year.present?
+          out_global_amounts << [it_month, movements.where(month: time_range, movement_type: 'out').sum(&:amount).to_f.round(2) * -1]
+          in_global_amounts << [it_month, movements.where(month: time_range, movement_type: 'in').sum(&:amount).to_f.round(2)]
+        else
+          out_global_amounts << [time_range, movements.where(year: time_range, movement_type: 'out').sum(&:amount).to_f.round(2) * -1]
+          in_global_amounts << [time_range, movements.where(year: time_range, movement_type: 'in').sum(&:amount).to_f.round(2)]
+        end
+      end
+
+
+      in_out_global_amounts = [
+        {
+          name: "Uscite",
+          data: out_global_amounts
+        },
+        {
+          name: "Entrate",
+          data: in_global_amounts
+        }
+      ]
+
+
+      # Costruisco l'array multi-linea per il grafico dei valori del metallo per caratura
+      metal_values_by_karat.each do |karat, data|
+        metal_values_by_date << { name: "#{karat[0]}", data: data }
+      end
+    end
+
+
+    [
+      final_valued_amounts_by_date,
+      metal_values_by_last_days,
+      metal_values_by_date,
+      year,
+      in_out_global_amounts
+    ]
   end
 end

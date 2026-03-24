@@ -1,4 +1,4 @@
-<div class="v2-mov-cell <%= movement.movement_type == 'out' ? 'out-cell' : '' %>"
+<div class="v2-mov-cell <%= movement.movement_type == 'out' ? 'out-cell' : '' %> <%= @count.metal_account? ? 'metal-cell' : '' %>"
      id="movement_<%= movement.id %>"
      style="--mov-color: <%= movement.expense_item&.color || 'transparent' %>">
   <div class="v2-mov-date"><%= parse_date(movement.emitted_at, '%d.%m.%y') %></div>
@@ -8,7 +8,9 @@
          data-bs-target="#movementEditingModal_<%= movement.id %>">
       <%= movement.causal %>
       <% if @count.metal_account? && movement.karat.present? %>
-        <span style="color: var(--txt3); font-size: 0.65rem; margin-left: 0.3rem;"><%= movement.karat.to_i %>k</span>
+        <span style="color: var(--txt3); font-size: 0.65rem; margin-left: 0.3rem;">
+          <%= movement.karat.to_i %>k
+        </span>
       <% end %>
     </div>
   <% else %>
@@ -18,6 +20,11 @@
         <span style="color: var(--txt3); font-size: 0.65rem; margin-left: 0.3rem;"><%= movement.karat.to_i %>k</span>
       <% end %>
     </div>
+  <% end %>
+  <% if @count.metal_account? %>
+    <div class="v2-mov-metal-col"><%= movement.price_per_gram_at_transaction.present? ? "#{to_visible_amount(movement.price_per_gram_at_transaction, false)}€" : '' %></div>
+    <div class="v2-mov-metal-col"><%= movement.price_at_transaction.present? ? "#{to_visible_amount(movement.price_at_transaction, false)}€" : '' %></div>
+    <div class="v2-mov-metal-col"><%= movement.spread.present? ? "#{to_visible_amount(movement.spread, false)}%" : '' %></div>
   <% end %>
   <div class="v2-mov-amount <%= movement.movement_type %>">
     <span class="d-inline d-lg-none"><%= movement.movement_type == 'in' ? '+' : '-' %></span><%= to_visible_amount(movement.amount) %><%= @count.metal_account? ? 'g' : '€' %>
