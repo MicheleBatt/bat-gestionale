@@ -30,6 +30,24 @@ class MovementsController < ApplicationController
     @movements_amounts_by_expense_items = out_movements.joins(:expense_item).group(:expense_item).sum(:amount)
     @movements_amounts_by_expense_items.sort_by{ | expense_item, amount | expense_item.description }
 
+    if @count.metal_account?
+      @total_in_price_at_transaction = in_movements.sum(:price_at_transaction).to_f.round(2)
+      @total_out_price_at_transaction = out_movements.sum(:price_at_transaction).to_f.abs.round(2)
+
+      # Ultimo valore rilevato per 1 grammo di metallo prezioso della migliore caratura possibile
+      @latest_value = MetalValue.latest_price(@count.metal_type, MetalValuesHelper::DEFAULT_KARAT_PARAM)
+
+      # Spread indicativo di vendita di 1 grammo di metallo prezioso
+      @sell_spread = [out_movements.order(emitted_at: :desc)&.first&.spread.to_f, -10.0].min
+      @sell_spread_amount = (@latest_value * (@sell_spread / 100.0)).round(2)
+      @sell_price_with_spread = (@latest_value * (1 - (@sell_spread.abs / 100.0))).round(2)
+
+      # Spread indicativo di acquisto di 1 grammo di metallo prezioso
+      @buy_spread = [in_movements.order(emitted_at: :desc)&.first&.spread.to_f, 15.0].max
+      @buy_spread_amount = (@latest_value * (@buy_spread / 100.0)).round(2)
+      @buy_price_with_spread = (@latest_value * (1 + (@buy_spread / 100.0))).round(2)
+    end
+
     if @time_range_report
       @start_amount = @count.initial_amount_by_date(@splitted_emitted_at_gteq[0], @splitted_emitted_at_gteq[1], @splitted_emitted_at_gteq[2])
       @final_amount = @start_amount + @total_movements_amount

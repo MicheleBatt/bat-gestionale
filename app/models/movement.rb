@@ -13,7 +13,6 @@ class Movement < ApplicationRecord
   validate :valid_metal_fields?
   validates :price_per_gram_at_transaction, numericality: { greater_than_or_equal_to: 0.0 }, allow_nil: true
   validates :price_at_transaction, numericality: { greater_than_or_equal_to: 0.0 }, allow_nil: true
-  validates :spread, numericality: { greater_than_or_equal_to: 0.0 }, allow_nil: true
   enum movement_type: MOVEMENT_TYPES.index_by(&:itself), _prefix: :movement_type
 
   # Callbacks
@@ -84,7 +83,7 @@ class Movement < ApplicationRecord
   def set_spread
     if self.price_per_gram_at_transaction.present? && self.karat.present? && self.emitted_at.present?
       metal_value = MetalValue.price_at_date(self.count.metal_type, self.karat, self.emitted_at)
-      delta = (self.price_per_gram_at_transaction.to_f.round(2) - metal_value).abs.to_f.round(2)
+      delta = (self.price_per_gram_at_transaction.to_f.round(2) - metal_value).to_f.round(2)
       self.spread = ((delta * 100.0) / metal_value).to_f.round(2)
     end
   end
