@@ -9,11 +9,11 @@ class Movement < ApplicationRecord
 
   # Validations
   validates :amount, :causal, :movement_type, :emitted_at, :year, :month, :day, :year_month_day, presence: true
+  validates :price_per_gram_at_transaction, numericality: { greater_than_or_equal_to: 0.0 }, allow_nil: true
+  validates :price_at_transaction, numericality: { greater_than_or_equal_to: 0.0 }, allow_nil: true
   validate :valid_amount?
   validate :valid_expense_item_reference?
   validate :valid_metal_fields?
-  validates :price_per_gram_at_transaction, numericality: { greater_than_or_equal_to: 0.0 }, allow_nil: true
-  validates :price_at_transaction, numericality: { greater_than_or_equal_to: 0.0 }, allow_nil: true
   enum movement_type: MOVEMENT_TYPES.index_by(&:itself), _prefix: :movement_type
 
   # Callbacks
@@ -74,6 +74,10 @@ class Movement < ApplicationRecord
       errors.add(:price_per_gram_at_transaction, "can't be blank") if self.price_per_gram_at_transaction.blank?
       errors.add(:price_at_transaction, "can't be blank") if self.price_at_transaction.blank?
       errors.add(:spread, "can't be blank") if self.spread.blank?
+
+      if self.amount.present? && self.karat.present? && self.count.metal_holdings[self.karat].to_f < self.amount.abs
+        errors.add(:karat, "#{self.amount} grams exceeds the stock of #{self.count.metal_holdings[self.karat].to_f} grams of #{self.karat.to_i} carats")
+      end
     end
   end
 

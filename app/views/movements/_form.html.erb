@@ -34,9 +34,11 @@
 
   <% if @count.metal_account? %>
     <div class="my-4 mx-2 mx-sm-4">
+      <% karats_for_select = available_karats_for_select(@count.metal_type) %>
+      <% karats_for_select = karats_for_select.filter { | k | @count.metal_holdings[k[1]].to_f > 0 || k[1] == movement.karat } if movement.movement_type == 'out' %>
       <%= form.label :karat, 'Caratura', class: "form-label" %>
       <%= form.select :karat,
-                      options_for_select(available_karats_for_select(@count.metal_type), movement.karat),
+                      options_for_select(karats_for_select, movement.karat),
                       { include_blank: 'Seleziona la caratura' },
                       class: 'form-control'
       %>

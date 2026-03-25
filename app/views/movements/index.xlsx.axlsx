@@ -4,7 +4,7 @@ is_metal = @count.metal_account?
 wb.add_worksheet(name: "Movimenti del mese") do |sheet|
   if is_metal
     # =====================================================================
-    # LAYOUT PER CONTI METALLO (16 colonne: Data, Causale, Caratura, Valore, Spread, €/g, Totale, Grammi × 2)
+    # LAYOUT PER CONTI METALLO (16 colonne: Data, Causale, Caratura, Valore/g, Spread, €/g, Totale, Grammi × 2)
     # =====================================================================
     s_title = wb.styles.add_style({font_name: "Calibri", fg_color: 'c9211e', sz: 16, b: true, u: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :medium, color: '000000'}})
     s_section = wb.styles.add_style({font_name: "Calibri", fg_color: 'ff0800', sz: 14, b: true, u: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
@@ -29,7 +29,7 @@ wb.add_worksheet(name: "Movimenti del mese") do |sheet|
     sheet.add_row e16, style: [s_title]*16
     sheet.add_row e16, style: [s_title]*16
     sheet.add_row ["VENDITE", "", "", "", "", "", "", "", "ACQUISTI", "", "", "", "", "", "", ""], style: [s_section, s_section, s_section, s_section, s_section, s_section, s_section, s_col_head_r, s_section, s_section, s_section, s_section, s_section, s_section, s_section, s_col_head_r]
-    sheet.add_row ["Data", "Causale", "Caratura", "Valore", "Spread", "€/grammo", "Totale", "Grammi", "Data", "Causale", "Caratura", "Valore", "Spread", "€/grammo", "Totale", "Grammi"], style: [s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head_r, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head_r]
+    sheet.add_row ["Data", "Causale", "Caratura", "Valore/g", "Spread", "€/grammo", "Totale", "Grammi", "Data", "Causale", "Caratura", "Valore/g", "Spread", "€/grammo", "Totale", "Grammi"], style: [s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head_r, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head_r]
 
     # MOVIMENTI
     first_data_row = 6
