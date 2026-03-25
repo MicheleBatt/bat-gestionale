@@ -1,7 +1,3 @@
 Rails.application.config.after_initialize do
-  begin
-    BackupDbCommand.call
-  rescue StandardError => e
-    Rails.logger.warn("Failed to fetch metal values at boot: #{e.message}")
-  end
+  BackupDbJob.perform_now
 end
