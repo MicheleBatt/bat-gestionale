@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_03_24_154705) do
+ActiveRecord::Schema[7.1].define(version: 2026_03_25_080454) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -108,12 +108,14 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_24_154705) do
     t.float "price_per_gram_at_transaction"
     t.float "price_at_transaction"
     t.float "spread"
+    t.bigint "metal_value_id"
     t.index ["amount"], name: "index_movements_on_amount"
     t.index ["count_id"], name: "index_movements_on_count_id"
     t.index ["day"], name: "index_movements_on_day"
     t.index ["emitted_at"], name: "index_movements_on_emitted_at"
     t.index ["expense_item_id"], name: "index_movements_on_expense_item_id"
     t.index ["karat"], name: "index_movements_on_karat"
+    t.index ["metal_value_id"], name: "index_movements_on_metal_value_id"
     t.index ["month"], name: "index_movements_on_month"
     t.index ["movement_type"], name: "index_movements_on_movement_type"
     t.index ["price_at_transaction"], name: "index_movements_on_price_at_transaction"
@@ -155,4 +157,5 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_24_154705) do
   add_foreign_key "memberships", "users"
   add_foreign_key "movements", "counts"
   add_foreign_key "movements", "expense_items"
+  add_foreign_key "movements", "metal_values"
 end

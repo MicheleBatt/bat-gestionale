@@ -17,7 +17,7 @@ class MovementsController < ApplicationController
     @new_in_movement = Movement.new
     @new_in_movement.movement_type = 'in'
 
-    @all_movements = @count.movements
+    @all_movements = @count.movements.includes(:metal_value)
     @search = @all_movements.ransack(params[:q])
     @movements = @search.result
     @movements_count = @movements.length

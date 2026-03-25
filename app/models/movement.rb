@@ -5,6 +5,7 @@ class Movement < ApplicationRecord
   # Relations
   belongs_to :count
   belongs_to :expense_item, optional: true
+  belongs_to :metal_value, optional: true
 
   # Validations
   validates :amount, :causal, :movement_type, :emitted_at, :year, :month, :day, :year_month_day, presence: true
@@ -22,7 +23,7 @@ class Movement < ApplicationRecord
   before_validation { self.day = self.emitted_at.day.to_i if self.emitted_at }
   before_validation { self.year_month_day = date_to_integer(self.emitted_at.year, self.emitted_at.month, self.emitted_at.day) if self.emitted_at }
   before_validation { self.price_at_transaction = (self.amount.to_f.abs * self.price_per_gram_at_transaction.to_f).to_f.round(2) if self.amount && self.price_per_gram_at_transaction }
-  before_validation { set_spread }
+  before_validation { set_metal_value_id_and_spread }
   before_save { self.causal = self.causal.to_s.strip if self.causal }
   before_save { self.amount = self.amount.to_f.round(2) if self.amount }
   before_save { self.karat = self.karat.to_f.round(2) if self.karat }
@@ -80,11 +81,18 @@ class Movement < ApplicationRecord
     self.count&.metal_account?
   end
 
-  def set_spread
+  def set_metal_value_id_and_spread
     if self.price_per_gram_at_transaction.present? && self.karat.present? && self.emitted_at.present?
-      metal_value = MetalValue.price_at_date(self.count.metal_type, self.karat, self.emitted_at)
-      delta = (self.price_per_gram_at_transaction.to_f.round(2) - metal_value).to_f.round(2)
-      self.spread = ((delta * 100.0) / metal_value).to_f.round(2)
+      metal_value = MetalValue.metal_value_at_date(self.count.metal_type, self.karat, self.emitted_at)
+      self.metal_value_id = metal_value&.id
+
+      metal_value_value = metal_value&.value.to_f.round(2)
+      delta = (self.price_per_gram_at_transaction.to_f.round(2) - metal_value_value).to_f.round(2)
+      self.spread = ((delta * 100.0) / metal_value_value).to_f.round(2)
     end
+  end
+
+  def value
+    self.metal_value&.value.to_f.round(2)
   end
 end

@@ -1,5 +1,5 @@
 <% movements.each do |movement| %>
-  <div class="v2-mov-row">
+  <div class="v2-mov-row <%= @count.metal_account? ? 'metal-row' : '' %>">
     <% if movement.movement_type == 'out' %>
       <%= render movement, expense_items: expense_items, movement_types: movement_types %>
       <div class="v2-mov-empty"></div>

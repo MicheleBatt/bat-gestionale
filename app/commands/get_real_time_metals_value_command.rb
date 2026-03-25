@@ -8,11 +8,11 @@ module GetRealTimeMetalsValueCommand
   def self.call(metals = ALL_METALS.keys, date = Date.today - 1.day)
     puts "********************** STARTING GET METAL VALUES ********************** "
 
-    begin
-      date = "#{date.year}#{date.month.to_s.rjust(2, '0')}#{date.day.to_s.rjust(2, '0')}"
-      recorded_date = Date.parse("#{date[0..3]}-#{date[4..5]}-#{date[6..7]}")
+    date = "#{date.year}#{date.month.to_s.rjust(2, '0')}#{date.day.to_s.rjust(2, '0')}"
+    recorded_date = Date.parse("#{date[0..3]}-#{date[4..5]}-#{date[6..7]}")
 
-      metals.each do |metal|
+    metals.each do |metal|
+      begin
         if MetalValue.where(metal: metal, recorded_at: recorded_date).blank?
           url = URI(MetalPricesParams::METAL_PRICES_URL.gsub(':metal', metal.to_s).gsub(':date', date.to_s))
           https = Net::HTTP.new(url.host, url.port)
@@ -37,11 +37,13 @@ module GetRealTimeMetalsValueCommand
             raise error_message
           end
         end
+      rescue StandardError => e
+        Rails.logger.warn "Failed to fetch #{metal} values: #{e}"
       end
-    rescue StandardError => e
-      Rails.logger.warn e
-      raise e
     end
+
+    Movement.joins(:count).where(counts: { count_type: metals.map { | metal_type | "#{metal_type.downcase}_investment_account" } }).each { | m | m.save! }
+
 
     puts "*********************** ENDING GET METAL VALUES *********************** "
   end

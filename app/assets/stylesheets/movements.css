@@ -146,9 +146,9 @@
     border-bottom: 1px solid rgba(109,40,217,0.1);
   }
 
-  /* Metal account: 6 colonne per lato */
+  /* Metal account: 7 colonne per lato */
   .v2-mov-table-head-section.metal-head {
-    grid-template-columns: 70px 1fr 65px 70px 55px 65px;
+    grid-template-columns: 70px 1fr 75px 75px 65px 75px 65px;
   }
 }
 
@@ -179,20 +179,156 @@
 }
 
 .v2-mov-cell.metal-cell {
-  grid-template-columns: 70px 1fr 65px 70px 55px 65px;
+  grid-template-columns: 70px 1fr 75px 75px 65px 75px 65px;
 }
 
 .v2-mov-cell:hover {
   background: rgba(109,40,217,0.03);
 }
 
-/* Metal extra columns */
+/* Metal extra columns (desktop individual cols) */
 .v2-mov-metal-col {
   padding: 0.4rem 0.35rem;
   text-align: center;
   font-size: 0.7rem;
   color: var(--txt2);
   font-variant-numeric: tabular-nums;
+}
+
+/* Standard single-column header (sotto 992px) */
+.v2-mov-standard-single-head {
+  display: none;
+}
+
+@media (max-width: 991px) {
+  .v2-mov-standard-single-head {
+    display: grid;
+    grid-template-columns: 70px 1fr 80px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--txt);
+    border-top: 1px solid rgba(109,40,217,0.1);
+    border-bottom: 1px solid rgba(109,40,217,0.1);
+  }
+
+  .v2-mov-standard-single-head .v2-mov-col-label {
+    padding: 0.35rem 0.5rem;
+    border: none;
+  }
+}
+
+/* Metal single-column header (700px - 1199px) */
+.v2-mov-metal-single-head {
+  display: none;
+}
+
+@media (min-width: 700px) and (max-width: 1199px) {
+  .v2-mov-metal-single-head {
+    display: grid;
+    grid-template-columns: 70px 1fr 75px 75px 65px 75px 65px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--txt);
+    border-top: 1px solid rgba(109,40,217,0.1);
+    border-bottom: 1px solid rgba(109,40,217,0.1);
+  }
+
+  .v2-mov-metal-single-head .v2-mov-col-label {
+    padding: 0.35rem 0.5rem;
+    text-align: center;
+    border: none;
+  }
+
+  .v2-mov-metal-single-head .v2-mov-col-label:nth-child(2) {
+    text-align: left;
+  }
+}
+
+/* Metal grouped cell (mobile only) */
+.v2-mov-metal-group {
+  display: none;
+}
+
+/* Metal: sotto 700px compatta le colonne in un gruppo */
+@media (max-width: 699px) {
+  .v2-mov-cell.metal-cell {
+    grid-template-columns: 60px minmax(30%, 1fr) auto;
+  }
+
+  .v2-mov-cell.metal-cell .v2-mov-metal-col,
+  .v2-mov-cell.metal-cell .v2-mov-amount {
+    display: none;
+  }
+
+  .v2-mov-cell.metal-cell .v2-mov-metal-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.3rem 0.5rem;
+    padding: 0.4rem 0.5rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .v2-mov-metal-group-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+  }
+
+  .v2-mov-metal-group-label {
+    font-size: 0.55rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--txt3);
+    line-height: 1;
+  }
+
+  .v2-mov-metal-group-value {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--txt2);
+    line-height: 1;
+  }
+
+  .v2-mov-metal-group-value.out { color: #dc2626; }
+  .v2-mov-metal-group-value.in { color: #059669; }
+}
+
+/* Metal accounts: single-column fino a 1199px (override del dual-column che scatta a 992px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .metal-table-head {
+    display: none !important;
+  }
+
+  .v2-mov-row.metal-row {
+    grid-template-columns: 1fr;
+  }
+
+  .v2-mov-row.metal-row .v2-mov-empty {
+    display: none;
+  }
+
+  .v2-mov-cell.out-cell.metal-cell {
+    border-right: none;
+  }
+
+  .v2-mov-cell.metal-cell:not(.out-cell) {
+    box-shadow: none;
+  }
+
+  .metal-totals-dual {
+    display: none !important;
+  }
+
+  .metal-totals-single {
+    display: block !important;
+  }
 }
 
 /* Expense item color background */
@@ -246,7 +382,8 @@
   }
 
   .v2-mov-cell:not(.out-cell) {
-    border-left: 1px solid #e2e8f0;
+    border-left: none;
+    box-shadow: -1px 0 0 #e2e8f0;
   }
 }
 
@@ -406,17 +543,11 @@
     font-size: 0.72rem;
   }
 
-  .v2-mov-cell.metal-cell {
-    grid-template-columns: 55px 1fr 50px 55px 45px 55px;
-    font-size: 0.65rem;
-  }
-
   .v2-mov-date {
     font-size: 0.65rem;
   }
 
-  .v2-mov-metal-col {
-    font-size: 0.6rem;
-    padding: 0.3rem 0.2rem;
+  .v2-mov-standard-single-head {
+    grid-template-columns: 60px 1fr 70px;
   }
 }

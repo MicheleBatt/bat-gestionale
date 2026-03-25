@@ -14,10 +14,10 @@ module ImportCountMovementsFromXlsxFileCommand
 
       (6..sheet.last_row).each do |row|
         if is_metal
-          # Layout 14 colonne: A-G vendite, H-N acquisti
-          # A/H=Data, B/I=Causale, C/J=Caratura, D/K=€/grammo, E/L=Totale(skip), F/M=Spread(skip), G/N=Grammi
-          out_empty = sheet.cell(row, 1).blank? && sheet.cell(row, 2).blank? && sheet.cell(row, 7).blank?
-          in_empty = sheet.cell(row, 8).blank? && sheet.cell(row, 9).blank? && sheet.cell(row, 14).blank?
+          # Layout 16 colonne: A-H vendite, I-P acquisti
+          # A/I=Data, B/J=Causale, C/K=Caratura, D/L=Valore(skip), E/M=Spread(skip), F/N=€/grammo, G/O=Totale(skip), H/P=Grammi
+          out_empty = sheet.cell(row, 1).blank? && sheet.cell(row, 2).blank? && sheet.cell(row, 8).blank?
+          in_empty = sheet.cell(row, 9).blank? && sheet.cell(row, 10).blank? && sheet.cell(row, 16).blank?
           break if out_empty && in_empty
 
           movement_type = out_empty ? 'in' : 'out'
@@ -26,14 +26,14 @@ module ImportCountMovementsFromXlsxFileCommand
             raw_date = sheet.cell(row, 1)
             causal = sheet.cell(row, 2)
             karat_str = sheet.cell(row, 3)
-            ppg = sheet.cell(row, 4)
-            amount = sheet.cell(row, 7)
+            ppg = sheet.cell(row, 6)
+            amount = sheet.cell(row, 8)
           else
-            raw_date = sheet.cell(row, 8)
-            causal = sheet.cell(row, 9)
-            karat_str = sheet.cell(row, 10)
-            ppg = sheet.cell(row, 11)
-            amount = sheet.cell(row, 14)
+            raw_date = sheet.cell(row, 9)
+            causal = sheet.cell(row, 10)
+            karat_str = sheet.cell(row, 11)
+            ppg = sheet.cell(row, 14)
+            amount = sheet.cell(row, 16)
           end
 
           # Parse date

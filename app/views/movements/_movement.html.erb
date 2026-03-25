@@ -22,9 +22,32 @@
     </div>
   <% end %>
   <% if @count.metal_account? %>
+    <div class="v2-mov-metal-col"><%= movement.value > 0 ? "#{to_visible_amount(movement.value, false)}€" : '' %></div>
+    <div class="v2-mov-metal-col"><%= movement.spread.present? ? "#{movement.spread > 0 ? '+' : ''}#{to_visible_amount(movement.spread, false)}%" : '' %></div>
     <div class="v2-mov-metal-col"><%= movement.price_per_gram_at_transaction.present? ? "#{to_visible_amount(movement.price_per_gram_at_transaction, false)}€" : '' %></div>
     <div class="v2-mov-metal-col"><%= movement.price_at_transaction.present? ? "#{to_visible_amount(movement.price_at_transaction, false)}€" : '' %></div>
-    <div class="v2-mov-metal-col"><%= movement.spread.present? ? "#{movement.spread > 0 ? '+' : ''}#{to_visible_amount(movement.spread, false)}%" : '' %></div>
+    <div class="v2-mov-metal-group">
+      <div class="v2-mov-metal-group-item">
+        <span class="v2-mov-metal-group-label">Valore</span>
+        <span class="v2-mov-metal-group-value"><%= movement.value > 0 ? "#{to_visible_amount(movement.value, false)}€" : '-' %></span>
+      </div>
+      <div class="v2-mov-metal-group-item">
+        <span class="v2-mov-metal-group-label">Spread</span>
+        <span class="v2-mov-metal-group-value"><%= movement.spread.present? ? "#{movement.spread > 0 ? '+' : ''}#{to_visible_amount(movement.spread, false)}%" : '-' %></span>
+      </div>
+      <div class="v2-mov-metal-group-item">
+        <span class="v2-mov-metal-group-label">€/g</span>
+        <span class="v2-mov-metal-group-value"><%= movement.price_per_gram_at_transaction.present? ? "#{to_visible_amount(movement.price_per_gram_at_transaction, false)}€" : '-' %></span>
+      </div>
+      <div class="v2-mov-metal-group-item">
+        <span class="v2-mov-metal-group-label">Totale</span>
+        <span class="v2-mov-metal-group-value"><%= movement.price_at_transaction.present? ? "#{to_visible_amount(movement.price_at_transaction, false)}€" : '-' %></span>
+      </div>
+      <div class="v2-mov-metal-group-item">
+        <span class="v2-mov-metal-group-label">Grammi</span>
+        <span class="v2-mov-metal-group-value <%= movement.movement_type %>"><%= movement.movement_type == 'in' ? '+' : '-' %><%= to_visible_amount(movement.amount) %>g</span>
+      </div>
+    </div>
   <% end %>
   <div class="v2-mov-amount <%= movement.movement_type %>">
     <span class="d-inline d-lg-none"><%= movement.movement_type == 'in' ? '+' : '-' %></span><%= to_visible_amount(movement.amount) %><%= @count.metal_account? ? 'g' : '€' %>

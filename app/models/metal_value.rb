@@ -1,6 +1,9 @@
 class MetalValue < ApplicationRecord
   include CountsHelper
 
+  # Relations
+  has_many :movements
+
   # Validations
   validates :metal, :value, :karat, :recorded_at, presence: true
   validates :recorded_at, uniqueness: { scope: [:metal, :karat] }
@@ -23,8 +26,13 @@ class MetalValue < ApplicationRecord
     where(metal: metal, karat: karat).order(recorded_at: :desc).first&.value.round(2)
   end
 
+  # Referenza al record della tabella alla data specificata (o il più recente prima di quella data)
+  def self.metal_value_at_date(metal, karat, date)
+    where(metal: metal, karat: karat).where('recorded_at <= ?', date).order(recorded_at: :desc).first
+  end
+
   # Prezzo alla data specificata (o il più recente prima di quella data)
   def self.price_at_date(metal, karat, date)
-    where(metal: metal, karat: karat).where('recorded_at <= ?', date).order(recorded_at: :desc).first&.value.to_f.round(2)
+    self.metal_value_at_date(metal, karat, date)&.value.to_f.round(2)
   end
 end

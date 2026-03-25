@@ -17,7 +17,8 @@
     <%= form.select :count_type,
                     options_for_select(count_types_for_select, count.count_type),
                     { include_blank: 'Specifica il tipo di conto' },
-                    class: 'form-control'
+                    class: 'form-control',
+                    data: { metal_types: CountsHelper::METALS_COUNT_TYPES.to_json }
     %>
   </div>
 
@@ -39,7 +40,7 @@
     <%= form.label :initial_amount, 'Giacenza Iniziale', class: "form-label" %>
     <div class="v2-input-group">
       <%= form.number_field :initial_amount, step: :any, class: "form-control" %>
-      <span class="v2-input-group-unit"><%= count.metal_account? ? 'g' : '€' %></span>
+      <span class="v2-input-group-unit" id="<%= modal_id %>_unit_label"><%= count.metal_account? ? 'g' : '€' %></span>
     </div>
   </div>
 
@@ -55,4 +56,19 @@
       Salva
     <% end %>
   </div>
+
+  <script>
+    (function() {
+      var modal = document.getElementById('<%= modal_id %>');
+      if (!modal) return;
+      var select = modal.querySelector('select[name*="count_type"]');
+      var unitLabel = document.getElementById('<%= modal_id %>_unit_label');
+      if (select && unitLabel) {
+        var metalTypes = JSON.parse(select.dataset.metalTypes);
+        select.addEventListener('change', function() {
+          unitLabel.textContent = metalTypes.includes(this.value) ? 'g' : '€';
+        });
+      }
+    })();
+  </script>
 <% end %>

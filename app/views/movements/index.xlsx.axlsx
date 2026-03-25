@@ -4,7 +4,7 @@ is_metal = @count.metal_account?
 wb.add_worksheet(name: "Movimenti del mese") do |sheet|
   if is_metal
     # =====================================================================
-    # LAYOUT PER CONTI METALLO (10 colonne: Data, Causale, Caratura, €/g, Grammi × 2)
+    # LAYOUT PER CONTI METALLO (16 colonne: Data, Causale, Caratura, Valore, Spread, €/g, Totale, Grammi × 2)
     # =====================================================================
     s_title = wb.styles.add_style({font_name: "Calibri", fg_color: 'c9211e', sz: 16, b: true, u: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :medium, color: '000000'}})
     s_section = wb.styles.add_style({font_name: "Calibri", fg_color: 'ff0800', sz: 14, b: true, u: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
@@ -23,13 +23,13 @@ wb.add_worksheet(name: "Movimenti del mese") do |sheet|
     s_saldo_neg = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, fg_color: '000000', bg_color: 'ff0000', alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
     s_fondo = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}, border_right: {style: :medium, color: '000000'}})
 
-    # TESTATA (14 colonne: A-G vendite, H-N acquisti)
-    e14 = [""] * 14
-    sheet.add_row [@table_titles[:main_title].upcase] + [""] * 13, style: [s_title]*14
-    sheet.add_row e14, style: [s_title]*14
-    sheet.add_row e14, style: [s_title]*14
-    sheet.add_row ["VENDITE", "", "", "", "", "", "", "ACQUISTI", "", "", "", "", "", ""], style: [s_section, s_section, s_section, s_section, s_section, s_section, s_col_head_r, s_section, s_section, s_section, s_section, s_section, s_section, s_col_head_r]
-    sheet.add_row ["Data", "Causale", "Caratura", "€/grammo", "Totale", "Spread", "Grammi", "Data", "Causale", "Caratura", "€/grammo", "Totale", "Spread", "Grammi"], style: [s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head_r, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head_r]
+    # TESTATA (16 colonne: A-H vendite, I-P acquisti)
+    e16 = [""] * 16
+    sheet.add_row [@table_titles[:main_title].upcase] + [""] * 15, style: [s_title]*16
+    sheet.add_row e16, style: [s_title]*16
+    sheet.add_row e16, style: [s_title]*16
+    sheet.add_row ["VENDITE", "", "", "", "", "", "", "", "ACQUISTI", "", "", "", "", "", "", ""], style: [s_section, s_section, s_section, s_section, s_section, s_section, s_section, s_col_head_r, s_section, s_section, s_section, s_section, s_section, s_section, s_section, s_col_head_r]
+    sheet.add_row ["Data", "Causale", "Caratura", "Valore", "Spread", "€/grammo", "Totale", "Grammi", "Data", "Causale", "Caratura", "Valore", "Spread", "€/grammo", "Totale", "Grammi"], style: [s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head_r, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head, s_col_head_r]
 
     # MOVIMENTI
     first_data_row = 6
@@ -43,20 +43,21 @@ wb.add_worksheet(name: "Movimenti del mese") do |sheet|
       amount_val = movement.amount.to_f.abs
       karat_label = movement.karat.present? ? "#{movement.karat.to_i}k" : ""
       ppg_val = movement.price_per_gram_at_transaction.present? ? movement.price_per_gram_at_transaction.to_f : ""
+      value_val = movement.value.to_f > 0 ? movement.value.to_f : ""
       spread_str = movement.spread.present? ? "#{to_visible_amount(movement.spread, false)}%" : ""
-      e7 = [""] * 7
+      e8 = [""] * 8
 
       if movement.movement_type == 'out'
-        row = sheet.add_row [parse_date(movement.emitted_at, '%d.%m.%y'), movement.causal, karat_label, ppg_val, nil, spread_str, amount_val] + e7,
-                            style: [s_cell, s_cell, s_cell, s_cell, s_cell, s_cell, s_num, s_empty, s_empty, s_empty, s_empty, s_empty, s_empty, s_empty]
+        row = sheet.add_row [parse_date(movement.emitted_at, '%d.%m.%y'), movement.causal, karat_label, value_val, spread_str, ppg_val, nil, amount_val] + e8,
+                            style: [s_cell, s_cell, s_cell, s_cell, s_cell, s_cell, s_cell, s_num, s_empty, s_empty, s_empty, s_empty, s_empty, s_empty, s_empty, s_empty]
         if movement.price_per_gram_at_transaction.present?
-          row.cells[4].escape_formulas = false
-          row.cells[4].value = "=D#{current_row}*G#{current_row}"
+          row.cells[6].escape_formulas = false
+          row.cells[6].value = "=F#{current_row}*H#{current_row}"
         end
         if last_empty_row_type == 'in'
-          cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:N#{current_row}"
+          cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:P#{current_row}"
         else
-          cells_to_merge << "H#{current_row}:N#{current_row}"
+          cells_to_merge << "I#{current_row}:P#{current_row}"
         end
         last_empty_row_type = 'in'
         if movement.karat.present?
@@ -64,16 +65,16 @@ wb.add_worksheet(name: "Movimenti del mese") do |sheet|
           karat_out_rows[movement.karat] << current_row
         end
       else
-        row = sheet.add_row e7 + [parse_date(movement.emitted_at, '%d.%m.%y'), movement.causal, karat_label, ppg_val, nil, spread_str, amount_val],
-                            style: [s_empty, s_empty, s_empty, s_empty, s_empty, s_empty, s_empty, s_cell, s_cell, s_cell, s_cell, s_cell, s_cell, s_num]
+        row = sheet.add_row e8 + [parse_date(movement.emitted_at, '%d.%m.%y'), movement.causal, karat_label, value_val, spread_str, ppg_val, nil, amount_val],
+                            style: [s_empty, s_empty, s_empty, s_empty, s_empty, s_empty, s_empty, s_empty, s_cell, s_cell, s_cell, s_cell, s_cell, s_cell, s_cell, s_num]
         if movement.price_per_gram_at_transaction.present?
-          row.cells[11].escape_formulas = false
-          row.cells[11].value = "=K#{current_row}*N#{current_row}"
+          row.cells[14].escape_formulas = false
+          row.cells[14].value = "=N#{current_row}*P#{current_row}"
         end
         if last_empty_row_type == 'out'
-          cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:G#{current_row}"
+          cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:H#{current_row}"
         else
-          cells_to_merge << "A#{current_row}:G#{current_row}"
+          cells_to_merge << "A#{current_row}:H#{current_row}"
         end
         last_empty_row_type = 'out'
         if movement.karat.present?
@@ -86,65 +87,65 @@ wb.add_worksheet(name: "Movimenti del mese") do |sheet|
     last_data_row = current_row - 1
 
     # RIGA VUOTA
-    sheet.add_row e14, style: [s_empty]*14
+    sheet.add_row e16, style: [s_empty]*16
     if last_empty_row_type == 'in'
-      cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:N#{current_row}"
-      cells_to_merge << "A#{current_row}:G#{current_row}"
+      cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:P#{current_row}"
+      cells_to_merge << "A#{current_row}:H#{current_row}"
     elsif cells_to_merge.present?
-      cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:G#{current_row}"
-      cells_to_merge << "H#{current_row}:N#{current_row}"
+      cells_to_merge[-1] = "#{cells_to_merge[-1].split(':')[0]}:H#{current_row}"
+      cells_to_merge << "I#{current_row}:P#{current_row}"
     end
     totals_row = current_row + 1
     current_row += 1
 
     # TOTALI (con formule)
-    row = sheet.add_row ["TOTALE:", "", "", "", "", "", nil, "TOTALE:", "", "", "", "", "", nil],
-                        style: [s_label_r, s_label_r, s_label_r, s_label_r, s_label_r, s_label_r, s_total_out, s_label_r, s_label_r, s_label_r, s_label_r, s_label_r, s_label_r, s_total_in]
-    row.cells[6].escape_formulas = false
-    row.cells[6].value = "=SUM(G#{first_data_row}:G#{last_data_row})"
-    row.cells[13].escape_formulas = false
-    row.cells[13].value = "=SUM(N#{first_data_row}:N#{last_data_row})"
-    cells_to_merge << "A#{current_row}:F#{current_row}"
-    cells_to_merge << "H#{current_row}:M#{current_row}"
+    row = sheet.add_row ["TOTALE:", "", "", "", "", "", "", nil, "TOTALE:", "", "", "", "", "", "", nil],
+                        style: [s_label_r, s_label_r, s_label_r, s_label_r, s_label_r, s_label_r, s_label_r, s_total_out, s_label_r, s_label_r, s_label_r, s_label_r, s_label_r, s_label_r, s_label_r, s_total_in]
+    row.cells[7].escape_formulas = false
+    row.cells[7].value = "=SUM(H#{first_data_row}:H#{last_data_row})"
+    row.cells[15].escape_formulas = false
+    row.cells[15].value = "=SUM(P#{first_data_row}:P#{last_data_row})"
+    cells_to_merge << "A#{current_row}:G#{current_row}"
+    cells_to_merge << "I#{current_row}:O#{current_row}"
     current_row += 1
 
     # DUE RIGHE VUOTE
-    sheet.add_row e14, style: [s_empty_m]*14
-    sheet.add_row e14, style: [s_empty_m]*14
-    cells_to_merge << "A#{current_row}:N#{current_row + 1}"
+    sheet.add_row e16, style: [s_empty_m]*16
+    sheet.add_row e16, style: [s_empty_m]*16
+    cells_to_merge << "A#{current_row}:P#{current_row + 1}"
     current_row += 2
 
     # GIACENZA (con formule)
     start_amount_row = nil
     if @time_range_report.present?
       start_amount_row = current_row
-      sheet.add_row [@table_titles[:start_amount_title].upcase] + [""] * 12 + [@start_amount.to_f],
-                    style: ([s_label_r2]*13) + [s_fondo]
-      sheet.merge_cells("A#{current_row}:M#{current_row}")
+      sheet.add_row [@table_titles[:start_amount_title].upcase] + [""] * 14 + [@start_amount.to_f],
+                    style: ([s_label_r2]*15) + [s_fondo]
+      sheet.merge_cells("A#{current_row}:O#{current_row}")
       current_row += 1
     end
 
     saldo_row = current_row
-    row = sheet.add_row [@table_titles[:total_amount_title].upcase] + [""] * 12 + [nil],
-                        style: ([s_label_r2]*13) + [@total_movements_amount <= 0 ? s_saldo_neg : s_saldo_pos]
-    row.cells[13].escape_formulas = false
-    row.cells[13].value = "=N#{totals_row}-G#{totals_row}"
-    sheet.merge_cells("A#{current_row}:M#{current_row}")
+    row = sheet.add_row [@table_titles[:total_amount_title].upcase] + [""] * 14 + [nil],
+                        style: ([s_label_r2]*15) + [@total_movements_amount <= 0 ? s_saldo_neg : s_saldo_pos]
+    row.cells[15].escape_formulas = false
+    row.cells[15].value = "=P#{totals_row}-H#{totals_row}"
+    sheet.merge_cells("A#{current_row}:O#{current_row}")
     current_row += 1
 
     if @time_range_report.present?
-      row = sheet.add_row [@table_titles[:final_amount_title].upcase] + [""] * 12 + [nil],
-                          style: ([s_label_r2]*13) + [s_fondo]
-      row.cells[13].escape_formulas = false
-      row.cells[13].value = "=N#{start_amount_row}+N#{saldo_row}"
-      sheet.merge_cells("A#{current_row}:M#{current_row}")
+      row = sheet.add_row [@table_titles[:final_amount_title].upcase] + [""] * 14 + [nil],
+                          style: ([s_label_r2]*15) + [s_fondo]
+      row.cells[15].escape_formulas = false
+      row.cells[15].value = "=P#{start_amount_row}+P#{saldo_row}"
+      sheet.merge_cells("A#{current_row}:O#{current_row}")
       current_row += 1
     end
 
     # DUE RIGHE VUOTE
-    sheet.add_row e14, style: [s_empty_m]*14
-    sheet.add_row e14, style: [s_empty_m]*14
-    cells_to_merge << "A#{current_row}:N#{current_row + 1}"
+    sheet.add_row e16, style: [s_empty_m]*16
+    sheet.add_row e16, style: [s_empty_m]*16
+    cells_to_merge << "A#{current_row}:P#{current_row + 1}"
     current_row += 2
 
     # GIACENZA PER CARATURA
@@ -154,28 +155,23 @@ wb.add_worksheet(name: "Movimenti del mese") do |sheet|
       total_rows = holdings_keys.length
 
       # Stili: solo i bordi esterni della tabella sono medium, tutto il resto è thin
-      # Posizioni: 0=A (bordo sinistro medium), 9=J (bordo destro medium)
-      # Prima riga: bordo superiore medium. Ultima riga: bordo inferiore medium.
-
-      # Titolo (prima riga della tabella: top medium, left medium su A, right medium su J)
       s_title_l = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border_top: {style: :medium, color: '000000'}, border_left: {style: :medium, color: '000000'}, border_bottom: {style: :thin, color: '000000'}, border_right: {style: :thin, color: '000000'}})
       s_title_m = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border_top: {style: :medium, color: '000000'}, border_bottom: {style: :thin, color: '000000'}, border_left: {style: :thin, color: '000000'}, border_right: {style: :thin, color: '000000'}})
       s_title_r = wb.styles.add_style({font_name: "Calibri", sz: 11, b: true, alignment: { horizontal: :center, vertical: :center }, border_top: {style: :medium, color: '000000'}, border_right: {style: :medium, color: '000000'}, border_bottom: {style: :thin, color: '000000'}, border_left: {style: :thin, color: '000000'}})
 
-      sheet.add_row ["GIACENZA PER CARATURA"] + [""] * 13,
-                    style: [s_title_l] + ([s_title_m] * 12) + [s_title_r]
-      sheet.merge_cells("A#{current_row}:N#{current_row}")
+      sheet.add_row ["GIACENZA PER CARATURA"] + [""] * 15,
+                    style: [s_title_l] + ([s_title_m] * 14) + [s_title_r]
+      sheet.merge_cells("A#{current_row}:P#{current_row}")
       current_row += 1
 
-      # Header (riga interna: left medium su A, right medium su J, top/bottom thin)
       s_head_l = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, alignment: { horizontal: :center, vertical: :center }, border_left: {style: :medium, color: '000000'}, border_top: {style: :thin, color: '000000'}, border_bottom: {style: :thin, color: '000000'}, border_right: {style: :thin, color: '000000'}})
       s_head_m = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, alignment: { horizontal: :center, vertical: :center }, border: {style: :thin, color: '000000'}})
       s_head_r = wb.styles.add_style({font_name: "Calibri", sz: 10, b: true, alignment: { horizontal: :center, vertical: :center }, border_right: {style: :medium, color: '000000'}, border_top: {style: :thin, color: '000000'}, border_bottom: {style: :thin, color: '000000'}, border_left: {style: :thin, color: '000000'}})
 
-      sheet.add_row ["Caratura", "", "", "", "", "", "", "Grammi", "", "", "", "", "", ""],
-                    style: [s_head_l] + ([s_head_m] * 12) + [s_head_r]
-      sheet.merge_cells("A#{current_row}:G#{current_row}")
-      sheet.merge_cells("H#{current_row}:N#{current_row}")
+      sheet.add_row ["Caratura", "", "", "", "", "", "", "", "Grammi", "", "", "", "", "", "", ""],
+                    style: [s_head_l] + ([s_head_m] * 14) + [s_head_r]
+      sheet.merge_cells("A#{current_row}:H#{current_row}")
+      sheet.merge_cells("I#{current_row}:P#{current_row}")
       current_row += 1
 
       # Righe per caratura (con formule)
@@ -188,32 +184,32 @@ wb.add_worksheet(name: "Movimenti del mese") do |sheet|
         s_row_r = wb.styles.add_style({font_name: "Calibri", sz: 10, alignment: { horizontal: :center, vertical: :center }, border_right: {style: :medium, color: '000000'}, border_top: {style: :thin, color: '000000'}, border_bottom: {style: bb, color: '000000'}, border_left: {style: :thin, color: '000000'}})
 
         # Formula: somma grammi acquisti - grammi vendite per questa caratura
-        out_refs = (karat_out_rows[karat] || []).map { |r| "G#{r}" }
-        in_refs = (karat_in_rows[karat] || []).map { |r| "N#{r}" }
+        out_refs = (karat_out_rows[karat] || []).map { |r| "H#{r}" }
+        in_refs = (karat_in_rows[karat] || []).map { |r| "P#{r}" }
         has_formula = out_refs.present? || in_refs.present?
         formula_parts = []
         formula_parts << in_refs.join("+") if in_refs.present?
         formula_parts << out_refs.map { |r| "-#{r}" }.join("") if out_refs.present?
 
-        row = sheet.add_row ["#{karat.to_i}k", "", "", "", "", "", "", has_formula ? nil : 0, "", "", "", "", "", ""],
-                            style: [s_row_l] + ([s_row_m] * 12) + [s_row_r]
+        row = sheet.add_row ["#{karat.to_i}k", "", "", "", "", "", "", "", has_formula ? nil : 0, "", "", "", "", "", "", ""],
+                            style: [s_row_l] + ([s_row_m] * 14) + [s_row_r]
         if has_formula
-          row.cells[7].escape_formulas = false
-          row.cells[7].value = "=#{formula_parts.join('')}"
+          row.cells[8].escape_formulas = false
+          row.cells[8].value = "=#{formula_parts.join('')}"
         end
-        sheet.merge_cells("A#{current_row}:G#{current_row}")
-        sheet.merge_cells("H#{current_row}:N#{current_row}")
+        sheet.merge_cells("A#{current_row}:H#{current_row}")
+        sheet.merge_cells("I#{current_row}:P#{current_row}")
         current_row += 1
       end
     end
 
     # MERGE E LARGHEZZE
-    sheet.merge_cells("A1:N3")
-    sheet.merge_cells("A4:G4")
-    sheet.merge_cells("H4:N4")
+    sheet.merge_cells("A1:P3")
+    sheet.merge_cells("A4:H4")
+    sheet.merge_cells("I4:P4")
     cells_to_merge.each { |ci| sheet.merge_cells(ci) }
     causal_col_width = @year.present? || @month.present? ? 25 : 35
-    sheet.column_widths 10, causal_col_width, 10, 12, 12, 10, 12, 10, causal_col_width, 10, 12, 12, 10, 12
+    sheet.column_widths 10, causal_col_width, 10, 12, 10, 12, 12, 12, 10, causal_col_width, 10, 12, 10, 12, 12, 12
 
   else
     # =====================================================================

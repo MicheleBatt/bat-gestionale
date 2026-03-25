@@ -8,8 +8,6 @@ module BackupDbCommand
     # Creo il backup del db e lo salvo in una cartella locale della macchina su cui gira l'applicazione
     folder_path = "#{Rails.env.development? ? '' : '/var/www/'}db_backup"
     Dir.mkdir(folder_path) unless Dir.exist?(folder_path)
-    folder_path += "/#{parse_date(Date.today, '%Y%m%d')}"
-    Dir.mkdir(folder_path) unless Dir.exist?(folder_path)
     db_backup_file_name = "db_backup_#{Rails.env}.tar"
     database = Rails.env.development? ? 'batgestionale_development' : ENV['DATABASE']
     cmd = "#{Rails.env.development? ? '' : 'PGPASSWORD=' + ENV['DATABASE_PWD']} pg_dump -F t #{database} > #{folder_path}/#{db_backup_file_name}"
