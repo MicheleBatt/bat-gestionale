@@ -102,7 +102,8 @@ class CountsController < ApplicationController
     @metal_values_by_last_days,
     @metal_values_by_date,
     _,
-    @in_out_global_amounts = @count.additional_stats_for_charts(params)
+    @in_out_global_amounts,
+    @capital_gains_data = @count.additional_stats_for_charts(params)
   end
 
   private

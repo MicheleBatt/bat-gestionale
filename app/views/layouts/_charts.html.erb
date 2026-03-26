@@ -163,6 +163,29 @@
   </div>
 <% end %>
 
+<% if capital_gains_data.present? %>
+  <%# Grafico plus/minusvalenze sulle vendite %>
+  <div class="v2-chart-card">
+    <% chart_title = "Plus/Minusvalenze sulle vendite" %>
+    <% purchase_series = capital_gains_data.map { |d| [d[:label], d[:purchase_cost]] } %>
+    <% sale_series = capital_gains_data.map { |d| [d[:label], d[:sale_total]] } %>
+    <% chart_data = [
+      { name: "Costo di acquisto", data: purchase_series },
+      { name: "Ricavo di vendita", data: sale_series }
+    ] %>
+    <%= column_chart chart_data,
+                     stacked: false,
+                     title: chart_title,
+                     download: { filename: chart_title, background: "#ffffff" },
+                     colors: ["#DC3545", "#198754"],
+                     loading: "Caricamento...",
+                     empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                     suffix: '€',
+                     library: metal_chart_lib.deep_merge({ datasets: { bar: { borderRadius: 4, borderSkipped: 'bottom' } } })
+    %>
+  </div>
+<% end %>
+
 <%# Pie charts row %>
 <% if movements_global_amount_by_counts.present? || savings_global_amount_by_counts.present? %>
   <div class="v2-chart-row">

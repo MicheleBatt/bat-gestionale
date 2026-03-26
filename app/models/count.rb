@@ -340,12 +340,64 @@ class Count < ApplicationRecord
     end
 
 
+    # Grafico plus/minusvalenze: per ogni vendita, compara il prezzo di vendita
+    # con il costo di acquisto della stessa grammatura e caratura al prezzo più basso effettuato nel passato.
+    # Logica di calcolo delle plus/minusvalenze con approccio "pool FIFO per prezzo crescente": per ogni vendita (out),
+    # si consuma dal pool di acquisti della stessa caratura partendo dal prezzo al grammo più basso,
+    # comparando costo d'acquisto vs ricavo di vendita.
+    capital_gains_data = []
+    if self.metal_account?
+      out_movements = self.movements.where(movement_type: 'out').where(karat: karats_values).order(emitted_at: :asc)
+      if out_movements.present?
+        # Costruisco un pool di grammi acquistati per caratura, ordinati per prezzo al grammo crescente
+        in_movements = self.movements.where(movement_type: 'in').where(karat: karats_values).order(price_per_gram_at_transaction: :asc, emitted_at: :asc)
+        purchase_pool = {}
+        in_movements.each do |m|
+          karat = m.karat
+          purchase_pool[karat] ||= []
+          purchase_pool[karat] << { remaining_grams: m.amount.to_f.abs, ppg: m.price_per_gram_at_transaction.to_f }
+        end
+
+        out_movements.each do |sale|
+          sale_grams = sale.amount.to_f.abs
+          sale_ppg = sale.price_per_gram_at_transaction.to_f
+          sale_total = (sale_grams * sale_ppg).round(2)
+          karat = sale.karat
+          pool = purchase_pool[karat] || []
+
+          # Calcolo il costo di acquisto consumando dal pool (prezzo più basso prima)
+          grams_to_match = sale_grams
+          purchase_cost = 0.0
+          pool.each do |slot|
+            next if slot[:remaining_grams] <= 0 || grams_to_match <= 0
+            take = [slot[:remaining_grams], grams_to_match].min
+            purchase_cost += take * slot[:ppg]
+            slot[:remaining_grams] -= take
+            grams_to_match -= take
+          end
+          purchase_cost = purchase_cost.round(2)
+
+          gain_pct = purchase_cost > 0 ? (((sale_total - purchase_cost) / purchase_cost) * 100).round(2) : 0.0
+          gain_pct_str = gain_pct >= 0 ? "+#{gain_pct}%" : "#{gain_pct}%"
+          label = "#{parse_date(sale.emitted_at, '%d/%m/%y')} #{sale.karat.to_i}k #{to_visible_amount(sale_grams, false)}g | Variazione: #{gain_pct_str}"
+          capital_gains_data << { label: label, sale_total: sale_total, purchase_cost: purchase_cost, emitted_at: sale.emitted_at }
+        end
+      end
+
+      # Filtro per time range: se è impostato un anno di visibilità, mostro solo le vendite di quell'anno
+      if year.present?
+        capital_gains_data = capital_gains_data.select { |d| d[:emitted_at].year == year.to_i }
+      end
+      capital_gains_data.each { |d| d.delete(:emitted_at) }
+    end
+
     [
       final_valued_amounts_by_date,
       metal_values_by_last_days,
       metal_values_by_date,
       year,
-      in_out_global_amounts
+      in_out_global_amounts,
+      capital_gains_data
     ]
   end
 end
