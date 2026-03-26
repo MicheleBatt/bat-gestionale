@@ -166,7 +166,7 @@
 <% if capital_gains_data.present? %>
   <%# Grafico plus/minusvalenze sulle vendite %>
   <div class="v2-chart-card">
-    <% chart_title = "Plus/Minusvalenze sulle vendite" %>
+    <% chart_title = "Comparazione tra costi di acquisto e ricavi di vendite sul #{count.name}" %>
     <% purchase_series = capital_gains_data.map { |d| [d[:label], d[:purchase_cost]] } %>
     <% sale_series = capital_gains_data.map { |d| [d[:label], d[:sale_total]] } %>
     <% chart_data = [

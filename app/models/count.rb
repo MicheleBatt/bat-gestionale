@@ -379,7 +379,7 @@ class Count < ApplicationRecord
 
           gain_pct = purchase_cost > 0 ? (((sale_total - purchase_cost) / purchase_cost) * 100).round(2) : 0.0
           gain_pct_str = gain_pct >= 0 ? "+#{gain_pct}%" : "#{gain_pct}%"
-          label = "#{parse_date(sale.emitted_at, '%d/%m/%y')} #{sale.karat.to_i}k #{to_visible_amount(sale_grams, false)}g | Variazione: #{gain_pct_str}"
+          label = "#{parse_date(sale.emitted_at, '%d/%m/%y')} #{sale.karat.to_i}k #{to_visible_amount(sale_grams, false)}g | plusvalenza: #{gain_pct_str}"
           capital_gains_data << { label: label, sale_total: sale_total, purchase_cost: purchase_cost, emitted_at: sale.emitted_at }
         end
       end
