@@ -10,7 +10,7 @@ namespace :updateDB do
 
     puts "******************* STARTING GET LAST METAL VALUES *******************"
 
-    ((Date.today - 35.days)..(Date.today - 5.days)).to_a.each do | date |
+    ((Date.today - 62.days)..(Date.today - 1.days)).to_a.each do | date |
       GetRealTimeMetalsValueCommand.call(['XAU', 'XAG'], date)
     end
 
