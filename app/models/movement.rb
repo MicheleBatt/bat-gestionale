@@ -75,8 +75,12 @@ class Movement < ApplicationRecord
       errors.add(:price_at_transaction, "can't be blank") if self.price_at_transaction.blank?
       errors.add(:spread, "can't be blank") if self.spread.blank?
 
-      if self.id.blank? && self.movement_type == 'out' && self.amount.present? && self.karat.present? && self.count.metal_holdings[self.karat].to_f < self.amount.abs
-        errors.add(:karat, "#{self.amount} grams exceeds the stock of #{self.count.metal_holdings[self.karat].to_f} grams of #{self.karat.to_i} carats")
+      if self.movement_type == 'out' && self.amount.present? && self.karat.present? && self.emitted_at.present?
+        count = self.count
+        movements = count.movements.where.not(id: self.id).where('emitted_at <= ?', self.emitted_at)
+        if count.metal_holdings(movements)[self.karat].to_f < self.amount.abs
+          errors.add(:karat, "#{self.amount} grams exceeds the stock of #{self.count.metal_holdings[self.karat].to_f} grams of #{self.karat.to_i} carats")
+        end
       end
     end
   end
