@@ -36,7 +36,7 @@
         <span class="v2-mov-metal-group-value"><%= movement.spread.present? ? "#{movement.spread > 0 ? '+' : ''}#{to_visible_amount(movement.spread, false)}%" : '-' %></span>
       </div>
       <div class="v2-mov-metal-group-item">
-        <span class="v2-mov-metal-group-label">€/g</span>
+        <span class="v2-mov-metal-group-label">Prezzo/g</span>
         <span class="v2-mov-metal-group-value"><%= movement.price_per_gram_at_transaction.present? ? "#{to_visible_amount(movement.price_per_gram_at_transaction, false)}€" : '-' %></span>
       </div>
       <div class="v2-mov-metal-group-item">

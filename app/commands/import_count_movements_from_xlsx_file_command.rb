@@ -15,7 +15,7 @@ module ImportCountMovementsFromXlsxFileCommand
       (6..sheet.last_row).each do |row|
         if is_metal
           # Layout 16 colonne: A-H vendite, I-P acquisti
-          # A/I=Data, B/J=Causale, C/K=Caratura, D/L=Valore(skip), E/M=Spread(skip), F/N=€/grammo, G/O=Totale(skip), H/P=Grammi
+          # A/I=Data, B/J=Causale, C/K=Caratura, D/L=Valore(skip), E/M=Spread(skip), F/N=Prezzo/grammo, G/O=Totale(skip), H/P=Grammi
           out_empty = sheet.cell(row, 1).blank? && sheet.cell(row, 2).blank? && sheet.cell(row, 8).blank?
           in_empty = sheet.cell(row, 9).blank? && sheet.cell(row, 10).blank? && sheet.cell(row, 16).blank?
           break if out_empty && in_empty
