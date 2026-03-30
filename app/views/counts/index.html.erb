@@ -13,7 +13,7 @@
         <span class="v2-hero-sub"><%= @organization.name %></span>
       </div>
       <div class="v2-hero-actions">
-        <%= link_to organization_counts_path(@organization, q: params[:q]&.to_unsafe_h, format: :text), class: "v2-btn-export" do %>
+        <%= link_to organization_counts_path(@organization, q: params[:q]&.to_unsafe_h, format: :text), class: "v2-btn-export", data: { turbo: false } do %>
           <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
           Esporta IBAN
         <% end %>

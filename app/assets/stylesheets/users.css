@@ -154,25 +154,32 @@
 }
 
 .v2-form-group .form-label {
+  font-family: var(--font);
   color: var(--txt2);
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.3rem;
 }
 
 .v2-form-group .form-control,
 .v2-form-group .form-select {
   font-family: var(--font);
-  background: rgba(255,255,255,0.05);
-  border: 1.5px solid var(--glass-border);
+  font-size: 0.85rem;
+  background: #f8f9fb;
+  border: 1.5px solid #e2e8f0;
   color: var(--txt);
   border-radius: 0.55rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.55rem 0.85rem;
   transition: all 0.2s;
 }
 
 .v2-form-group .form-control:focus,
 .v2-form-group .form-select:focus {
-  background: rgba(255,255,255,0.07);
+  background: #ffffff;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(109,40,217,0.1);
+  box-shadow: 0 0 0 3px rgba(109,40,217,0.08);
   color: var(--txt);
   outline: none;
 }
@@ -189,8 +196,8 @@
 
 .v2-form-group .form-select option:checked,
 .v2-form-group .form-control option:checked {
-  background: #e5e7eb;
-  color: #1e293b;
+  background: #ede9fe;
+  color: var(--txt);
 }
 
 .v2-form-actions {

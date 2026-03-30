@@ -57,9 +57,13 @@
 }
 
 .v2-mov-count {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  color: var(--txt2);
+  color: var(--txt);
+  background: var(--surface);
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(109,40,217,0.3);
 }
 
 .v2-mov-btns {
