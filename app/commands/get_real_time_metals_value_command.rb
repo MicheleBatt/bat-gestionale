@@ -6,7 +6,10 @@ module GetRealTimeMetalsValueCommand
   include CountsHelper
 
   def self.call(metals = ALL_METALS.keys, date = Date.today - 1.day)
-    puts "********************** STARTING GET METAL VALUES ********************** "
+    puts "********************** STARTING GET METAL VALUES **********************"
+    # Il sabato e la domenica i mercati sono chiusi, quindi non sono disponibili i valori degli indici di borsa
+    # dei metalli preziosi
+    return if date&.saturday? || date&.sunday?
 
     date = "#{date.year}#{date.month.to_s.rjust(2, '0')}#{date.day.to_s.rjust(2, '0')}"
     recorded_date = Date.parse("#{date[0..3]}-#{date[4..5]}-#{date[6..7]}")
@@ -45,6 +48,6 @@ module GetRealTimeMetalsValueCommand
     Movement.joins(:count).where(counts: { count_type: metals.map { | metal_type | "#{metal_type.downcase}_investment_account" } }).each { | m | m.save! }
 
 
-    puts "*********************** ENDING GET METAL VALUES *********************** "
+    puts "*********************** ENDING GET METAL VALUES ***********************"
   end
 end
