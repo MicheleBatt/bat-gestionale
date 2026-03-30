@@ -19,15 +19,11 @@
 
 # Learn more: http://github.com/javan/whenever
 
-
+env :TZ, 'Europe/Rome'
 env :PATH, ENV['PATH']
 
 set :output, "#{path}/log/cron.log"
 set :environment, ENV['RAILS_ENV']
-
-# every :day, at: '1 am' do
-#   runner 'PreInvoicesRefresherJob.perform_now'
-# end
 
 every :day, at: '2 am' do
   runner 'BackupDbJob.perform_now'
