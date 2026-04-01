@@ -22,6 +22,8 @@
   }
 } %>
 
+
+
 <% if final_valued_amounts_by_date.present? %>
   <%# Giacenza + Valore affiancati (full width) %>
   <div class="v2-chart-row">
@@ -70,6 +72,8 @@
   </div>
 <% end %>
 
+
+
 <% if metal_values_by_date.present? || metal_values_by_last_days.present? %>
   <% metal_chart_lib = chart_lib.deep_merge({
     plugins: {
@@ -113,6 +117,8 @@
     <% end %>
   </div>
 <% end %>
+
+
 
 <% if in_out_global_amounts.present? %>
   <div class="v2-chart-row">
@@ -163,6 +169,8 @@
   </div>
 <% end %>
 
+
+
 <% if holdings_by_karat.present? %>
   <% metal_name = CountsHelper::ALL_METALS[metal.to_sym][:italian_name] %>
   <div class="v2-chart-row">
@@ -202,6 +210,8 @@
   </div>
 <% end %>
 
+
+
 <% if capital_gains_data.present? %>
   <%# Grafico plus/minusvalenze sulle vendite %>
   <div class="v2-chart-card">
@@ -225,7 +235,8 @@
   </div>
 <% end %>
 
-<%# Pie charts row %>
+
+
 <% if movements_global_amount_by_counts.present? || savings_global_amount_by_counts.present? %>
   <div class="v2-chart-row">
     <% if movements_global_amount_by_counts.present? %>
@@ -267,6 +278,8 @@
   </div>
 <% end %>
 
+
+
 <%# Voci di spesa %>
 <div class="v2-chart-grid">
   <% movements_global_amount_by_expense_items.keys.sort_by{ |key| movements_global_amount_by_expense_items[key]['total'] * -1 }.each do |expense_item| %>
@@ -299,6 +312,8 @@
     </div>
   <% end %>
 </div>
+
+
 
 <script>
   function adjustPieLegends() {
