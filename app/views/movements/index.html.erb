@@ -143,12 +143,27 @@
         </div>
 
         <div class="v2-metric">
-          <div class="v2-metric-icon" style="background: rgba(217,119,6,0.1); color: #d97706;">
-            <svg class="ico" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-          </div>
+          <% if @trend %>
+            <% if @trend > 0 %>
+              <div class="v2-metric-icon" style="background: rgba(220,38,38,0.1); color: #dc2626;">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+              </div>
+            <% else %>
+              <div class="v2-metric-icon" style="background: rgba(5,150,105,0.1); color: #059669;">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="v2-metric-icon" style="background: rgba(217,119,6,0.1); color: #d97706;">
+              <svg class="ico" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            </div>
+          <% end %>
+
           <div>
             <div class="v2-metric-label">Valore corrente 1g (<%= MetalValuesHelper::DEFAULT_KARAT_PARAM %>k)</div>
-            <div class="v2-metric-value"><%= to_visible_amount(@latest_value, false) %><span class="v2-metric-currency">&euro;/g</span></div>
+            <div class="v2-metric-value">
+              <%= to_visible_amount(@latest_value, false) %><span class="v2-metric-currency">&euro;/g</span>
+            </div>
           </div>
         </div>
 

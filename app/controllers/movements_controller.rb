@@ -36,6 +36,7 @@ class MovementsController < ApplicationController
 
       # Ultimo valore rilevato per 1 grammo di metallo prezioso della migliore caratura possibile
       @latest_value = MetalValue.latest_price(@count.metal_type, MetalValuesHelper::DEFAULT_KARAT_PARAM)
+      @trend = MetalValue.trend(@count.metal_type)
 
       # Spread indicativo di vendita di 1 grammo di metallo prezioso
       @sell_spread = [out_movements.order(emitted_at: :desc)&.first&.spread.to_f, -10.0].min

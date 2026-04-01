@@ -247,7 +247,7 @@ class Count < ApplicationRecord
     end
   end
 
-  def additional_stats_for_charts(params)
+  def additional_stats_for_charts(params, movements)
     metal_values_by_last_days = []
     final_valued_amounts_by_date = {}
     metal_values_by_date = []
@@ -399,13 +399,31 @@ class Count < ApplicationRecord
       capital_gains_data.each { |d| d.delete(:emitted_at) }
     end
 
+
+    # Grafico che indica la giacenza corrente in grammi per caratura sul piano di accumulo sul metallo prezioso
+    holdings_by_karat = self.metal_holdings(movements)
+
+
+    # Grafico che indica il valore corrente della giacenza per caratura sul piano di accumulo sul metallo prezioso
+    if holdings_by_karat.keys.size > 1
+      valued_holdings_by_karat = holdings_by_karat.each_with_object({}) do |(karat, grams), hash|
+        price = MetalValue.latest_price(self.metal_type, karat)
+        hash[karat] = (grams.abs * price).round(2)
+      end
+    else
+      holdings_by_karat = nil
+    end
+
+
     [
       final_valued_amounts_by_date,
       metal_values_by_last_days,
       metal_values_by_date,
       year,
       in_out_global_amounts,
-      capital_gains_data
+      capital_gains_data,
+      holdings_by_karat,
+      valued_holdings_by_karat
     ]
   end
 end

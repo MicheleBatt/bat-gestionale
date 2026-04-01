@@ -35,4 +35,17 @@ class MetalValue < ApplicationRecord
   def self.price_at_date(metal, karat, date)
     self.metal_value_at_date(metal, karat, date)&.value.to_f.round(2)
   end
+
+  # Trend percentuale del valore del metallo prezioso corrente negli ultimi N giorni
+  def self.trend(metal, karat = MetalValuesHelper::DEFAULT_KARAT_PARAM, days = 1)
+    latest = where(metal: metal, karat: karat).order(recorded_at: :desc).first
+    return nil unless latest
+
+    past = where(metal: metal, karat: karat)
+             .where('recorded_at <= ?', latest.recorded_at - days.days)
+             .order(recorded_at: :desc).first
+    return nil unless past&.value&.positive?
+
+    ((latest.value - past.value) / past.value * 100).round(2)
+  end
 end

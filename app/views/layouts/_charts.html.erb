@@ -163,6 +163,45 @@
   </div>
 <% end %>
 
+<% if holdings_by_karat.present? %>
+  <% metal_name = CountsHelper::ALL_METALS[metal.to_sym][:italian_name] %>
+  <div class="v2-chart-row">
+    <div class="v2-chart-card">
+      <% chart_title = "Giacenza in grammi per caratura di #{metal_name}" %>
+      <% chart_data = holdings_by_karat.transform_keys { |k| "#{k.to_f}k" } %>
+      <%= pie_chart chart_data,
+                    library: pie_lib.deep_merge({
+                                                  plugins: { title: { text: chart_title } }
+                                                }),
+                    title: chart_title,
+                    height: "450px",
+                    download: { filename: chart_title, background: "#ffffff" },
+                    loading: "Caricamento...",
+                    empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                    suffix: 'g'
+      %>
+    </div>
+
+    <% if valued_holdings_by_karat.present? %>
+      <div class="v2-chart-card">
+        <% chart_title = "Valore della giacenza per caratura di #{metal_name}" %>
+        <% chart_data = valued_holdings_by_karat.transform_keys { |k| "#{k.to_f}k" } %>
+        <%= pie_chart chart_data,
+                      library: pie_lib.deep_merge({
+                                                    plugins: { title: { text: chart_title } }
+                                                  }),
+                      title: chart_title,
+                      height: "450px",
+                      download: { filename: chart_title, background: "#ffffff" },
+                      loading: "Caricamento...",
+                      empty: "Spiacenti, non ci sono dati disponibili per questa ricerca",
+                      suffix: '€'
+        %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
 <% if capital_gains_data.present? %>
   <%# Grafico plus/minusvalenze sulle vendite %>
   <div class="v2-chart-card">
