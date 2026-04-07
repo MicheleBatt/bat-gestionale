@@ -3,10 +3,13 @@ include ApplicationHelper
 module GetRealTimeMetalsValueCommand
   require "uri"
   require "net/http"
+  include ApplicationHelper
   include CountsHelper
 
   def self.call(metals = ALL_METALS.keys, date = Date.today - 1.day)
-    puts "********************** STARTING GET METAL VALUES **********************"
+    parsed_date = parse_italian_datetime(date, '%d/%m/%Y')
+
+    puts "********************** STARTING GET METAL VALUES ON #{parsed_date} **********************"
     # Il sabato e la domenica i mercati sono chiusi, quindi non sono disponibili i valori degli indici di borsa
     # dei metalli preziosi
     return if date&.saturday? || date&.sunday?
@@ -48,6 +51,6 @@ module GetRealTimeMetalsValueCommand
     Movement.joins(:count).where(counts: { count_type: metals.map { | metal_type | "#{metal_type.downcase}_investment_account" } }).each { | m | m.save! }
 
 
-    puts "*********************** ENDING GET METAL VALUES ***********************"
+    puts "*********************** ENDING GET METAL VALUES ON #{parsed_date} ***********************"
   end
 end
