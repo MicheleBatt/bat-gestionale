@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_03_25_080454) do
+ActiveRecord::Schema[7.1].define(version: 2026_04_10_130055) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -27,8 +27,10 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_25_080454) do
     t.bigint "organization_id", null: false
     t.string "count_type", default: "bank_account", null: false
     t.string "currency", default: "EUR", null: false
+    t.boolean "deleted", default: false, null: false
     t.index ["count_type"], name: "index_counts_on_count_type"
     t.index ["current_amount"], name: "index_counts_on_current_amount"
+    t.index ["deleted"], name: "index_counts_on_deleted"
     t.index ["initial_amount"], name: "index_counts_on_initial_amount"
     t.index ["monitoring_scope"], name: "index_counts_on_monitoring_scope"
     t.index ["name", "organization_id"], name: "index_counts_on_name_and_organization_id", unique: true

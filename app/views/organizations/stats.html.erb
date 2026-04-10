@@ -39,7 +39,7 @@
                 <div class="v2-filter-group">
                   <%= f.label :count_id_eq, 'Conto' %>
                   <%= f.select :count_id_eq,
-                               options_for_select(@organization.counts.map{ |count| [count.name, count.id] }, @search.count_id_eq),
+                               options_for_select(@organization.not_deleted_counts.map{ |count| [count.name, count.id] }, @search.count_id_eq),
                                { include_blank: "Tutti i conti" },
                                class: 'v2-select'
                   %>

@@ -70,7 +70,7 @@ class OrganizationsController < ApplicationController
     @search = @organization.movements.includes(:count).ransack(params[:q])
     movements = @search.result
 
-    @count = @organization.counts.find(params[:q][:count_id_eq]) if params[:q].present? && params[:q][:count_id_eq].present?
+    @count = @organization.not_deleted_counts.find(params[:q][:count_id_eq]) if params[:q].present? && params[:q][:count_id_eq].present?
 
     @years_range,
     @final_amounts_by_date,

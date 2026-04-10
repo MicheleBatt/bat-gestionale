@@ -8,7 +8,7 @@ class CountsController < ApplicationController
 
   # GET /counts or /counts.json
   def index
-    @search = @organization.counts.ransack(params[:q])
+    @search = @organization.not_deleted_counts.ransack(params[:q])
     @counts = @search.result
     @counts_count = @counts.length
     @counts_global_amount = @counts.where.not(count_type: CountsHelper::METALS_COUNT_TYPES).sum(:current_amount).to_f.round(2)
@@ -60,7 +60,11 @@ class CountsController < ApplicationController
     respond_to do |format|
       if @count.update(count_params)
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("count_#{@count.id}", partial: "counts/count", locals: { count: @count })
+          if @count.deleted?
+            render turbo_stream: turbo_stream.remove("count_#{@count.id}")
+          else
+            render turbo_stream: turbo_stream.replace("count_#{@count.id}", partial: "counts/count", locals: { count: @count })
+          end
         end
         format.html { redirect_to organization_counts_path(@organization), notice: "Conto corrente aggiornato correttamente" }
         format.json { render :show, status: :ok, location: @count }
@@ -111,11 +115,12 @@ class CountsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_count
-      @count = @organization.counts.find(params[:id])
+      @count = @organization.not_deleted_counts.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def count_params
-      params.require(:count).permit(:name, :description, :count_type, :iban, :monitoring_scope, :initial_amount, :ordering_number, :organization_id)
+      params.require(:count).permit(:name, :description, :count_type, :iban, :monitoring_scope,
+                                    :deleted, :initial_amount, :ordering_number, :organization_id)
     end
 end

@@ -49,6 +49,21 @@
     <%= form.number_field :ordering_number, class: "form-control" %>
   </div>
 
+  <% if count.persisted? && count.movements.present? %>
+    <div class="m-4" style="border: 1px solid #dc2626; border-radius: 8px; padding: 1rem; background: rgba(220, 38, 38, 0.05);">
+      <div class="form-check">
+        <%= form.check_box :deleted, class: "form-check-input close-count-check", id: "#{modal_id}_deleted_flag", style: "border-color: #dc2626;" %>
+        <%= form.label :deleted, 'Chiudi conto', class: "form-check-label", for: "#{modal_id}_deleted_flag", style: "color: #dc2626; font-weight: 600; font-size: 0.85rem;" %>
+      </div>
+      <p style="color: var(--txt2); font-size: 0.8rem; margin: 0.6rem 0 0; line-height: 1.5;">
+        Attivando questa opzione il conto verrà chiuso definitivamente. Da quel momento non sarà più possibile
+        gestire la contabilità di questo conto (registrare nuovi movimenti, modificare quelli esistenti, ecc.).
+        Tutti i movimenti registrati in passato resteranno comunque archiviati a sistema a fini di consultazione storica.
+        <strong style="color: #dc2626;">Questa operazione è irreversibile e non potrà essere annullata.</strong>
+      </p>
+    </div>
+  <% end %>
+
   <div class="mt-4 d-flex flex-wrap justify-content-between">
     <button type="button" class="btn btn-secondary mx-2 mx-sm-4 my-2" data-bs-dismiss="modal">Annulla</button>
 

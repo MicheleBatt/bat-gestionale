@@ -3,6 +3,7 @@ class Organization < ApplicationRecord
 
   # Relations
   has_many :counts, -> { order(ordering_number: :asc) }, dependent: :destroy
+  has_many :not_deleted_counts, -> { where(deleted: [nil, false]).order(ordering_number: :asc) }, class_name: 'Count', dependent: :destroy
   has_many :metal_accounts, -> { where(count_type: CountsHelper::METALS_COUNT_TYPES).order(ordering_number: :asc) }, class_name: 'Count', dependent: :destroy
   has_many :non_metal_accounts, -> { where.not(count_type: CountsHelper::METALS_COUNT_TYPES).order(ordering_number: :asc) }, class_name: 'Count', dependent: :destroy
   has_many :movements, through: :counts

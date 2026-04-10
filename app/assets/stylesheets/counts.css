@@ -1248,3 +1248,9 @@ a.v2-btn-icon,
     gap: 0.4rem;
   }
 }
+
+/* ---------- Close Count Checkbox ---------- */
+.form-check-input.close-count-check:checked {
+  background-color: var(--red);
+  border-color: var(--red);
+}
