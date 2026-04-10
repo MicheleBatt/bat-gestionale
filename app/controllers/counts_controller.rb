@@ -61,6 +61,10 @@ class CountsController < ApplicationController
       if @count.update(count_params)
         format.turbo_stream do
           if @count.deleted?
+            if @count.ordering_number > 0
+              counts = @count.organization.not_deleted_counts.where.not(id: @count.id)
+              counts.where("ordering_number > ?", @count.ordering_number).update_all("ordering_number = ordering_number - 1")
+            end
             render turbo_stream: turbo_stream.remove("count_#{@count.id}")
           else
             render turbo_stream: turbo_stream.replace("count_#{@count.id}", partial: "counts/count", locals: { count: @count })
