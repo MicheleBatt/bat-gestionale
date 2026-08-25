@@ -1,0 +1,64 @@
+# Stack di produzione di Numio: applicazione Rails + Postgres.
+#
+# Avvio:   docker compose -f docker-compose.production.yml --env-file .env.production up -d --build
+# Stato:   docker compose -f docker-compose.production.yml ps
+# Log:     docker compose -f docker-compose.production.yml logs -f app
+#
+# L'applicazione NON è esposta su internet da qui: ascolta solo su 127.0.0.1:3000 e viene
+# raggiunta da cloudflared, che gira sulla macchina host e stabilisce il tunnel verso Cloudflare.
+
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PWD}
+      POSTGRES_DB: ${DATABASE}
+      # Le date e l'ordinamento seguono la localizzazione italiana
+      TZ: Europe/Rome
+    volumes:
+      # I dati vivono sull'SSD esterno, non sulla microSD
+      - ${DATA_DIR}/pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      RAILS_ENV: production
+      TZ: Europe/Rome
+      # Rails legge la connessione da qui; le tre variabili sotto servono a BackupDbCommand
+      # e al controllo di config/initializers/ensure_env_variables.rb
+      DATABASE_URL: postgres://${DATABASE_USER}:${DATABASE_PWD}@db:5432/${DATABASE}
+      DATABASE: ${DATABASE}
+      DATABASE_PWD: ${DATABASE_PWD}
+      USER: ${DATABASE_USER}
+      DATABASE_HOST: db
+      DB_BACKUP_PATH: /var/www/db_backup
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      APP_HOST: ${APP_HOST}
+      RAILS_MAX_THREADS: 5
+      WEB_CONCURRENCY: 1
+    volumes:
+      # I dump del database restano sull'host, così sopravvivono al container e sono
+      # copiabili fuori dalla macchina dal cron di backup offsite
+      - ${DATA_DIR}/db_backup:/var/www/db_backup
+    ports:
+      # Solo loopback: nessuna esposizione sulla rete locale né su internet
+      - "127.0.0.1:3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:3000/up || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s

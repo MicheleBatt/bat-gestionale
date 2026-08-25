@@ -40,9 +40,17 @@ RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 # Final stage for app image
 FROM base
 
-# Install packages needed for deployment
+# Install packages needed for deployment.
+# Il client Postgres arriva dal repository ufficiale PGDG e non da Debian: serve la versione 16,
+# la stessa del server, perché pg_dump si rifiuta di esportare da un server più recente di sé.
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libvips postgresql-client && \
+    apt-get install --no-install-recommends -y curl libvips ca-certificates gnupg && \
+    echo "deb http://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/pgdg.gpg && \
+    sed -i 's|deb http|deb [signed-by=/usr/share/keyrings/pgdg.gpg] http|' /etc/apt/sources.list.d/pgdg.list && \
+    apt-get update -qq && \
+    apt-get install --no-install-recommends -y postgresql-client-16 && \
+    apt-get purge -y gnupg && apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Copy built artifacts: gems, application

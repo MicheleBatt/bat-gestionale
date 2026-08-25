@@ -21,4 +21,4 @@ staging:
 
 production:
   <<: *default
-  database: batgestionale_development
+  url: <%= ENV["DATABASE_URL"] %>

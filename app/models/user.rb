@@ -11,8 +11,12 @@ class User < ApplicationRecord
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+  # :registerable è volutamente escluso: gli utenti vengono creati dagli admin da UsersController,
+  # non esiste registrazione pubblica.
+  # :recoverable è volutamente escluso: niente recupero password via email, quindi nessun SMTP da
+  # configurare. Se un utente dimentica la password, un admin gliela reimposta da UsersController.
+  devise :database_authenticatable,
+         :rememberable, :validatable
 
   # Validations
   validates :first_name, :last_name, presence: true

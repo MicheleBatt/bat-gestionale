@@ -4,7 +4,7 @@ development:
 test:
   adapter: test
 
+# L'applicazione non usa broadcast via Action Cable (nessun turbo_stream_from), quindi non serve
+# Redis: l'adapter async lavora in-process ed evita una dipendenza in più da installare sul server.
 production:
-  adapter: redis
-  url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } %>
-  channel_prefix: bat_gestionale_production
+  adapter: async

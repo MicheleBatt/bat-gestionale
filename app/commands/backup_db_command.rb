@@ -5,12 +5,21 @@ module BackupDbCommand
   def self.call
     puts "[#{Time.now}] Backup DB job started"
 
-    # Creo il backup del db e lo salvo in una cartella locale della macchina su cui gira l'applicazione
-    folder_path = "#{Rails.env.development? ? '' : '/var/www/'}db_backup"
-    Dir.mkdir(folder_path) unless Dir.exist?(folder_path)
+    # Creo il backup del db e lo salvo in una cartella locale della macchina su cui gira l'applicazione.
+    # In produzione la cartella è un volume Docker montato sull'SSD, così il dump sopravvive al container.
+    folder_path = ENV.fetch('DB_BACKUP_PATH') { Rails.env.development? ? 'db_backup' : '/var/www/db_backup' }
+    FileUtils.mkdir_p(folder_path)
     db_backup_file_name = "db_backup_#{Rails.env}.tar"
     database = Rails.env.development? ? 'batgestionale_development' : ENV['DATABASE']
-    cmd = "#{Rails.env.development? ? '' : 'PGPASSWORD=' + ENV['DATABASE_PWD']} pg_dump -F t #{database} > #{folder_path}/#{db_backup_file_name}"
+
+    # In sviluppo Postgres è locale e si usa l'autenticazione peer; in produzione gira in un container
+    # separato, quindi host, utente e password vanno passati esplicitamente a pg_dump.
+    if Rails.env.development?
+      cmd = "pg_dump -F t #{database} > #{folder_path}/#{db_backup_file_name}"
+    else
+      host = ENV.fetch('DATABASE_HOST') { 'db' }
+      cmd = "PGPASSWORD=#{ENV['DATABASE_PWD']} pg_dump -F t -h #{host} -U #{ENV['USER']} #{database} > #{folder_path}/#{db_backup_file_name}"
+    end
 
     # Eseguo il comando e verifico se la sua eseuzione sia andata a buon fine. Se si, proseguo. Se no, interrompo
     # l'esecuzione del command lanciando un'eccezione
