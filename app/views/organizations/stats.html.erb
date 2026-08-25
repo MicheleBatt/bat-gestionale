@@ -31,7 +31,7 @@
                 <div class="v2-filter-group">
                   <%= f.label :year_eq, 'Anno' %>
                   <%= f.select :year_eq,
-                               options_for_select(@years_range.map{ |year| [year, year] }, @search.year_eq),
+                               options_for_select(@years_range.to_a.reverse.map{ |year| [year, year] }, @search.year_eq),
                                { include_blank: "Tutti gli anni" },
                                class: 'v2-select'
                   %>

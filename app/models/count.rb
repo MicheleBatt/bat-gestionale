@@ -264,7 +264,7 @@ class Count < ApplicationRecord
 
       # Estraggo il valore di quel metallo per caratura negli ultimi 31 giorni
       date_format = "%-d %b"
-      dates = ((Date.today - 30.days)..(Date.today)).to_a
+      dates = ((Date.today - 100.days)..(Date.today)).to_a
       metal_values = MetalValue.where(metal: self.metal_type, recorded_at: dates).order(recorded_at: :asc)
       metal_values = metal_values.where(karat: karats_values )
       metal_values = metal_values.group_by(&:karat)
