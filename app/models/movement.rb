@@ -49,10 +49,10 @@ class Movement < ApplicationRecord
 
   def valid_amount?
     if self.movement_type == 'out' && self.amount.to_f > 0
-      errors.add(:amount, "must be negative")
+      errors.add(:amount, "deve essere negativo per un movimento in uscita")
     end
     if self.movement_type == 'in' && self.amount.to_f < 0
-      errors.add(:amount, "must be positive")
+      errors.add(:amount, "deve essere positivo per un movimento in entrata")
     end
   end
 
@@ -60,26 +60,26 @@ class Movement < ApplicationRecord
     return if metal_account?
 
     if self.movement_type == 'out' && self.expense_item_id.blank?
-      errors.add(:expense_item_id, "Specifica una voce di spesa!")
+      errors.add(:expense_item_id, "è obbligatoria per i movimenti in uscita")
     end
 
     if self.movement_type == 'in' && self.expense_item_id.present?
-      errors.add(:expense_item_id, "La voce di spesa può essere selezionata solo per movimenti di cassa in uscita!")
+      errors.add(:expense_item_id, "può essere indicata solo per i movimenti in uscita")
     end
   end
 
   def valid_metal_fields?
     if metal_account?
-      errors.add(:karat, "can't be blank") if self.karat.blank?
-      errors.add(:price_per_gram_at_transaction, "can't be blank") if self.price_per_gram_at_transaction.blank?
-      errors.add(:price_at_transaction, "can't be blank") if self.price_at_transaction.blank?
-      errors.add(:spread, "can't be blank") if self.spread.blank?
+      errors.add(:karat, :blank) if self.karat.blank?
+      errors.add(:price_per_gram_at_transaction, :blank) if self.price_per_gram_at_transaction.blank?
+      errors.add(:price_at_transaction, :blank) if self.price_at_transaction.blank?
+      errors.add(:spread, :blank) if self.spread.blank?
 
       if self.movement_type == 'out' && self.amount.present? && self.karat.present? && self.emitted_at.present?
         count = self.count
         movements = count.movements.where.not(id: self.id).where('emitted_at <= ?', self.emitted_at)
         if count.metal_holdings(movements)[self.karat].to_f < self.amount.abs
-          errors.add(:karat, "#{self.amount} grams exceeds the stock of #{self.count.metal_holdings[self.karat].to_f} grams of #{self.karat.to_i} carats")
+          errors.add(:karat, "#{self.amount} grammi superano la giacenza di #{self.count.metal_holdings[self.karat].to_f} grammi a #{self.karat.to_i} carati")
         end
       end
     end

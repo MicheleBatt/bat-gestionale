@@ -33,6 +33,14 @@
   animation: errorFadeIn 0.5s ease-out both;
 }
 
+.error-logo {
+  display: block;
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+  margin: 0 auto 1.5rem;
+}
+
 .error-code {
   font-size: 5rem;
   font-weight: 800;
@@ -100,6 +108,11 @@
 @media (max-width: 480px) {
   .error-card {
     padding: 2.5rem 1.5rem;
+  }
+
+  .error-logo {
+    max-width: 210px;
+    margin-bottom: 1.25rem;
   }
 
   .error-code {

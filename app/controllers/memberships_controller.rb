@@ -9,13 +9,20 @@ class MembershipsController < ApplicationController
     params[:membership].delete(:modal_id)
     @membership = Membership.new(membership_params)
 
+    # authorize_resource verifica solo la classe: senza questo controllo sul record un
+    # editor potrebbe aggiungere membri a un'organizzazione di cui non è editor.
+    authorize! :create, @membership
+
     respond_to do |format|
       if @membership.save
         format.html { redirect_to organizations_path, notice: "Membro aggiunto correttamente all'organizzazione" }
         format.json { render :show, status: :created, location: @membership }
       else
+        # Lo stato di errore è indispensabile: con un 200 il gestore di turbo:submit-end
+        # in layouts/_auto_close_modals considera riuscito l'invio e chiude la modale,
+        # nascondendo all'utente i messaggi di errore appena caricati.
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @membership })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @membership }), status: :unprocessable_entity
         end
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @membership.errors, status: :unprocessable_entity }
@@ -36,8 +43,9 @@ class MembershipsController < ApplicationController
         format.html { redirect_to organizations_path, notice: "Ruolo aggiornato correttamente" }
         format.json { render :show, status: :ok, location: @membership }
       else
+        # Stesso motivo di create: senza lo stato di errore la modale si chiuderebbe
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @membership })
+          render turbo_stream: turbo_stream.update("#{modal_id}_error_messages", partial: "layouts/error_messages", locals: { obj: @membership }), status: :unprocessable_entity
         end
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @membership.errors, status: :unprocessable_entity }
@@ -66,6 +74,9 @@ class MembershipsController < ApplicationController
 
     def set_membership
       @membership = @organization.memberships.find(params[:id])
+
+      # Stesso motivo di create: la verifica va fatta sul record, non sulla classe
+      authorize! action_name.to_sym, @membership
     end
 
     # Only allow a list of trusted parameters through.

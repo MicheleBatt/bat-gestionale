@@ -8,7 +8,11 @@
     </div>
 
     <div class="v2-org-actions">
-      <%= link_to organization_counts_path(organization), class: "v2-btn-icon", title: "Visualizza conti" do %>
+      <%= link_to organization_path(organization), class: "v2-btn-icon", data: { turbo: false }, title: "Dashboard" do %>
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+      <% end %>
+
+      <%= link_to organization_counts_path(organization), class: "v2-btn-icon", data: { turbo: false }, title: "Visualizza conti" do %>
         <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
       <% end %>
 
@@ -41,41 +45,19 @@
     <div class="v2-org-body">
       <div id="memberships_<%= organization.id %>" class="membership-cont">
         <% if organization.memberships.present? %>
-          <% organization.memberships.each do |membership| %>
-            <div class="v2-membership-item" id="membership_<%= membership.id %>">
-              <div class="v2-membership-info">
-                <span class="v2-membership-name"><%= membership.username %></span>
-                <span class="v2-membership-role"><%= italian_role(membership.role) %></span>
-              </div>
-              <div class="v2-membership-actions">
-                <button type="button"
-                        class="v2-btn-icon"
-                        title="Modifica ruolo"
-                        data-bs-toggle="modal"
-                        data-bs-target="#membershipEditingModal_<%= membership.id %>">
-                  <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
-                </button>
-
-                <button type="button"
-                        class="v2-btn-icon danger"
-                        title="Rimuovi"
-                        data-bs-toggle="modal"
-                        data-bs-target="#membershipDeleteModal_<%= membership.id %>">
-                  <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
-                </button>
-              </div>
-            </div>
-          <% end %>
+          <%= render partial: "memberships/membership", collection: organization.memberships, as: :membership %>
         <% else %>
           <p class="v2-membership-empty">Al momento non ci sono membri per questa organizzazione</p>
         <% end %>
 
-        <div class="v2-membership-add">
-          <button type="button" class="v2-btn-add-member" data-bs-toggle="modal" data-bs-target="#membershipCreationModal<%= organization.id %>">
-            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-            Aggiungi membro
-          </button>
-        </div>
+        <% if can? :create, Membership.new(organization_id: organization.id) %>
+          <div class="v2-membership-add">
+            <button type="button" class="v2-btn-add-member" data-bs-toggle="modal" data-bs-target="#membershipCreationModal<%= organization.id %>">
+              <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              Aggiungi membro
+            </button>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>

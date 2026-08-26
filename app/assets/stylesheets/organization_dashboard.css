@@ -1,0 +1,309 @@
+/* =========================================================
+   Dashboard dell'organizzazione (organizations#show)
+   Riusa metriche, card grafico e voci membro già definite altrove:
+   qui ci sono solo i pannelli e le liste specifiche di questa pagina.
+   ========================================================= */
+
+/* Riga del periodo con le frecce di navigazione fra i mesi */
+.v2-dash-period {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.v2-dash-period-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 0.4rem;
+  color: var(--txt2);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.v2-dash-period-arrow:hover {
+  color: var(--accent);
+  background: rgba(109, 40, 217, 0.05);
+}
+
+.v2-dash-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Stessa scatola delle card dei grafici (.v2-chart-card): bordo violetto, ombreggiatura
+   a due livelli e comparsa animata, così i pannelli e i grafici sembrano lo stesso oggetto */
+.v2-dash-panel {
+  background: #ffffff;
+  border: 1px solid rgba(109, 40, 217, 0.3);
+  border-radius: var(--radius);
+  padding: 1.25rem 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.06);
+  animation: fadeUp 0.4s ease-out both;
+  color: #1e293b;
+}
+
+.v2-dash-row .v2-dash-panel {
+  margin-bottom: 0;
+}
+
+.v2-dash-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+
+.v2-dash-panel-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--txt);
+  margin: 0;
+}
+
+.v2-dash-panel-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--txt2);
+  white-space: nowrap;
+}
+
+.v2-dash-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.v2-dash-panel-foot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.v2-dash-empty {
+  font-size: 0.82rem;
+  color: var(--txt3);
+  margin: 0.5rem 0 0;
+}
+
+/* ---------- Metrica cliccabile ---------- */
+
+/* Il link riempie tutta la card, bordi interni compresi: senza questo pseudo-elemento
+   il click sul padding della card non attiverebbe la navigazione */
+.v2-metric-clickable {
+  position: relative;
+  cursor: pointer;
+}
+
+.v2-metric-clickable .v2-metric-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+}
+
+.v2-metric-clickable:hover {
+  border-color: rgba(109, 40, 217, 0.6);
+  transform: translateY(-2px);
+}
+
+/* .v2-metric-link rimpicciolisce il valore, pensato per le voci testuali tipo
+   "Visualizza grafici": qui il valore è un numero e mantiene la resa delle altre metriche */
+.v2-metric-clickable .v2-metric-link .v2-metric-value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--txt);
+  display: block;
+}
+
+/* Dettaglio entrate/uscite sotto la metrica del saldo */
+.v2-dash-metric-detail {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+/* Freccia e valore sono attaccati: nessun gap fra i due elementi flex */
+.v2-dash-metric-detail .pos,
+.v2-dash-metric-detail .neg {
+  display: inline-flex;
+  align-items: center;
+}
+
+.v2-dash-metric-detail .pos { color: #198754; }
+.v2-dash-metric-detail .neg { color: #dc3545; }
+
+/* Valore di una metrica in attivo: verde come il dettaglio delle entrate.
+   Il rosso per i valori negativi è già definito da .v2-metric-value.neg */
+.v2-metric-value.pos,
+.v2-metric-value.pos .v2-metric-currency {
+  color: #198754;
+}
+
+/* Frecce proporzionate al testo minuto del dettaglio: la classe .ico-sm dell'app
+   sarebbe 16px, troppo grande accanto a un testo di 0.72rem */
+.v2-dash-metric-detail .ico {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+/* ---------- Membri ---------- */
+
+/* L'email dei membri è ora resa da .v2-membership-email, condivisa con la lista
+   organizzazioni: qui basta che le voci occupino tutta la larghezza del pannello */
+.v2-dash-list .v2-membership-item {
+  width: 100%;
+}
+
+/* ---------- Scadenze ---------- */
+
+.v2-dash-deadline {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.6rem 0.75rem;
+  background: #f8f9fb;
+  border: 1px solid var(--glass-border);
+  border-radius: 0.65rem;
+}
+
+.v2-dash-deadline.expired {
+  border-color: rgba(220, 53, 69, 0.35);
+  background: rgba(220, 53, 69, 0.05);
+}
+
+.v2-dash-deadline-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.6rem;
+  padding: 0.3rem 0;
+  background: #ffffff;
+  border-radius: 0.5rem;
+  border: 1px solid var(--glass-border);
+}
+
+.v2-dash-deadline-date .day {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--txt);
+}
+
+.v2-dash-deadline-date .month {
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--txt3);
+}
+
+.v2-dash-deadline-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.v2-dash-deadline-desc {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--txt);
+}
+
+.v2-dash-deadline-state {
+  font-size: 0.72rem;
+  color: var(--txt3);
+}
+
+.v2-dash-deadline.expired .v2-dash-deadline-state {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+/* ---------- Ultimi movimenti ---------- */
+
+.v2-dash-movement {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.6rem 0.75rem;
+  background: #f8f9fb;
+  border: 1px solid var(--glass-border);
+  border-radius: 0.65rem;
+}
+
+.v2-dash-movement-date {
+  min-width: 3.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--txt3);
+  white-space: nowrap;
+}
+
+.v2-dash-movement-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.v2-dash-movement-causal {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--txt);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.v2-dash-movement-count {
+  font-size: 0.72rem;
+  color: var(--txt3);
+}
+
+.v2-dash-movement-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.v2-dash-movement-amount {
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: nowrap;
+  text-align: right;
+  min-width: 6rem;
+}
+
+.v2-dash-movement-amount.pos { color: #198754; }
+.v2-dash-movement-amount.neg { color: #dc3545; }
+
+.v2-dash-movement-amount .unit {
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-left: 0.1rem;
+}
+
+@media (max-width: 900px) {
+  .v2-dash-row {
+    grid-template-columns: 1fr;
+  }
+
+  .v2-dash-movement-tag {
+    display: none;
+  }
+}

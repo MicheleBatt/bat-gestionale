@@ -4,7 +4,7 @@
   <div class="v2-login-wrapper">
     <div class="v2-login-card">
       <div class="v2-login-header">
-        <h1 class="v2-login-title">Numio</h1>
+        <%= image_tag "/images/loghi/logo_esteso.png", alt: "Numio", class: "v2-login-logo" %>
         <p class="v2-login-subtitle">Accedi al tuo account</p>
       </div>
 
@@ -16,7 +16,12 @@
 
         <div class="v2-login-field">
           <%= f.label :password, 'Password', class: "v2-login-label" %>
-          <%= f.password_field :password, autocomplete: "current-password", class: "v2-input", placeholder: "La tua password" %>
+          <%= render "layouts/password_field",
+                     form: f,
+                     attribute: :password,
+                     input_class: "v2-input",
+                     autocomplete: "current-password",
+                     placeholder: "La tua password" %>
         </div>
 
         <div class="v2-login-remember">

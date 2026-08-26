@@ -17,7 +17,7 @@
           <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
           Esporta IBAN
         <% end %>
-        <% if can? :create, Count %>
+        <% if can? :create, Count.new(organization_id: @organization.id) %>
           <button type="button" class="v2-btn-primary" data-bs-toggle="modal" data-bs-target="#countCreationModal">
             <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
             Nuovo conto
@@ -44,7 +44,7 @@
         </div>
         <div>
           <div class="v2-metric-label">Giacenza complessiva</div>
-          <div class="v2-metric-value <%= @counts_global_amount < 0 ? 'neg' : '' %>">
+          <div class="v2-metric-value <%= 'neg' if @counts_global_amount.negative? %>">
             <%= to_visible_amount(@counts_global_amount, false) %><span class="v2-metric-currency">&euro;</span>
           </div>
         </div>
@@ -129,10 +129,12 @@
         </div>
         <h3>Nessun conto trovato</h3>
         <p>Modifica i filtri di ricerca oppure aggiungi il tuo primo conto per iniziare.</p>
-        <button type="button" class="v2-btn-ghost" data-bs-toggle="modal" data-bs-target="#countCreationModal">
-          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-          Aggiungi conto
-        </button>
+        <% if can? :create, Count.new(organization_id: @organization.id) %>
+          <button type="button" class="v2-btn-ghost" data-bs-toggle="modal" data-bs-target="#countCreationModal">
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Aggiungi conto
+          </button>
+        <% end %>
       </div>
     <% end %>
   </main>
@@ -140,13 +142,17 @@
 
 <%# Modals (fuori da .v2 per evitare problemi di stacking context) %>
 <div class="v2">
-  <%= render "modal",
-             modal_id: "countCreationModal",
-             title: "Aggiungi un nuovo conto",
-             count: Count.new
-  %>
+  <% if can? :create, Count.new(organization_id: @organization.id) %>
+    <%= render "modal",
+               modal_id: "countCreationModal",
+               title: "Aggiungi un nuovo conto",
+               count: Count.new
+    %>
+  <% end %>
 
   <% @counts.each do |count| %>
+    <% next unless can? :update, count %>
+
     <%= render "modal",
                modal_id: "countEditingModal_#{count.id}",
                title: "Modifica conto",

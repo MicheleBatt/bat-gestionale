@@ -138,6 +138,27 @@
   border-bottom: 1px solid rgba(109,40,217,0.3);
 }
 
+/* Logo + link raggruppati a sinistra: senza il contenitore, lo space-between della
+   barra distribuirebbe logo e menu ai due estremi */
+.v2-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.v2-nav-logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.v2-nav-logo img {
+  height: 34px;
+  width: auto;
+  display: block;
+}
+
 /* Desktop nav links */
 .v2-nav-links {
   display: flex;

@@ -1,51 +1,63 @@
 <% new_upcoming_deadlines = upcoming_deadlines_count(@organization) %>
 <% organizations = current_user.organizations %>
 
+<% logo_path = @organization.present? ? organization_path(@organization) : organizations_path %>
+
 <nav class="v2-nav">
   <div class="v2-nav-inner">
-    <%# Desktop nav %>
-    <ul class="v2-nav-links">
-      <li>
-        <%= link_to organization_counts_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_counts_path(@organization))}", data: { turbo: false } do %>
-          <svg class="ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="16.5" cy="14" r="1.5" fill="currentColor" stroke="none"/></svg>
-          Conti corrente
-        <% end %>
-      </li>
-      <li>
-        <%= link_to organization_expense_items_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_expense_items_path(@organization))}" do %>
-          <svg class="ico" viewBox="0 0 24 24"><path d="M4 4h7l9 9-7 7-9-9V4z"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/></svg>
-          Voci di spesa
-        <% end %>
-      </li>
-      <li>
-        <%= link_to organization_deadlines_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_deadlines_path(@organization))}" do %>
-          <svg class="ico" viewBox="0 0 24 24"><path d="M5 3h14M5 21h14"/><path d="M7 3v5l5 4-5 4v5M17 3v5l-5 4 5 4v5"/></svg>
-          Scadenziario
-          <% if new_upcoming_deadlines > 0 %>
-            <span class="v2-nav-badge"><%= new_upcoming_deadlines %></span>
-          <% end %>
-        <% end %>
-      </li>
-      <% if can? :index, Organization %>
+    <div class="v2-nav-left">
+      <%# Logo: porta alla dashboard dell'organizzazione corrente %>
+      <%= link_to logo_path, class: "v2-nav-logo", title: "Numio", data: { turbo: false } do %>
+        <%= image_tag "/images/loghi/large_logo.png", alt: "Numio" %>
+      <% end %>
+
+      <%# Desktop nav %>
+      <ul class="v2-nav-links">
+        <%# Le sezioni legate a un'organizzazione compaiono solo se ce n'è una in contesto %>
+        <% if @organization.present? %>
         <li>
-          <%= link_to organizations_path, class: "v2-nav-link #{'active' if current_page?(organizations_path)}" do %>
-            <svg class="ico" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75M21 21v-2a4 4 0 00-3-3.85"/></svg>
-            Organizzazioni
+          <%= link_to organization_counts_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_counts_path(@organization))}", data: { turbo: false } do %>
+            <svg class="ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="16.5" cy="14" r="1.5" fill="currentColor" stroke="none"/></svg>
+            Conti corrente
           <% end %>
         </li>
-      <% end %>
-      <% if can? :index, User %>
         <li>
-          <%= link_to users_path, class: "v2-nav-link #{'active' if current_page?(users_path)}" do %>
-            <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2c0-3.3 2.7-6 6-6s6 2.7 6 6v2"/></svg>
-            Utenti
+          <%= link_to organization_expense_items_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_expense_items_path(@organization))}" do %>
+            <svg class="ico" viewBox="0 0 24 24"><path d="M4 4h7l9 9-7 7-9-9V4z"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+            Voci di spesa
           <% end %>
         </li>
-      <% end %>
-    </ul>
+        <li>
+          <%= link_to organization_deadlines_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_deadlines_path(@organization))}" do %>
+            <svg class="ico" viewBox="0 0 24 24"><path d="M5 3h14M5 21h14"/><path d="M7 3v5l5 4-5 4v5M17 3v5l-5 4 5 4v5"/></svg>
+            Scadenziario
+            <% if new_upcoming_deadlines > 0 %>
+              <span class="v2-nav-badge"><%= new_upcoming_deadlines %></span>
+            <% end %>
+          <% end %>
+        </li>
+        <% end %>
+        <% if can? :index, Organization %>
+          <li>
+            <%= link_to organizations_path, class: "v2-nav-link #{'active' if current_page?(organizations_path)}" do %>
+              <svg class="ico" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75M21 21v-2a4 4 0 00-3-3.85"/></svg>
+              Organizzazioni
+            <% end %>
+          </li>
+        <% end %>
+        <% if can? :index, User %>
+          <li>
+            <%= link_to users_path, class: "v2-nav-link #{'active' if current_page?(users_path)}" do %>
+              <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2c0-3.3 2.7-6 6-6s6 2.7 6 6v2"/></svg>
+              Utenti
+            <% end %>
+          </li>
+          <% end %>
+      </ul>
+    </div>
 
     <%# Mobile: org name (visible only on mobile) %>
-    <span class="v2-mobile-only v2-mobile-org-name"><%= @organization.name %></span>
+    <span class="v2-mobile-only v2-mobile-org-name"><%= @organization&.name %></span>
 
     <%# Mobile hamburger (label only, checkbox is outside v2-nav-inner) %>
     <label for="v2MobileCheck" class="v2-mobile-toggle">
@@ -56,20 +68,13 @@
     <div class="v2-desktop-only">
       <details class="v2-org-switcher">
         <summary>
-          <%= @organization.name %>
+          <%= @organization&.name || "Organizzazioni" %>
           <svg class="ico-sm ico" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
         </summary>
         <div class="v2-dropdown-panel">
-          <% organizations.where.not(id: @organization.id).each do |organization| %>
-            <% link =
-               current_page?(organization_counts_path(@organization)) ? organization_counts_path(organization) :
-                 (current_page?(organization_expense_items_path(@organization)) ? organization_expense_items_path(organization) :
-                   (current_page?(organization_deadlines_path(@organization)) ? organization_deadlines_path(organization) :
-                     (current_page?(organizations_path) ? organizations_path :
-                       (current_page?(users_path) ? users_path :
-                          (current_page?(edit_user_path(current_user)) ? edit_user_path(current_user) : root_path)))))
-            %>
-            <%= link_to link, class: "v2-dropdown-item" do %>
+          <% organizations.where.not(id: @organization&.id).each do |organization| %>
+            <%= link_to organization_path(organization), class: "v2-dropdown-item" do %>
+              <svg class="ico" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75M21 21v-2a4 4 0 00-3-3.85"/></svg>
               <%= organization.name %>
             <% end %>
           <% end %>
@@ -89,6 +94,7 @@
   <%# Mobile menu checkbox + slide-down menu (siblings for CSS ~ selector) %>
   <input type="checkbox" id="v2MobileCheck" class="v2-mobile-menu-check">
   <div class="v2-mobile-menu">
+    <% if @organization.present? %>
     <%= link_to organization_counts_path(@organization), class: "v2-nav-link #{'active' if current_page?(organization_counts_path(@organization))}", data: { turbo: false } do %>
       <svg class="ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="16.5" cy="14" r="1.5" fill="currentColor" stroke="none"/></svg>
       Conti corrente
@@ -104,6 +110,7 @@
         <span class="v2-nav-badge"><%= new_upcoming_deadlines %></span>
       <% end %>
     <% end %>
+    <% end %>
     <% if can? :index, Organization %>
       <%= link_to organizations_path, class: "v2-nav-link #{'active' if current_page?(organizations_path)}" do %>
         <svg class="ico" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75M21 21v-2a4 4 0 00-3-3.85"/></svg>
@@ -118,16 +125,8 @@
     <% end %>
 
     <%# Org switcher links in mobile menu %>
-    <% organizations.where.not(id: @organization.id).each do |organization| %>
-      <% link =
-         current_page?(organization_counts_path(@organization)) ? organization_counts_path(organization) :
-           (current_page?(organization_expense_items_path(@organization)) ? organization_expense_items_path(organization) :
-             (current_page?(organization_deadlines_path(@organization)) ? organization_deadlines_path(organization) :
-               (current_page?(organizations_path) ? organizations_path :
-                 (current_page?(users_path) ? users_path :
-                    (current_page?(edit_user_path(current_user)) ? edit_user_path(current_user) : root_path)))))
-      %>
-      <%= link_to link, class: "v2-nav-link" do %>
+    <% organizations.where.not(id: @organization&.id).each do |organization| %>
+      <%= link_to organization_path(organization), class: "v2-nav-link" do %>
         <svg class="ico" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
         <%= organization.name %>
       <% end %>

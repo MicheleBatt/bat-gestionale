@@ -1,0 +1,274 @@
+<%# L'intervallo mostrato arriva dai parametri from/to: se cade dentro un unico mese basta
+    indicare il giorno iniziale, altrimenti serve la data completa da entrambi i lati %>
+<% same_month = @period_start.beginning_of_month == @period_end.beginning_of_month %>
+<% period_label = same_month ? "#{l(@period_start, format: '%-d')} – #{l(@period_end, format: '%-d %B %Y')}"
+                             : "#{l(@period_start, format: '%-d %B %Y')} – #{l(@period_end, format: '%-d %B %Y')}" %>
+<% period_month = l(@period_start, format: '%B') %>
+<%# "ad aprile", "ad agosto", "ad ottobre", ma "a gennaio": la d eufonica davanti a vocale %>
+<% in_current_month = "#{period_month.match?(/\A[aeiou]/i) ? 'ad' : 'a'} #{period_month}" %>
+
+<%# Opzioni comuni ai grafici, allineate a quelle del partial layouts/_charts %>
+<% chart_font = { family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" } %>
+<% chart_lib = {
+  plugins: {
+    title: { color: '#1e293b', font: { **chart_font, size: 15, weight: 600 }, padding: { bottom: 20 } },
+    legend: { labels: { color: '#475569', font: { **chart_font, size: 11 }, usePointStyle: true, pointStyle: 'circle' } }
+  },
+  scales: {
+    x: { ticks: { color: '#64748b', font: { **chart_font, size: 10 } }, grid: { color: '#f1f5f9' } },
+    y: { ticks: { color: '#64748b', font: { **chart_font, size: 10 } }, grid: { color: '#f1f5f9' } }
+  },
+  datasets: { bar: { borderRadius: 4, borderSkipped: 'bottom' } }
+} %>
+<% pie_lib = {
+  plugins: {
+    title: { display: true, color: '#1e293b', font: { **chart_font, size: 15, weight: 600 }, padding: { bottom: 20 } },
+    legend: { position: 'right', maxWidth: 300, labels: { color: '#475569', font: { **chart_font, size: 11 }, padding: 8, usePointStyle: true, pointStyle: 'circle' } }
+  }
+} %>
+
+<div class="v2">
+  <%= render 'layouts/aurora_background' %>
+  <%= render 'layouts/navbar_v2' %>
+
+  <main class="v2-main">
+    <%# Hero %>
+    <header class="v2-hero">
+      <div>
+        <h1 class="v2-hero-title"><%= @organization.name %></h1>
+
+        <div class="v2-hero-sub v2-dash-period">
+          <%= link_to organization_path(@organization, @previous_period),
+                      class: "v2-dash-period-arrow",
+                      title: "Mese precedente",
+                      data: { turbo: false } do %>
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+          <% end %>
+
+          <span>Attività <%= in_current_month %> · <%= period_label %></span>
+
+          <%= link_to organization_path(@organization, @next_period),
+                      class: "v2-dash-period-arrow",
+                      title: "Mese successivo",
+                      data: { turbo: false } do %>
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+          <% end %>
+        </div>
+      </div>
+    </header>
+
+    <%# Metriche di sintesi %>
+    <section class="v2-metrics">
+      <div class="v2-metric v2-metric-clickable">
+        <%= link_to organization_counts_path(@organization), class: "v2-metric-link", title: "Vai ai conti" do %>
+          <div class="v2-metric-icon purple">
+            <svg class="ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="16.5" cy="14" r="1.5" fill="currentColor" stroke="none"/></svg>
+          </div>
+          <div>
+            <div class="v2-metric-label">Conti attivi</div>
+            <div class="v2-metric-value"><%= @counts.size %></div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="v2-metric">
+        <div class="v2-metric-icon green <%= 'neg' if @global_amount.negative? %>">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <div>
+          <div class="v2-metric-label">Giacenza a fine <%= period_month %></div>
+          <div class="v2-metric-value <%= 'neg' if @global_amount.negative? %>">
+            <%= to_visible_amount(@global_amount, false) %><span class="v2-metric-currency">&euro;</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="v2-metric">
+        <div class="v2-metric-icon amber">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
+        </div>
+        <div>
+          <div class="v2-metric-label">Movimenti del periodo</div>
+          <div class="v2-metric-value"><%= @movements_count %></div>
+          <div class="v2-dash-metric-detail">
+            <span class="pos"><svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M19 12l-7 7-7-7"/></svg><%= @movements_in_count %> entrate</span>
+            <span class="neg"><svg class="ico" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg><%= @movements_out_count %> uscite</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="v2-metric">
+        <%# Saldo positivo: freccia in giù verde. Saldo negativo: freccia in su rossa,
+            con le stesse direzioni usate per entrate e uscite nella card dei movimenti %>
+        <div class="v2-metric-icon <%= @period_balance.negative? ? 'green neg' : 'green' %>">
+          <% if @period_balance.negative? %>
+            <svg class="ico" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          <% else %>
+            <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+          <% end %>
+        </div>
+        <div>
+          <div class="v2-metric-label">Saldo del periodo</div>
+          <%# Saldo in attivo: segno + e stringa verde. In passivo: il segno meno arriva già
+              dall'importo e la stringa è rossa. A zero resta il colore neutro. %>
+          <div class="v2-metric-value <%= @period_balance.negative? ? 'neg' : ('pos' if @period_balance.positive?) %>">
+            <%= '+' if @period_balance.positive? %><%= to_visible_amount(@period_balance, false) %><span class="v2-metric-currency">&euro;</span>
+          </div>
+          <div class="v2-dash-metric-detail">
+            <span class="pos">+<%= to_visible_amount(@period_in, false) %> &euro;</span>
+            <span class="neg"><%= to_visible_amount(@period_out, false) %> &euro;</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="v2-metric v2-metric-clickable">
+        <%= link_to organization_deadlines_path(@organization), class: "v2-metric-link", title: "Vai alle scadenze" do %>
+          <div class="v2-metric-icon <%= @deadlines.any?(&:expired?) ? 'amber' : 'purple' %>">
+            <svg class="ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          </div>
+          <div>
+            <div class="v2-metric-label">Scadenze del mese</div>
+            <div class="v2-metric-value"><%= @deadlines.size %></div>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <%# Membri e scadenze affiancati %>
+    <section class="v2-dash-row">
+      <div class="v2-dash-panel">
+        <div class="v2-dash-panel-head">
+          <h2 class="v2-dash-panel-title"><%= @memberships.size %> Membri</h2>
+
+          <% if can? :create, Membership.new(organization_id: @organization.id) %>
+            <button type="button" class="v2-btn-add-member" data-bs-toggle="modal" data-bs-target="#membershipCreationModal<%= @organization.id %>">
+              <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              Aggiungi membro
+            </button>
+          <% end %>
+        </div>
+
+        <% if @memberships.present? %>
+          <div class="v2-dash-list" id="memberships_<%= @organization.id %>">
+            <%= render partial: "memberships/membership", collection: @memberships, as: :membership %>
+          </div>
+        <% else %>
+          <p class="v2-dash-empty">Nessun membro associato a questa organizzazione.</p>
+        <% end %>
+      </div>
+
+      <div class="v2-dash-panel">
+        <div class="v2-dash-panel-head">
+          <h2 class="v2-dash-panel-title">Scadenze di <%= l(@period_end, format: '%B') %></h2>
+          <span class="v2-dash-panel-count"><%= @deadlines.size %></span>
+        </div>
+
+        <% if @deadlines.present? %>
+          <div class="v2-dash-list">
+            <% @deadlines.each do |deadline| %>
+              <div class="v2-dash-deadline <%= 'expired' if deadline.expired? %>">
+                <div class="v2-dash-deadline-date">
+                  <span class="day"><%= deadline.expired_at.day %></span>
+                  <span class="month"><%= l(deadline.expired_at.to_date, format: '%b') %></span>
+                </div>
+                <div class="v2-dash-deadline-info">
+                  <span class="v2-dash-deadline-desc"><%= deadline.description %></span>
+                  <span class="v2-dash-deadline-state">
+                    <%= deadline.expired? ? 'Scaduta' : "Tra #{(deadline.expired_at.to_date - Date.today).to_i} giorni" %>
+                  </span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="v2-dash-empty">Nessuna scadenza prevista per questo mese.</p>
+        <% end %>
+      </div>
+    </section>
+
+    <%# Andamento entrate/uscite %>
+    <div class="v2-chart-card">
+      <% chart_title = "Entrate/Uscite su tutti i conti #{in_current_month}" %>
+      <%# Senza un massimo esplicito Chart.js arrotonda la cima dell'asse a un valore tondo,
+          lasciando molto spazio vuoto sopra la colonna più alta %>
+      <% in_out_max = @in_out_by_day.flat_map { |serie| serie[:data].values }.max.to_f %>
+      <%= column_chart @in_out_by_day,
+                       stacked: false,
+                       title: chart_title,
+                       max: (in_out_max * 1.1).round(2),
+                       download: { filename: chart_title, background: "#ffffff" },
+                       colors: ["#DC3545", "#198754"],
+                       loading: "Caricamento...",
+                       empty: "Nessun movimento registrato nel periodo",
+                       suffix: '€',
+                       library: chart_lib.deep_merge({ plugins: { legend: { display: false } } })
+      %>
+    </div>
+
+    <%# Ripartizioni %>
+    <div class="v2-chart-card v2-mov-chart">
+      <% chart_title = "Uscite per voce di spesa #{in_current_month}" %>
+      <% expenses_total = @expenses_by_item.values.sum.to_f.round(2) %>
+      <%# Con una serie singola Chartkick interpreta colors come un colore per barra:
+          ogni voce di spesa mantiene così il colore scelto dall'utente %>
+      <%= column_chart @expenses_by_item,
+                       title: "#{chart_title} - #{to_visible_amount(expenses_total)}€",
+                       max: (@expenses_by_item.values.max.to_f * 1.1).round(2),
+                       colors: @expense_items_colors,
+                       download: { filename: chart_title, background: "#ffffff" },
+                       loading: "Caricamento...",
+                       empty: "Nessuna uscita registrata nel periodo",
+                       suffix: '€',
+                       library: chart_lib
+      %>
+    </div>
+
+    <div class="v2-chart-card">
+      <% chart_title = "Giacenza per conto a fine #{period_month}" %>
+      <%= pie_chart @amount_by_count,
+                    title: chart_title,
+                    height: "420px",
+                    download: { filename: chart_title, background: "#ffffff" },
+                    loading: "Caricamento...",
+                    empty: "Nessuna giacenza da mostrare",
+                    suffix: '€',
+                    library: pie_lib.deep_merge({ plugins: { title: { text: chart_title } } })
+      %>
+    </div>
+
+    <%# Ultimi movimenti %>
+    <section class="v2-dash-panel">
+      <div class="v2-dash-panel-head">
+        <h2 class="v2-dash-panel-title">Ultimi movimenti</h2>
+        <span class="v2-dash-panel-count"><%= @movements_count %> nel periodo</span>
+      </div>
+
+      <% if @recent_movements.present? %>
+        <div class="v2-dash-list" id="dashboard_movements">
+          <%= render partial: "organizations/dashboard_movement", collection: @recent_movements, as: :movement %>
+        </div>
+
+        <% if @movements_count > @recent_movements.size %>
+          <div class="v2-dash-panel-foot" id="dashboard_movements_more">
+            <%# L'intervallo va trasmesso, altrimenti il caricamento incrementale
+                riporterebbe i movimenti del mese corrente invece di quello mostrato %>
+            <%= link_to month_movements_organization_path(@organization, from: @period_start, to: @period_end),
+                        class: "v2-chart-link-btn",
+                        data: { turbo_stream: true } do %>
+              vedi tutti
+            <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="v2-dash-empty">Nessun movimento registrato nel periodo.</p>
+      <% end %>
+    </section>
+  </main>
+</div>
+
+<%# Modali (fuori da .v2-main per evitare problemi di stacking context) %>
+<div class="v2">
+  <%= render "memberships/modals", organization: @organization %>
+</div>
+
+<%= render 'layouts/auto_close_modals' %>

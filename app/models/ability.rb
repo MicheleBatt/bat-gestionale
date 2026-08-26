@@ -33,6 +33,18 @@ class Ability
 
       cannot :manage, [Organization, Membership]
       cannot [:index, :add, :destroy], User
+
+      # Dashboard, caricamento incrementale dei movimenti e statistiche della propria
+      # organizzazione restano visibili: sono in sola lettura e mostrano dati che il membro
+      # può già consultare altrove. Gestione e modifica restano agli admin.
+      can [:show, :month_movements, :stats], Organization, id: organizations_ids
+
+      # Gli editor gestiscono i membri delle sole organizzazioni di cui sono editor:
+      # possono aggiungerli, cambiarne il ruolo e rimuoverli. La regola sta dopo il
+      # `cannot` perché in CanCanCan vince l'ultima definizione che corrisponde.
+      if editor_organizations_ids.present?
+        can :manage, Membership, organization_id: editor_organizations_ids
+      end
     end
   end
 end

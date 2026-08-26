@@ -16,6 +16,7 @@ class ExpenseItemsController < ApplicationController
     modal_id = params[:expense_item][:modal_id]
     params[:expense_item].delete(:modal_id)
     @expense_item = ExpenseItem.new(expense_item_params)
+    authorize! :create, @expense_item
 
     respond_to do |format|
       if @expense_item.save
@@ -70,6 +71,10 @@ class ExpenseItemsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_expense_item
       @expense_item = @organization.expense_items.find(params[:id])
+
+      # authorize_resource verifica solo la classe: chi è editor di una qualsiasi
+      # organizzazione la supererebbe anche dove è semplice lettore.
+      authorize! action_name.to_sym, @expense_item
     end
 
     # Only allow a list of trusted parameters through.

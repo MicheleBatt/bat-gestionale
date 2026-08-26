@@ -10,7 +10,7 @@
         <span class="v2-hero-sub"><%= @organization.name %></span>
       </div>
       <div class="v2-hero-actions">
-        <% if can? :bulk_create, Deadline %>
+        <% if can? :create, Deadline.new(organization_id: @organization.id) %>
           <button type="button" class="v2-btn-export" data-bs-toggle="modal" data-bs-target="#importDeadlinesModal">
             <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
             Importa
@@ -20,7 +20,7 @@
           <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
           Esporta
         <% end %>
-        <% if can? :create, Deadline %>
+        <% if can? :create, Deadline.new(organization_id: @organization.id) %>
           <button type="button" class="v2-btn-primary" data-bs-toggle="modal" data-bs-target="#deadlineCreationModal">
             <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
             Nuova scadenza
@@ -103,10 +103,12 @@
         </div>
         <h3>Nessuna scadenza trovata</h3>
         <p>Modifica i filtri di ricerca oppure aggiungi la tua prima scadenza.</p>
-        <button type="button" class="v2-btn-ghost" data-bs-toggle="modal" data-bs-target="#deadlineCreationModal">
-          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-          Aggiungi scadenza
-        </button>
+        <% if can? :create, Deadline.new(organization_id: @organization.id) %>
+          <button type="button" class="v2-btn-ghost" data-bs-toggle="modal" data-bs-target="#deadlineCreationModal">
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Aggiungi scadenza
+          </button>
+        <% end %>
       </div>
     <% end %>
   </main>
@@ -114,13 +116,17 @@
 
 <%# Modals (fuori da .v2 per evitare problemi di stacking context) %>
 <div class="v2">
-  <%= render "modal",
-             modal_id: "deadlineCreationModal",
-             title: "Aggiungi una nuova scadenza",
-             deadline: Deadline.new
-  %>
+  <% if can? :create, Deadline.new(organization_id: @organization.id) %>
+    <%= render "modal",
+               modal_id: "deadlineCreationModal",
+               title: "Aggiungi una nuova scadenza",
+               deadline: Deadline.new
+    %>
+  <% end %>
 
   <% @deadlines_by_year.values.flatten.each do |deadline| %>
+    <% next unless can? :update, deadline %>
+
     <%= render "modal",
                modal_id: "deadlineEditingModal_#{deadline.id}",
                title: "Modifica scadenza",

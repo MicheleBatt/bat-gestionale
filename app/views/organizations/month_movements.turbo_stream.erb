@@ -1,0 +1,7 @@
+<%# Accoda alla lista i movimenti del mese non ancora mostrati e rimuove il link "vedi tutti",
+    che a quel punto non ha più nulla da caricare. %>
+<%= turbo_stream.append "dashboard_movements" do %>
+  <%= render partial: "organizations/dashboard_movement", collection: @movements, as: :movement %>
+<% end %>
+
+<%= turbo_stream.remove "dashboard_movements_more" %>

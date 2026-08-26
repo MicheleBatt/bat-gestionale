@@ -33,11 +33,17 @@
       <div class="<%= modal_id.present? ? 'm-4' : 'v2-form-group' %>">
         <div>
           <%= form.label :password, 'Password', class: "form-label" %>
-          <%= form.password_field :password, autocomplete: "new-password", class: "form-control" %>
+          <%= render "layouts/password_field",
+                     form: form,
+                     attribute: :password,
+                     autocomplete: "new-password" %>
         </div>
         <div class="mt-3">
           <%= form.label :password_confirmation, 'Ripeti Password', class: "form-label" %>
-          <%= form.password_field :password_confirmation, autocomplete: "new-password", class: "form-control" %>
+          <%= render "layouts/password_field",
+                     form: form,
+                     attribute: :password_confirmation,
+                     autocomplete: "new-password" %>
         </div>
       </div>
     </div>

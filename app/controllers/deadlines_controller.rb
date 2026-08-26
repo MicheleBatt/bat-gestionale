@@ -24,6 +24,7 @@ class DeadlinesController < ApplicationController
     modal_id = params[:deadline][:modal_id]
     params[:deadline].delete(:modal_id)
     @deadline = Deadline.new(deadline_params)
+    authorize! :create, @deadline
 
     respond_to do |format|
       if @deadline.save
@@ -63,6 +64,9 @@ class DeadlinesController < ApplicationController
 
   # POST /deadlines/bulk_create
   def bulk_create
+    # L'importazione crea scadenze: va autorizzata sull'organizzazione di destinazione
+    authorize! :create, Deadline.new(organization: @organization)
+
     file = params[:file]
 
     if file.blank?
@@ -97,6 +101,10 @@ class DeadlinesController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_deadline
       @deadline = @organization.deadlines.find(params[:id])
+
+      # authorize_resource verifica solo la classe: chi è editor di una qualsiasi
+      # organizzazione la supererebbe anche dove è semplice lettore.
+      authorize! action_name.to_sym, @deadline
     end
 
     # Only allow a list of trusted parameters through.

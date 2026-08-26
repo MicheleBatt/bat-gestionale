@@ -2,7 +2,7 @@
      id="movement_<%= movement.id %>"
      style="--mov-color: <%= movement.expense_item&.color || 'transparent' %>">
   <div class="v2-mov-date"><%= parse_date(movement.emitted_at, '%d.%m.%y') %></div>
-  <% if can? :update, Movement %>
+  <% if can? :update, movement %>
     <div class="v2-mov-causal"
          data-bs-toggle="modal"
          data-bs-target="#movementEditingModal_<%= movement.id %>">
@@ -54,7 +54,7 @@
   </div>
 </div>
 
-<% if can? :update, Movement %>
+<% if can? :update, movement %>
   <%= render "modal",
              modal_id: "movementEditingModal_#{movement.id}",
              title: @count.metal_account? ? (movement.movement_type == 'out' ? "Modifica Vendita" : "Modifica Acquisto") : (movement.movement_type == 'out' ? "Modifica Uscita" : "Modifica Entrata"),

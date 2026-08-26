@@ -44,6 +44,9 @@ gem "bootsnap", require: false
 # Gem for authentication
 gem 'devise'
 
+# Gem for Rails and ActiveRecord translations (validation messages, dates, numbers)
+gem 'rails-i18n', '~> 7.0'
+
 # Gem for data filters on views
 gem 'ransack'
 

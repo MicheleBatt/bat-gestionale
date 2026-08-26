@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
   devise_for :users
-  root to: 'counts#index'
+  root to: 'home#index'
 
-  resources :organizations, except: [:show, :new, :edit] do
+  resources :organizations, except: [:new, :edit] do
     resources :memberships, except: [:show, :new, :edit]
     resources :deadlines, except: [:show, :new, :edit] do
       collection do
@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     resources :expense_items, except: [:show, :new, :edit]
     member do
       get :stats, to: 'organizations#stats'
+      get :month_movements, to: 'organizations#month_movements'
     end
     resources :counts, except: [:show, :new, :edit] do
       member do

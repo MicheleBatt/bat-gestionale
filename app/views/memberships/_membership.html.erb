@@ -1,23 +1,34 @@
+<%# Riga di un membro dell'organizzazione.
+    Condivisa da organizations#index e dalla dashboard organizations#show, così le due
+    pagine offrono la stessa esperienza ed è anche il target dei turbo stream di update. %>
 <div class="v2-membership-item" id="membership_<%= membership.id %>">
   <div class="v2-membership-info">
-    <span class="v2-membership-name"><%= membership.username %></span>
-    <span class="v2-membership-role"><%= italian_role(membership.role) %></span>
+    <div class="v2-membership-identity">
+      <span class="v2-membership-name"><%= membership.username %></span>
+      <span class="v2-membership-role"><%= italian_role(membership.role) %></span>
+    </div>
+    <span class="v2-membership-email"><%= membership.user.email %></span>
   </div>
-  <div class="v2-membership-actions">
-    <button type="button"
-            class="v2-btn-icon"
-            title="Modifica ruolo"
-            data-bs-toggle="modal"
-            data-bs-target="#membershipEditingModal_<%= membership.id %>">
-      <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
-    </button>
 
-    <button type="button"
-            class="v2-btn-icon danger"
-            title="Rimuovi"
-            data-bs-toggle="modal"
-            data-bs-target="#membershipDeleteModal_<%= membership.id %>">
-      <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
-    </button>
+  <div class="v2-membership-actions">
+    <% if can? :update, membership %>
+      <button type="button"
+              class="v2-btn-icon"
+              title="Modifica ruolo"
+              data-bs-toggle="modal"
+              data-bs-target="#membershipEditingModal_<%= membership.id %>">
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+      </button>
+    <% end %>
+
+    <% if can? :destroy, membership %>
+      <button type="button"
+              class="v2-btn-icon danger"
+              title="Rimuovi"
+              data-bs-toggle="modal"
+              data-bs-target="#membershipDeleteModal_<%= membership.id %>">
+        <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+      </button>
+    <% end %>
   </div>
 </div>

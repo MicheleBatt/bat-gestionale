@@ -12,7 +12,7 @@
         <h1 class="v2-hero-title">Voci di spesa</h1>
         <span class="v2-hero-sub"><%= @organization.name %></span>
       </div>
-      <% if can? :create, ExpenseItem %>
+      <% if can? :create, ExpenseItem.new(organization_id: @organization.id) %>
         <button type="button" class="v2-btn-primary" data-bs-toggle="modal" data-bs-target="#expense_itemCreationModal">
           <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
           Nuova voce di spesa
@@ -73,10 +73,12 @@
         </div>
         <h3>Nessuna voce di spesa trovata</h3>
         <p>Modifica i filtri di ricerca oppure aggiungi la tua prima voce di spesa.</p>
-        <button type="button" class="v2-btn-ghost" data-bs-toggle="modal" data-bs-target="#expense_itemCreationModal">
-          <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-          Aggiungi voce di spesa
-        </button>
+        <% if can? :create, ExpenseItem.new(organization_id: @organization.id) %>
+          <button type="button" class="v2-btn-ghost" data-bs-toggle="modal" data-bs-target="#expense_itemCreationModal">
+            <svg class="ico ico-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Aggiungi voce di spesa
+          </button>
+        <% end %>
       </div>
     <% end %>
   </main>
@@ -84,13 +86,17 @@
 
 <%# Modals (fuori da .v2 per evitare problemi di stacking context) %>
 <div class="v2">
-  <%= render "modal",
-             modal_id: "expense_itemCreationModal",
-             title: "Aggiungi una voce di spesa",
-             expense_item: ExpenseItem.new
-  %>
+  <% if can? :create, ExpenseItem.new(organization_id: @organization.id) %>
+    <%= render "modal",
+               modal_id: "expense_itemCreationModal",
+               title: "Aggiungi una voce di spesa",
+               expense_item: ExpenseItem.new
+    %>
+  <% end %>
 
   <% @expense_items.each do |expense_item| %>
+    <% next unless can? :update, expense_item %>
+
     <%= render "modal",
                modal_id: "expense_itemEditingModal_#{expense_item.id}",
                title: "Modifica voce di spesa",

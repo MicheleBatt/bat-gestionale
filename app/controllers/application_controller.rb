@@ -7,14 +7,31 @@ class ApplicationController < ActionController::Base
   end
 
   protected
+    # Stabilisce l'organizzazione di contesto della richiesta: serve alla navbar e alle
+    # azioni index dei controller annidati, che non hanno un singolo record da autorizzare.
     def set_organization
-      if user_signed_in?
-        organization_id = params[:organization_id]
-        organization_id = current_user.memberships&.first&.organization_id if organization_id.blank?
-        organization_id = Organization&.first&.id if organization_id.blank?
-        @organization = Organization.find(organization_id)
+      return unless user_signed_in?
 
-        redirect_to '/404.html' if !current_user.admin? && !@organization.memberships.pluck(:user_id).include?(current_user.id)
-      end
+      @organization = resolve_organization
+      return if @organization.nil?
+
+      # L'appartenenza è definita una volta sola, in Ability: qui si applica soltanto.
+      # CanCan::AccessDenied è gestita dal rescue_from in cima a questa classe.
+      authorize! :show, @organization
+    end
+
+    # L'organizzazione richiesta esplicitamente dalla rotta, altrimenti la prima a cui
+    # l'utente appartiene. Un admin senza organizzazioni ripiega sulla prima esistente;
+    # se non ne esiste nessuna il risultato è nil e sono le singole pagine a gestirlo.
+    def resolve_organization
+      # Nelle rotte annidate l'identificativo è :organization_id, in quelle di
+      # OrganizationsController è :id. Altrove :id indica tutt'altro (un utente, un conto...).
+      requested_id = params[:organization_id].presence
+      requested_id ||= params[:id].presence if controller_name == "organizations"
+
+      return Organization.find(requested_id) if requested_id.present?
+
+      current_user.memberships.order(:id).first&.organization ||
+        (current_user.admin? ? Organization.order(:id).first : nil)
     end
 end

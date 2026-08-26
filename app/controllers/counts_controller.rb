@@ -37,6 +37,7 @@ class CountsController < ApplicationController
     modal_id = params[:count][:modal_id]
     params[:count].delete(:modal_id)
     @count = Count.new(count_params)
+    authorize! :create, @count
 
     respond_to do |format|
       if @count.save
@@ -120,6 +121,10 @@ class CountsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_count
       @count = @organization.not_deleted_counts.find(params[:id])
+
+      # authorize_resource verifica solo la classe: chi è editor di una qualsiasi
+      # organizzazione la supererebbe anche dove è semplice lettore.
+      authorize! action_name.to_sym, @count
     end
 
     # Only allow a list of trusted parameters through.

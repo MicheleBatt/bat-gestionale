@@ -1,0 +1,77 @@
+# Nomi italiani di modelli e attributi: senza questi i messaggi di validazione uscirebbero
+# metà tradotti, del tipo "First name non può essere lasciato in bianco".
+
+it:
+  errors:
+    messages:
+      # rails-i18n usa formule al maschile ("non può essere lasciato in bianco"), che stonano
+      # con attributi femminili come "Descrizione". Queste due sono neutre rispetto al genere.
+      blank: "è un campo obbligatorio"
+      taken: "è già in uso"
+
+  activerecord:
+    models:
+      user: "Utente"
+      organization: "Organizzazione"
+      membership: "Appartenenza"
+      count: "Conto"
+      movement: "Movimento"
+      expense_item: "Voce di spesa"
+      deadline: "Scadenza"
+      metal_value: "Valore del metallo"
+
+    attributes:
+      user:
+        first_name: "Nome"
+        last_name: "Cognome"
+        email: "Email"
+        password: "Password"
+        password_confirmation: "Conferma password"
+        role: "Ruolo"
+      organization:
+        name: "Nome"
+      membership:
+        user_id: "Utente"
+        organization_id: "Organizzazione"
+        user: "Utente"
+        organization: "Organizzazione"
+        role: "Ruolo"
+      count:
+        name: "Nome"
+        initial_amount: "Importo iniziale"
+        count_type: "Tipo di conto"
+        metal_type: "Metallo"
+        ordering_number: "Numero di ordinamento"
+        organization: "Organizzazione"
+      movement:
+        count: "Conto"
+        expense_item: "Voce di spesa"
+        metal_value: "Valore del metallo"
+        amount: "Importo"
+        causal: "Causale"
+        movement_type: "Tipo di movimento"
+        emitted_at: "Data"
+        year: "Anno"
+        month: "Mese"
+        day: "Giorno"
+        year_month_day: "Data"
+        expense_item_id: "Voce di spesa"
+        karat: "Caratura"
+        spread: "Spread"
+        price_per_gram_at_transaction: "Prezzo al grammo"
+        price_at_transaction: "Prezzo"
+      expense_item:
+        description: "Descrizione"
+        color: "Colore"
+        organization: "Organizzazione"
+      deadline:
+        description: "Descrizione"
+        expired_at: "Scadenza"
+        year: "Anno"
+        month: "Mese"
+        organization: "Organizzazione"
+      metal_value:
+        metal: "Metallo"
+        value: "Valore"
+        karat: "Caratura"
+        recorded_at: "Data di rilevazione"

@@ -79,10 +79,21 @@ class UsersController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_user
       @user = User.find(params[:id])
+
+      # authorize_resource verifica solo la classe, e la regola `can :update, User, id: user.id`
+      # la fa passare a chiunque: senza questo controllo sul record un utente qualsiasi
+      # potrebbe modificare o eliminare l'account di un altro.
+      authorize! action_name.to_sym, @user
     end
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:first_name, :last_name, :email, :password, :password_confirmation, :role)
+      permitted = [:first_name, :last_name, :email, :password, :password_confirmation]
+
+      # Il ruolo è assegnabile solo dagli admin: altrimenti chiunque potrebbe promuoversi
+      # scrivendo role=admin nel form del proprio account.
+      permitted << :role if current_user&.admin?
+
+      params.require(:user).permit(*permitted)
     end
 end

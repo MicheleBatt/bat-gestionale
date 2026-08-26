@@ -1,0 +1,19 @@
+<%# Riga di un movimento nella dashboard dell'organizzazione.
+    Usata sia al primo caricamento sia dalla risposta turbo stream di month_movements,
+    così le righe accodate sono identiche a quelle già presenti. %>
+<div class="v2-dash-movement">
+  <div class="v2-dash-movement-date"><%= l(movement.emitted_at.to_date, format: '%-d %b') %></div>
+  <div class="v2-dash-movement-info">
+    <span class="v2-dash-movement-causal"><%= movement.causal %></span>
+    <span class="v2-dash-movement-count"><%= movement.count.name %></span>
+  </div>
+  <% if movement.expense_item.present? %>
+    <span class="v2-dash-movement-tag" style="background-color: <%= movement.expense_item.color %>1a; color: <%= movement.expense_item.color %>;">
+      <%= movement.expense_item.description %>
+    </span>
+  <% end %>
+  <div class="v2-dash-movement-amount <%= movement.amount.to_f.negative? ? 'neg' : 'pos' %>">
+    <%= to_visible_amount(movement.amount, false) %>
+    <span class="unit"><%= movement.count.metal_account? ? 'g' : '€' %></span>
+  </div>
+</div>

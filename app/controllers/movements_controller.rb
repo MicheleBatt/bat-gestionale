@@ -85,6 +85,7 @@ class MovementsController < ApplicationController
     modal_id = params[:movement][:modal_id]
     params[:movement].delete(:modal_id)
     @movement = Movement.new(movement_params)
+    authorize! :create, @movement
 
     respond_to do |format|
       if @movement.save
@@ -124,6 +125,9 @@ class MovementsController < ApplicationController
 
   # POST /movements/bulk_create
   def bulk_create
+    # L'importazione crea movimenti: va autorizzata sul conto di destinazione
+    authorize! :create, Movement.new(count: @count)
+
     file = params[:file]
 
     if file.blank?
@@ -160,10 +164,16 @@ class MovementsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_movement
       @movement = @count.movements.find(params[:id])
+
+      # authorize_resource verifica solo la classe: chi è editor di una qualsiasi
+      # organizzazione la supererebbe anche dove è semplice lettore.
+      authorize! action_name.to_sym, @movement
     end
 
     def set_count
-      @count = Count.find(params[:count_id])
+      # Vincolato all'organizzazione della rotta: con Count.find un utente poteva passare
+      # la propria organizzazione e l'id di un conto altrui, leggendone i movimenti.
+      @count = @organization.counts.find(params[:count_id])
     end
 
     # Only allow a list of trusted parameters through.

@@ -2,7 +2,7 @@
   <div class="v2-ei-swatch" style="background-color: <%= expense_item.color %>"></div>
   <div class="v2-ei-desc"><%= expense_item.description %></div>
 
-  <% if can? :update, ExpenseItem %>
+  <% if can? :update, expense_item %>
     <div class="v2-ei-actions">
       <button type="button"
               class="v2-btn-icon"
