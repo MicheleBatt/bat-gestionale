@@ -4,6 +4,17 @@
    qui ci sono solo i pannelli e le liste specifiche di questa pagina.
    ========================================================= */
 
+/* Le card della dashboard portano più testo di quelle delle altre pagine — etichette
+   lunghe come "Giacenza a fine agosto" e la riga di dettaglio sotto il valore — quindi
+   hanno bisogno di più larghezza e vanno a capo prima.
+   La regola parte da 769px per non scavalcare quella globale che sotto quella soglia
+   dispone le card in colonna singola. */
+@media (min-width: 769px) {
+  .v2-dash-metrics {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
 /* Riga del periodo con le frecce di navigazione fra i mesi */
 .v2-dash-period {
   display: flex;
