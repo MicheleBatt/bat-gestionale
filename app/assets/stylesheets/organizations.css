@@ -183,6 +183,44 @@
   flex-shrink: 0;
 }
 
+/* Spiegazione dei ruoli sotto il selettore, nelle modali di aggiunta e modifica membro */
+.v2-role-hint {
+  margin: 0.6rem 0 0;
+  padding: 0.7rem 0.85rem;
+  background: #f8f9fb;
+  border: 1px solid var(--glass-border);
+  border-radius: 0.55rem;
+}
+
+.v2-role-hint dt {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--txt);
+}
+
+.v2-role-hint dd {
+  margin: 0.1rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--txt2);
+}
+
+.v2-role-hint dt + dd + dt {
+  margin-top: 0.6rem;
+}
+
+/* Avviso nella modale quando l'email indicata non corrisponde a nessun utente */
+.v2-new-user-notice {
+  margin: 0;
+  padding: 0.7rem 0.85rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--txt2);
+  background: rgba(124, 92, 252, 0.08);
+  border: 1px solid rgba(109, 40, 217, 0.2);
+  border-radius: 0.55rem;
+}
+
 .v2-membership-empty {
   font-size: 0.8rem;
   color: var(--txt3);

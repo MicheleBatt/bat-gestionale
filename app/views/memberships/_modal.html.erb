@@ -8,7 +8,12 @@
       <div class="modal-body">
         <div id="<%= modal_id %>_error_messages"></div>
 
-        <%= render "memberships/form", membership: membership, organization: organization, modal_id: modal_id %>
+        <%# Il form ha un id proprio perché il server possa sostituirlo via turbo stream
+            quando l'email indicata non corrisponde a nessun utente e servono i dati
+            per creare l'account contestualmente %>
+        <div id="<%= modal_id %>_form">
+          <%= render "memberships/form", membership: membership, organization: organization, modal_id: modal_id %>
+        </div>
       </div>
     </div>
   </div>

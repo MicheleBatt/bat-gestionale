@@ -43,12 +43,8 @@
 
   <div id="orgCollapse_<%= organization.id %>" class="v2-org-collapse">
     <div class="v2-org-body">
-      <div id="memberships_<%= organization.id %>" class="membership-cont">
-        <% if organization.memberships.present? %>
-          <%= render partial: "memberships/membership", collection: organization.memberships, as: :membership %>
-        <% else %>
-          <p class="v2-membership-empty">Al momento non ci sono membri per questa organizzazione</p>
-        <% end %>
+      <div class="membership-cont">
+        <%= render "memberships/list", organization: organization %>
 
         <% if can? :create, Membership.new(organization_id: organization.id) %>
           <div class="v2-membership-add">

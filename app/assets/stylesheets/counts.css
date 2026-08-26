@@ -159,6 +159,27 @@
   display: block;
 }
 
+/* Logo + link raggruppati a sinistra: senza il contenitore, lo space-between della
+   barra distribuirebbe logo e menu ai due estremi */
+.v2-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.v2-nav-logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.v2-nav-logo img {
+  height: 34px;
+  width: auto;
+  display: block;
+}
+
 /* Desktop nav links */
 .v2-nav-links {
   display: flex;
@@ -233,6 +254,15 @@
 }
 .v2-org-switcher > summary::-webkit-details-marker { display: none; }
 
+.v2-org-switcher > summary > span {
+  max-width: 55vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.v2-org-switcher > summary .ico { flex-shrink: 0; }
+
 .v2-org-switcher[open] > summary {
   color: var(--accent);
   background: rgba(109,40,217,0.05);
@@ -264,9 +294,13 @@
   color: var(--txt2);
   border-radius: 0.4rem;
   transition: all 0.15s;
+  /* Ancora il badge delle scadenze all'angolo della voce, come fa .v2-nav-link
+     nella barra: senza, si posizionerebbe rispetto al selettore organizzazione */
+  position: relative;
 }
 
-.v2-dropdown-item:hover {
+.v2-dropdown-item:hover,
+.v2-dropdown-item.active {
   color: var(--accent);
   background: rgba(109,40,217,0.05);
 }
@@ -276,60 +310,42 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Mobile hamburger */
-.v2-mobile-toggle {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  width: 40px; height: 40px;
-  background: none;
-  border: 1px solid var(--glass-border);
-  border-radius: 0.5rem;
-  color: var(--txt);
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.v2-mobile-toggle:hover { background: var(--surface); }
-
-.v2-mobile-menu-check { display: none; }
-
-.v2-mobile-menu {
-  position: fixed;
-  top: 57px; left: 0; right: 0;
-  background: #ffffff;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+/* Il menu a tendina è uno solo: ogni voce di navigazione compare al suo interno
+   soltanto dove la barra non la mostra in linea. Le due soglie sono diverse:
+   le voci legate all'organizzazione lasciano la barra sotto i 900px, Organizzazioni
+   e Utenti già sotto xl (1200px). */
+.v2-dropdown-nav {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0.35rem;
+  margin-bottom: 0.35rem;
   border-bottom: 1px solid var(--glass-border);
-  border-radius: 0 0 var(--radius) var(--radius);
-  padding: 0.75rem 1rem;
-  z-index: 99;
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(-8px);
-  transition: max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.6s ease,
-              transform 0.6s ease;
-  pointer-events: none;
 }
 
-.v2-mobile-menu-check:checked ~ .v2-mobile-menu {
-  max-height: 500px;
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+@media (min-width: 901px) {
+  .v2-dropdown-nav {
+    display: none;
+  }
 }
 
-.v2-mobile-menu .v2-nav-link {
-  width: 100%;
-  padding: 0.65rem 0.85rem;
+/* Organizzazioni e Utenti: nel pannello fino a xl, nella barra da xl in su */
+@media (max-width: 1199.98px) {
+  .v2-dropdown-nav-xl {
+    display: flex;
+  }
+
+  .v2-nav-item-xl {
+    display: none;
+  }
 }
 
-
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* Il pannello non deve uscire dallo schermo sui telefoni */
+@media (max-width: 480px) {
+  .v2-dropdown-panel {
+    min-width: 0;
+    width: max-content;
+    max-width: 85vw;
+  }
 }
 
 /* =========================================================
@@ -1216,15 +1232,8 @@ a.v2-btn-icon,
    ========================================================= */
 .v2-mobile-only { display: none; }
 
-.v2-mobile-org-name {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--txt);
-}
-
 @media (max-width: 900px) {
   .v2-nav-links { display: none; }
-  .v2-mobile-toggle { display: flex; }
   .v2-desktop-only { display: none; }
   .v2-mobile-only { display: block; }
 }

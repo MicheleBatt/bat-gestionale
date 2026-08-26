@@ -161,9 +161,18 @@
 
 /* ---------- Membri ---------- */
 
-/* L'email dei membri è ora resa da .v2-membership-email, condivisa con la lista
+/* L'elenco dei membri è lo stesso partial usato nella lista organizzazioni: la spaziatura
+   della dashboard è applicata dal contesto, così il partial non deve sapere dove viene reso */
+.v2-dash-panel .membership-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* L'email dei membri è resa da .v2-membership-email, condivisa con la lista
    organizzazioni: qui basta che le voci occupino tutta la larghezza del pannello */
-.v2-dash-list .v2-membership-item {
+.v2-dash-list .v2-membership-item,
+.v2-dash-panel .membership-list .v2-membership-item {
   width: 100%;
 }
 

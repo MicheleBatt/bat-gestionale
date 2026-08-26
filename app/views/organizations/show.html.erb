@@ -138,7 +138,7 @@
     <section class="v2-dash-row">
       <div class="v2-dash-panel">
         <div class="v2-dash-panel-head">
-          <h2 class="v2-dash-panel-title"><%= @memberships.size %> Membri</h2>
+          <h2 class="v2-dash-panel-title" id="memberships_count_<%= @organization.id %>"><%= @memberships.size %> Membri</h2>
 
           <% if can? :create, Membership.new(organization_id: @organization.id) %>
             <button type="button" class="v2-btn-add-member" data-bs-toggle="modal" data-bs-target="#membershipCreationModal<%= @organization.id %>">
@@ -148,13 +148,7 @@
           <% end %>
         </div>
 
-        <% if @memberships.present? %>
-          <div class="v2-dash-list" id="memberships_<%= @organization.id %>">
-            <%= render partial: "memberships/membership", collection: @memberships, as: :membership %>
-          </div>
-        <% else %>
-          <p class="v2-dash-empty">Nessun membro associato a questa organizzazione.</p>
-        <% end %>
+        <%= render "memberships/list", organization: @organization %>
       </div>
 
       <div class="v2-dash-panel">

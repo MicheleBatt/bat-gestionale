@@ -1,3 +1,9 @@
+<%
+  # Valorizzati dal controller quando l'email indicata non corrisponde a nessun utente:
+  # in quel caso il form si allarga e chiede anche i dati per creare l'account.
+  new_user = local_assigns.fetch(:new_user, nil)
+  email = local_assigns.fetch(:email, nil)
+%>
 <%= form_with(model: [organization, membership]) do |form| %>
   <%= form.hidden_field :modal_id, value: modal_id %>
   <%= form.hidden_field :organization_id, value: organization.id %>
@@ -5,7 +11,7 @@
   <% if membership.id.blank? %>
     <div class="m-4">
       <%= form.label :email, 'Email utente', class: "form-label" %>
-      <%= form.text_field :email, class: "form-control" %>
+      <%= form.text_field :email, value: email, class: "form-control" %>
     </div>
   <% end %>
 
@@ -16,13 +22,62 @@
                  { include_blank: 'Seleziona un ruolo' },
                  class: 'form-control'
     %>
+
+    <dl class="v2-role-hint">
+      <dt>Ospite</dt>
+      <dd>
+        Consulta conti, movimenti, voci di spesa e scadenze dell'organizzazione, comprese
+        le statistiche. Non può aggiungere né modificare dati, e non gestisce i membri.
+      </dd>
+
+      <dt>Editor</dt>
+      <dd>
+        Oltre a consultare, crea, modifica ed elimina conti, movimenti, voci di spesa e
+        scadenze. Gestisce inoltre i membri dell'organizzazione e i loro ruoli.
+      </dd>
+    </dl>
   </div>
+
+  <% if new_user.present? %>
+    <div class="m-4">
+      <p class="v2-new-user-notice">
+        Questo indirizzo non è ancora censito a sistema: completa i dati qui sotto per
+        creare l'account insieme all'aggiunta del membro.
+      </p>
+    </div>
+
+    <%= fields_for :user, new_user do |user_form| %>
+      <div class="m-4">
+        <%= user_form.label :first_name, 'Nome', class: "form-label" %>
+        <%= user_form.text_field :first_name, class: "form-control" %>
+      </div>
+
+      <div class="m-4">
+        <%= user_form.label :last_name, 'Cognome', class: "form-label" %>
+        <%= user_form.text_field :last_name, class: "form-control" %>
+      </div>
+
+      <div class="m-4">
+        <%= user_form.label :password, 'Password', class: "form-label" %>
+        <%= render "layouts/password_field",
+                   form: user_form,
+                   attribute: :password,
+                   autocomplete: "new-password" %>
+      </div>
+
+      <div class="m-4">
+        <%= user_form.label :password_confirmation, 'Ripeti Password', class: "form-label" %>
+        <%= render "layouts/password_field",
+                   form: user_form,
+                   attribute: :password_confirmation,
+                   autocomplete: "new-password" %>
+      </div>
+    <% end %>
+  <% end %>
 
   <div class="my-4 mx-2 mx-sm-4 d-flex justify-content-center justify-content-sm-end">
     <%= form.button :submit, class: 'btn btn-success' do %>
-      Salva
+      <%= new_user.present? ? 'Crea utente e aggiungi' : 'Salva' %>
     <% end %>
   </div>
 <% end %>
-
-

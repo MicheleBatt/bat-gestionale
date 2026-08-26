@@ -44,6 +44,10 @@ class Ability
       # `cannot` perché in CanCanCan vince l'ultima definizione che corrisponde.
       if editor_organizations_ids.present?
         can :manage, Membership, organization_id: editor_organizations_ids
+
+        # Creare un utente è consentito solo come passaggio dell'aggiunta di un membro:
+        # la pagina utenti usa l'azione :add, che resta riservata agli admin.
+        can :create, User
       end
     end
   end

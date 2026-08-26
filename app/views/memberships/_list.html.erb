@@ -1,0 +1,20 @@
+<%# Elenco dei membri di un'organizzazione.
+    È il bersaglio dei turbo stream: viene sostituito per intero quando un membro viene
+    aggiunto o rimosso, così il passaggio da "nessun membro" alla prima voce (e viceversa)
+    non richiede casi particolari.
+
+    Locals:
+      organization - l'organizzazione (obbligatorio)
+
+    L'aspetto lo decide il contesto: la dashboard spazia le voci con una regola discendente
+    su .v2-dash-panel .membership-list, così il partial non deve sapere dove viene reso.
+%>
+<% memberships = organization.memberships.includes(:user).sort_by { |membership| membership.username.to_s.downcase } %>
+
+<div id="memberships_<%= organization.id %>" class="membership-list">
+  <% if memberships.present? %>
+    <%= render partial: "memberships/membership", collection: memberships, as: :membership %>
+  <% else %>
+    <p class="v2-membership-empty">Al momento non ci sono membri per questa organizzazione</p>
+  <% end %>
+</div>

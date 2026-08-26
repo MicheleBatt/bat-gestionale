@@ -1,0 +1,17 @@
+<%# Modali di un singolo membro: modifica ruolo e rimozione.
+    Il contenitore ha un id proprio perché un membro aggiunto via turbo stream possa
+    portarsi dietro le proprie modali, altrimenti i suoi pulsanti punterebbero a
+    elementi inesistenti finché la pagina non viene ricaricata. %>
+<div id="membership_modals_<%= membership.id %>">
+  <% if can? :update, membership %>
+    <%= render "memberships/modal",
+               modal_id: "membershipEditingModal_#{membership.id}",
+               title: "Modifica ruolo",
+               membership: membership,
+               organization: organization %>
+  <% end %>
+
+  <% if can? :destroy, membership %>
+    <%= render "memberships/delete_modal", membership: membership, organization: organization %>
+  <% end %>
+</div>

@@ -1,19 +1,16 @@
 <%# Tutte le modali delle membership di un'organizzazione: modifica ruolo, rimozione e
     aggiunta di un membro. Vanno renderizzate una volta sola per pagina, fuori dal
-    contenuto principale, e sono condivise da organizations#index e organizations#show. %>
-<% organization.memberships.each do |membership| %>
-  <% if can? :update, membership %>
-    <%= render "memberships/modal",
-               modal_id: "membershipEditingModal_#{membership.id}",
-               title: "Modifica ruolo",
-               membership: membership,
-               organization: organization %>
-  <% end %>
+    contenuto principale, e sono condivise da organizations#index e organizations#show.
 
-  <% if can? :destroy, membership %>
-    <%= render "memberships/delete_modal", membership: membership, organization: organization %>
-  <% end %>
-<% end %>
+    Il contenitore ha un id perché le modali di un membro aggiunto via turbo stream
+    possano esservi accodate senza toccare la modale di creazione, che in quel momento
+    è aperta sotto gli occhi dell'utente. %>
+<div id="memberships_modals_<%= organization.id %>">
+  <%= render partial: "memberships/membership_modals",
+             collection: organization.memberships,
+             as: :membership,
+             locals: { organization: organization } %>
+</div>
 
 <% if can? :create, Membership.new(organization_id: organization.id) %>
   <%= render "memberships/modal",
