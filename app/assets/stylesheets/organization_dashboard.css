@@ -318,6 +318,34 @@
   margin-left: 0.1rem;
 }
 
+/* Fumetto con la causale per esteso: nascosto ovunque, il CSS lo abilita solo dove
+   la riga è compressa su due livelli e la causale viene troncata */
+.v2-dash-movement-tooltip {
+  display: none;
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: calc(100% - 0.35rem);
+  z-index: 5;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: #ffffff;
+  background: rgba(30, 41, 59, 0.96);
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+}
+
+.v2-dash-movement-tooltip.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
 @media (max-width: 900px) {
   .v2-dash-row {
     grid-template-columns: 1fr;
@@ -325,5 +353,42 @@
 
   .v2-dash-movement-tag {
     display: none;
+  }
+}
+
+/* Su schermi stretti la riga si dispone su due livelli: data e importo ai due estremi
+   della prima, causale e conto sulla seconda */
+@media (max-width: 768px) {
+  .v2-dash-movement {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "date amount"
+      "info info";
+    align-items: center;
+    row-gap: 0.3rem;
+    column-gap: 0.5rem;
+    cursor: pointer;
+  }
+
+  .v2-dash-movement-date {
+    grid-area: date;
+    justify-self: start;
+  }
+
+  .v2-dash-movement-amount {
+    grid-area: amount;
+    justify-self: end;
+    min-width: 0;
+  }
+
+  .v2-dash-movement-info {
+    grid-area: info;
+    min-width: 0;
+  }
+
+  .v2-dash-movement-tooltip {
+    display: block;
   }
 }

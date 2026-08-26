@@ -217,7 +217,8 @@
       %>
     </div>
 
-    <div class="v2-chart-card">
+    <%# Sugli schermi stretti la legenda passa sotto al grafico, come nella pagina statistiche %>
+    <div class="v2-chart-card" data-controller="pie-legend">
       <% chart_title = "Giacenza per conto a fine #{period_month}" %>
       <%= pie_chart @amount_by_count,
                     title: chart_title,
