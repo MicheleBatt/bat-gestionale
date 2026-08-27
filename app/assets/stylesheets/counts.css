@@ -1239,7 +1239,7 @@ a.v2-btn-icon,
 }
 
 @media (max-width: 768px) {
-  .v2-main { padding: 1.5rem 1rem 3rem; }
+  .v2-main { padding: 1.5rem 0.5rem 3rem; }
   .v2-hero-title { font-size: 1.5rem; }
   .v2-metrics { grid-template-columns: 1fr; }
   .v2-grid { grid-template-columns: 1fr; }
