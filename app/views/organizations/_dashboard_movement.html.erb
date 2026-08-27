@@ -22,8 +22,7 @@
   <% end %>
 
   <div class="v2-dash-movement-amount <%= movement.amount.to_f.negative? ? 'neg' : 'pos' %>">
-    <%= to_visible_amount(movement.amount, false) %>
-    <span class="unit"><%= movement.count.metal_account? ? 'g' : '€' %></span>
+    <%= (movement.amount.to_f.positive? ? '+' : '') + to_visible_amount(movement.amount, false) + (movement.count.metal_account? ? 'g' : '€') %>
   </div>
 
   <div class="v2-dash-movement-tooltip" data-movement-tooltip-target="tooltip" role="tooltip">
