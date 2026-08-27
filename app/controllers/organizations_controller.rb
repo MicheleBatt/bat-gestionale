@@ -223,8 +223,8 @@ class OrganizationsController < ApplicationController
       # delle serie determina l'ordine delle barre e l'abbinamento con i colori.
       days = (@period_start..@period_end).to_a
       [
-        { name: 'Uscite', data: days.to_h { |day| [day.strftime('%-d %-b'), outflows[day].abs.round(2)] } },
-        { name: 'Entrate', data: days.to_h { |day| [day.strftime('%-d %-b'), incomes[day].round(2)] } }
+        { name: 'Uscite', data: days.to_h { |day| [day.strftime('%-d'), outflows[day].abs.round(2)] } },
+        { name: 'Entrate', data: days.to_h { |day| [day.strftime('%-d'), incomes[day].round(2)] } }
       ]
     end
 
