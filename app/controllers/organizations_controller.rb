@@ -207,7 +207,8 @@ class OrganizationsController < ApplicationController
     end
 
     # Entrate e uscite giorno per giorno nel periodo, pronte per il grafico a colonne.
-    # Tutti i giorni sono presenti anche senza movimenti, così l'asse temporale non ha buchi.
+    # Tutti i giorni sono presenti anche senza movimenti, così l'asse temporale non ha buchi
+    # e il mese in corso mostra comunque l'intera griglia fino all'ultimo giorno.
     def in_out_by_day(movements)
       incomes = Hash.new(0.0)
       outflows = Hash.new(0.0)
@@ -221,7 +222,10 @@ class OrganizationsController < ApplicationController
       # le date, Chartkick costruirebbe un asse temporale con etichette in formato ISO.
       # Uscite prima delle entrate, come nel grafico della pagina statistiche: l'ordine
       # delle serie determina l'ordine delle barre e l'abbinamento con i colori.
-      days = (@period_start..@period_end).to_a
+      # L'asse arriva sempre all'ultimo giorno del mese mostrato: nel mese in corso il periodo
+      # si ferma a oggi, ma il grafico deve comunque riservare lo spazio ai giorni futuri
+      # (che restano a zero) invece di troncarsi a metà.
+      days = (@period_start..@period_end.end_of_month).to_a
       [
         { name: 'Uscite', data: days.to_h { |day| [day.strftime('%-d'), outflows[day].abs.round(2)] } },
         { name: 'Entrate', data: days.to_h { |day| [day.strftime('%-d'), incomes[day].round(2)] } }
