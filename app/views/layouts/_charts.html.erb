@@ -127,7 +127,7 @@
       <% chart_title = "Entrate/Uscite #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
       <%= column_chart in_out_global_amounts,
                        stacked: false,
-                       title: chart_title,
+                       title: in_out_chart_title(chart_title, in_out_global_amounts, year, suffix),
                        download: { filename: chart_title, background: "#ffffff" },
                        colors: ["#DC3545", "#198754"],
                        loading: "Caricamento...",
@@ -142,7 +142,7 @@
       <% chart_title = "Valore delle Entrate/Uscite sul #{entity.name} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
       <%= column_chart in_out_global_valued_amounts,
                        stacked: false,
-                       title: chart_title,
+                       title: in_out_chart_title(chart_title, in_out_global_valued_amounts, year, '€'),
                        download: { filename: chart_title, background: "#ffffff" },
                        colors: ["#DC3545", "#198754"],
                        loading: "Caricamento...",
@@ -158,7 +158,7 @@
     <% chart_title = "Entrate/Uscite #{count.present? ? 'sul ' + entity.name : 'su tutti i conti'} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
     <%= column_chart in_out_global_valued_amounts,
                      stacked: false,
-                     title: chart_title,
+                     title: in_out_chart_title(chart_title, in_out_global_valued_amounts, year, suffix),
                      download: { filename: chart_title, background: "#ffffff" },
                      colors: ["#DC3545", "#198754"],
                      loading: "Caricamento...",
@@ -285,9 +285,14 @@
   <% movements_global_amount_by_expense_items.keys.sort_by{ |key| movements_global_amount_by_expense_items[key]['total'] * -1 }.each do |expense_item| %>
     <div class="v2-chart-card v2-chart-card-sm">
       <% chart_title_compact = "#{expense_item.description} #{year.present? ? 'nel ' + year : 'negli anni'}" %>
-      <% chart_title = "#{chart_title_compact}: #{to_visible_amount(movements_global_amount_by_expense_items[expense_item]['total'])}€" %>
+      <% expense_total = movements_global_amount_by_expense_items[expense_item].delete('total') %>
+      <% periods_count = movements_global_amount_by_expense_items[expense_item].size %>
+      <% expense_average = periods_count > 0 ? (expense_total / periods_count).round(2) : 0 %>
+      <% chart_title = [
+        "#{chart_title_compact}: #{to_visible_amount(expense_total)}€",
+        "#{year.present? ? 'Media mensile' : 'Media annua'}: #{to_visible_amount(expense_average)}€"
+      ] %>
       <% chart_color = expense_item.color.upcase != '#FFFFFF' ? expense_item.color : '#F2F2F2' %>
-      <% movements_global_amount_by_expense_items[expense_item].delete('total') %>
       <%= column_chart movements_global_amount_by_expense_items[expense_item],
                        title: chart_title,
                        max: (movements_max_amount * 1.1).to_f.round(2),

@@ -66,6 +66,19 @@ module ApplicationHelper
     formatted_amount
   end
 
+  # Titolo su più righe per il grafico entrate/uscite: per ogni serie
+  # aggiunge il totale e la media sui periodi mostrati (mesi o anni).
+  def in_out_chart_title(base_title, in_out_amounts, year, suffix)
+    average_label = year.present? ? 'media mensile' : 'media annua'
+    lines = in_out_amounts.map do |serie|
+      values = serie[:data].map { |_, amount| amount.to_f.abs }
+      total = values.sum
+      average = values.any? ? total / values.size : 0
+      "#{serie[:name]}: #{to_visible_amount(total.round(2))}#{suffix} (#{average_label} #{to_visible_amount(average.round(2))}#{suffix})"
+    end
+    [base_title, *lines]
+  end
+
   def date_to_integer(year, month, day)
     "#{year.to_i}#{month.to_i.to_s.rjust(2, '0')}#{day.to_i.to_s.rjust(2, '0')}".to_i
   end
